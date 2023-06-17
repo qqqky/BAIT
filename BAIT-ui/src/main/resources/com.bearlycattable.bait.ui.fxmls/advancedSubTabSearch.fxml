@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox alignment="TOP_CENTER" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedSubTabSearchController">
+  <children>
+    <VBox alignment="CENTER">
+      <children>
+        <HBox alignment="CENTER" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.loadTemplate">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.loadTemplate" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+        <HBox alignment="BOTTOM_CENTER" prefWidth="1224.0">
+          <children>
+            <HBox alignment="CENTER">
+              <children>
+                <TextField fx:id="advancedSearchTextFieldLoadSearchTemplateFromFile" styleClass="pathInput" prefWidth="854.0">
+                  <tooltip>
+                    <Tooltip text="%tooltip.searchTab.importTemplateHere" />
+                  </tooltip>
+                </TextField>
+                <HBox prefWidth="5.0" />
+                <Button fx:id="advancedBtnBrowseImportSearchResultsFile" mnemonicParsing="false" onAction="#doBrowseExistingResultsFilePath" text="%button.browse" />
+                <HBox prefWidth="5.0" />
+                <Button fx:id="advancedBtnLoadExisting" mnemonicParsing="false" onAction="#doLoadExistingResultsFile" text="%button.loadFile" />
+                <HBox prefWidth="5.0" />
+                <Button fx:id="advancedBtnShowExistingResults" disable="true" mnemonicParsing="false" onAction="#doShowExistingResultsFromFile" text="%button.browseLoaded">
+                  <tooltip>
+                    <Tooltip text="%tooltip.searchTab.browseLoadedExplanation" />
+                  </tooltip>
+                </Button>
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+      </children>
+    </VBox>
+    <VBox>
+      <children>
+        <HBox alignment="CENTER" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.selectSavePath">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.saveLocationExplanation" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <TextField fx:id="advancedSearchTextFieldSaveSearchToFile" styleClass="pathInput" prefHeight="31.0" prefWidth="827.0" />
+            <HBox alignment="CENTER" prefHeight="32.0" prefWidth="90.0">
+              <children>
+                <Button fx:id="advancedSearchBtnBrowseWhereToSave" mnemonicParsing="false" onAction="#doSelectSearchSaveTargetPath" prefHeight="31.0" prefWidth="77.0" text="%button.browse" />
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+      </children>
+    </VBox>
+    <VBox>
+      <children>
+        <VBox alignment="CENTER" prefWidth="1226.0">
+          <children>
+            <HBox alignment="CENTER" prefWidth="1261.0" styleClass="topicMarkerMain">
+              <children>
+                <Label alignment="CENTER" text="%label.topic.provideSeed">
+                  <font>
+                    <Font size="23.0" />
+                  </font>
+                </Label>
+                <HBox prefWidth="5.0" />
+                <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                  <tooltip>
+                    <Tooltip text="%tooltip.special.searchTab.seedRequirementExplanation" />
+                  </tooltip>
+                </Label>
+              </children>
+            </HBox>
+            <VBox prefHeight="5.0" prefWidth="1226.0" />
+            <HBox fx:id="advancedSearchSeedComponentParent" alignment="CENTER" prefWidth="1226.0">
+              <children>
+                <TextField fx:id="advancedSearchTextFieldContinueFromSeed" alignment="CENTER" styleClass="fullPKInput" prefWidth="694.0" />
+                <HBox prefWidth="5.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <Label text="[" />
+                    <Label fx:id="advancedSearchLabelLengthSeed" text="0" />
+                    <Label text="]" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <Button fx:id="advancedSearchBtnImportSeedFromConstruction" mnemonicParsing="false" onAction="#doImportPriv" text="%button.importFromConstruction">
+                  <tooltip>
+                    <Tooltip text="%tooltip.searchTab.importFromConstruction" />
+                  </tooltip>
+                </Button>
+                <HBox prefWidth="5.0" />
+                <Button fx:id="advancedBtnExportSeedToConstruction" mnemonicParsing="false" onAction="#doExportPriv" text="%button.exportToConstruction">
+                  <tooltip>
+                    <Tooltip text="%tooltip.searchTab.exportToConstruction" />
+                  </tooltip>
+                </Button>
+              </children>
+            </HBox>
+            <VBox prefHeight="5.0" prefWidth="1226.0" />
+          </children>
+        </VBox>
+      </children>
+    </VBox>
+    <VBox fx:id="advancedModeSpecificConfigParent">
+      <children>
+        <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.selectOtherParameters">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.seeInstructionsTab" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+          <children>
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="95.0" text="%label.searchMode" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <ChoiceBox fx:id="advancedSearchChoiceBoxSearchMode" prefHeight="31.0" prefWidth="220.0" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="75.0" text="%label.iterations" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <TextField fx:id="advancedSearchTextFieldIterations" styleClass="iterationsInput" alignment="CENTER" prefHeight="31.0" prefWidth="87.0" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="86.0" text="%label.scaleFactor" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <ComboBox fx:id="advancedSearchComboBoxScaleFactor" prefHeight="31.0" prefWidth="100.0" />
+            <HBox prefHeight="38.0" prefWidth="80.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.exactMatchExplanation" />
+              </tooltip>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <CheckBox fx:id="advancedSearchCbxEnableExactMatchCheck" mnemonicParsing="false" selected="true" text="%label.enableExactMatch" />
+            <HBox prefWidth="10.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.notificationExplanation" />
+              </tooltip>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <CheckBox fx:id="advancedSearchCbxEnableSoundNotifications" layoutX="918.0" layoutY="19.0" mnemonicParsing="false" text="%label.enableNotifications" />
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+          <children>
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.lockWordsExplanation" />
+              </tooltip>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER_RIGHT" text="%label.lockWords" />
+            <HBox prefWidth="5.0" />
+            <HBox fx:id="advancedSearchHBoxDisabledWordsParent" alignment="CENTER">
+              <children>
+                <CheckBox id="advancedCbxLock01" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="1" />
+                <CheckBox id="advancedCbxLock02" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="2" />
+                <CheckBox id="advancedCbxLock03" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="3" />
+                <CheckBox id="advancedCbxLock04" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="4" />
+                <CheckBox id="advancedCbxLock05" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="5" />
+                <CheckBox id="advancedCbxLock06" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="6" />
+                <CheckBox id="advancedCbxLock07" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="7" />
+                <CheckBox id="advancedCbxLock08" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="8" />
+                <HBox prefWidth="10.0" />
+              </children>
+            </HBox>
+            <HBox alignment="CENTER">
+              <children>
+                <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                  <tooltip>
+                    <Tooltip text="%tooltip.special.searchTab.loggingProgress" />
+                  </tooltip>
+                </Label>
+                <HBox prefWidth="5.0" />
+                <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.logProgressEvery.start" />
+                <HBox prefWidth="5.0" />
+                <TextField fx:id="advancedSearchTextFieldLogKeyEveryXIterations" styleClass="iterationsInput" alignment="CENTER" prefWidth="100.0" />
+                <HBox prefWidth="5.0" />
+                <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.logProgressEvery.end" />
+                <HBox prefWidth="5.0" />
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" fx:id="advancedSearchHBoxNotificationToleranceParent" />
+        <HBox alignment="CENTER">
+          <children>
+            <Label alignment="CENTER_RIGHT" text="%label.subtopic.modeSpecific">
+              <font>
+                <Font name="System Bold" size="16.0" />
+              </font>
+            </Label>
+          </children>
+        </HBox>
+<!--        Mode-specific options are added to this component-->
+        <HBox fx:id="advancedSearchHBoxModeSpecificOptionsParent" alignment="CENTER" prefHeight="38.0" prefWidth="1226.0" />
+      </children>
+    </VBox>
+    <VBox prefHeight="5.0" />
+    <VBox fx:id="advancedAdditionalConfigParent" alignment="CENTER">
+      <children>
+        <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.selectAdditional">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.selectAdditionalConfigs" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+          <children>
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="56.0" text="%label.loops" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+            <TextField fx:id="advancedSearchTextFieldNumberOfLoops" alignment="CENTER" prefWidth="64.0" text="1" />
+            <HBox layoutX="627.0" prefHeight="100.0" prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.loopsExplanation" />
+              </tooltip>
+            </Label>
+            <HBox layoutX="497.0" prefHeight="100.0" prefWidth="5.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.loopOptionsExplained" />
+          </children>
+        </HBox>
+        <VBox alignment="CENTER">
+          <children>
+            <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+              <children>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="advancedSearchCbxLoopOptionEnableIncDec" mnemonicParsing="false" prefWidth="75.0" text="%label.enable" />
+                <HBox prefWidth="50.0" />
+                <HBox fx:id="advancedOptionalMenuIncDecContainer" alignment="CENTER" disable="true" prefWidth="1000.0">
+                  <children>
+                    <RadioButton fx:id="advancedSearchRadioOptionalIncAbsolute" mnemonicParsing="false" text="%label.incAbsolute">
+                      <toggleGroup>
+                        <ToggleGroup fx:id="incDecType" />
+                      </toggleGroup>
+                    </RadioButton>
+                    <HBox prefWidth="5.0" />
+                    <RadioButton fx:id="advancedSearchRadioOptionalDecAbsolute" mnemonicParsing="false" text="%label.decAbsolute" toggleGroup="$incDecType" />
+                    <HBox prefWidth="5.0" />
+                    <RadioButton fx:id="advancedSearchRadioOptionalIncWords" mnemonicParsing="false" selected="true" text="%label.incWords" toggleGroup="$incDecType" />
+                    <HBox prefWidth="5.0" />
+                    <RadioButton fx:id="advancedSearchRadioOptionalDecWords" mnemonicParsing="false" text="%label.decWords" toggleGroup="$incDecType" />
+
+                    <HBox prefWidth="50.0" />
+                    <Label alignment="CENTER_RIGHT" text="%label.incDecBy" />
+                    <HBox prefWidth="5.0" />
+                    <TextField fx:id="advancedSearchTextFieldIncDecBy" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0">
+                      <tooltip>
+                        <Tooltip text="%tooltip.searchTab.seedIncDec" />
+                      </tooltip>
+                    </TextField>
+                  </children>
+                </HBox>
+              </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+              <children>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="advancedSearchCbxLoopOptionEnableRotation" mnemonicParsing="false" prefWidth="75.0" text="%label.enable" />
+                <HBox prefWidth="50.0" />
+                <HBox fx:id="advancedOptionalMenuHRotationContainer" alignment="CENTER" disable="true" prefWidth="1000.0">
+                  <children>
+                    <RadioButton fx:id="advancedSearchRadioOptionalRotateNormal" mnemonicParsing="false" text="%label.rotNormal">
+                      <toggleGroup>
+                        <ToggleGroup fx:id="rotationType" />
+                      </toggleGroup>
+                    </RadioButton>
+                    <HBox prefWidth="5.0" />
+                    <RadioButton fx:id="advancedSearchRadioOptionalRotateWords" mnemonicParsing="false" selected="true" text="%label.rotWords" toggleGroup="$rotationType" />
+                    <HBox prefWidth="5.0" />
+                    <RadioButton fx:id="advancedSearchRadioOptionalRotatePrefixed" mnemonicParsing="false" text="%label.rotPrefixed" toggleGroup="$rotationType" />
+                    <HBox prefHeight="38.0" prefWidth="50.0" />
+                    <HBox prefHeight="100.0" prefWidth="5.0" />
+                    <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.rotBy" />
+                    <HBox prefHeight="100.0" prefWidth="5.0" />
+                    <TextField fx:id="advancedTextFieldRotateHorizontallyBy" alignment="CENTER" prefWidth="104.0">
+                      <tooltip>
+                        <Tooltip text="%tooltip.searchTab.seedHRot" />
+                      </tooltip>
+                    </TextField>
+                  </children>
+                </HBox>
+              </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+              <children>
+                <HBox prefHeight="100.0" prefWidth="5.0" />
+                <CheckBox fx:id="advancedSearchCbxLoopOptionEnableVertical" mnemonicParsing="false" prefWidth="75.0" text="%label.enable" />
+                <HBox prefWidth="50.0" />
+                <HBox fx:id="advancedOptionalMenuVRotationContainer" alignment="CENTER" disable="true" prefWidth="1000.0">
+                  <children>
+                    <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.rotVBy" />
+                    <HBox prefHeight="100.0" prefWidth="5.0" />
+                    <TextField fx:id="advancedTextFieldRotateVerticallyBy" alignment="CENTER" prefWidth="104.0">
+                      <tooltip>
+                        <Tooltip text="%tooltip.searchTab.seedVRot" />
+                      </tooltip>
+                    </TextField>
+                    <HBox prefWidth="5.0" />
+                    <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.rotVAtIndexes" />
+                    <HBox prefWidth="5.0" />
+                    <TextField fx:id="advancedTextFieldRotateVerticallyAtIndexes" alignment="CENTER" prefWidth="192.0">
+                      <tooltip>
+                        <Tooltip text="%tooltip.searchTab.seedVRotIndexes" />
+                      </tooltip>
+                    </TextField>
+                    <HBox prefWidth="5.0" />
+                    <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                      <tooltip>
+                        <Tooltip text="%tooltip.special.searchTab.seedVRotExample" />
+                      </tooltip>
+                    </Label>
+                  </children>
+                </HBox>
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+      </children>
+    </VBox>
+    <VBox prefHeight="5.0" />
+    <VBox alignment="CENTER">
+      <children>
+        <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.startSearch">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.searchTab.startSearch" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1224.0">
+          <children>
+            <Button fx:id="advancedBtnSearch" mnemonicParsing="false" onAction="#doAdvancedSearch" prefWidth="195.0" text="%button.search" />
+            <HBox prefHeight="100.0" prefWidth="5.0" />
+          </children>
+        </HBox>
+        <Label fx:id="advancedSearchErrorLabel" styleClass="errorInfoMessage" alignment="CENTER" />
+      </children>
+    </VBox>
+  </children>
+</VBox>

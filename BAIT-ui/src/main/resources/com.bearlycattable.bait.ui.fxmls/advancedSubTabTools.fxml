@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox prefWidth="1226.0" style="-fx-border-color: black;"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedSubTabToolsController">
+  <children>
+    <HBox alignment="CENTER" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.createNewTemplate">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.toolsTab.createTemplateExplanation" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <VBox prefHeight="5.0" prefWidth="1226.0" />
+    <VBox alignment="TOP_CENTER">
+      <children>
+        <HBox alignment="CENTER" styleClass="topicMarkerAdditional">
+          <children>
+            <Label alignment="CENTER" text="%label.subtopic.chooseHow">
+              <font>
+                <Font name="System Bold" size="18.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.toolsTab.selectCreationType" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="32.0" prefWidth="1226.0">
+          <children>
+            <HBox prefHeight="32.0" prefWidth="5.0" />
+            <RadioButton fx:id="advancedToolsRadioCreateTemplateFromManualInput" mnemonicParsing="false" text="%label.createOptionA">
+              <toggleGroup>
+                <ToggleGroup fx:id="templateCreationType" />
+              </toggleGroup>
+            </RadioButton>
+            <HBox prefHeight="31.0" prefWidth="50.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.max" />
+            <TextField fx:id="advancedToolsTextFieldMaxEntriesInManualInput" alignment="CENTER" disable="true" prefHeight="31.0" prefWidth="40.0" text="3" />
+            <HBox prefHeight="32.0" prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.toolsTab.manualCreation" />
+              </tooltip>
+            </Label>
+            <HBox prefWidth="50.0" />
+            <HBox alignment="CENTER_LEFT">
+              <children>
+                <HBox prefHeight="32.0" prefWidth="5.0" />
+                <RadioButton fx:id="advancedToolsRadioCreateTemplateFromFile" mnemonicParsing="false" text="%label.createOptionB" toggleGroup="$templateCreationType" />
+                <HBox prefHeight="32.0" prefWidth="50.0" />
+                <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.max" />
+                <TextField fx:id="advancedToolsTextFieldMaxEntriesInFile" alignment="CENTER" disable="true" prefHeight="31.0" prefWidth="100.0" text="%label.unlimited" />
+                <HBox prefHeight="32.0" prefWidth="5.0" />
+                <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                  <tooltip>
+                    <Tooltip text="%tooltip.special.toolsTab.automaticCreation" />
+                  </tooltip>
+                </Label>
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+<!--        we inject components for template creation source choice here-->
+        <HBox fx:id="advancedToolsTemplateCreationSourceParentContainer" alignment="CENTER" />
+        <HBox prefHeight="4.0" />
+        <HBox alignment="CENTER" styleClass="topicMarkerAdditional">
+          <children>
+            <Label alignment="CENTER" text="%label.subtopic.chooseWhere">
+              <font>
+                <Font name="System Bold" size="18.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.toolsTab.templateSaveLocation" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <HBox prefHeight="4.0" />
+        <HBox alignment="CENTER">
+            <children>
+              <HBox prefWidth="5.0" />
+              <Label prefHeight="32.0" prefWidth="96.0" text="%label.savePath" />
+              <TextField alignment="CENTER" fx:id="advancedToolsTextFieldTemplateSavePath" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0" />
+              <HBox prefWidth="5.0" />
+              <Button alignment="CENTER" mnemonicParsing="false" onAction="#doBrowseAddressListSavePath" text="%button.browse" />
+            </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Button fx:id="advancedToolsBtnCreateEmptyTemplate" mnemonicParsing="false" onAction="#doCreateEmptyResultTemplate" prefHeight="31.0" text="%button.createEmptyTemplate" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <Label fx:id="searchToolsLabelTemplateCreationResult" styleClass="errorInfoMessage" alignment="CENTER" wrapText="true" />
+        <HBox prefHeight="5.0" />
+      </children>
+    </VBox>
+    <VBox prefWidth="1226.0">
+      <children>
+        <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.mergeResults">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.toolsTab.mergeExplanation" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" prefWidth="1035.0" />
+        <HBox alignment="CENTER" prefWidth="1226.0">
+          <children>
+            <Label prefHeight="32.0" prefWidth="96.0" text="%label.mergeInputOne" />
+            <TextField fx:id="advancedToolsTextFieldMergeInputFile01" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0">
+              <tooltip>
+                <Tooltip text="%tooltip.toolsTab.mergeInputOne" />
+              </tooltip>
+            </TextField>
+            <HBox prefWidth="5.0" />
+            <Button mnemonicParsing="false" onAction="#doBrowseInputPathOne" text="%button.browse" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" prefWidth="1035.0" />
+        <HBox alignment="CENTER" prefWidth="1226.0">
+          <children>
+            <Label prefHeight="32.0" prefWidth="96.0" text="%label.mergeInputTwo" />
+            <TextField fx:id="advancedToolsTextFieldMergeInputFile02" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0">
+              <tooltip>
+                <Tooltip text="%tooltip.toolsTab.mergeInputTwo" />
+              </tooltip>
+            </TextField>
+            <HBox prefWidth="5.0" />
+            <Button mnemonicParsing="false" onAction="#doBrowseInputPathTwo" text="%button.browse" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" prefWidth="1035.0" />
+        <HBox alignment="CENTER" prefWidth="1226.0">
+          <children>
+            <Label prefHeight="32.0" prefWidth="96.0" text="%label.mergeOutput" />
+            <TextField fx:id="advancedToolsTextFieldMergeOutputFilePath" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0">
+              <tooltip>
+                <Tooltip text="%tooltip.toolsTab.mergeOutput" />
+              </tooltip>
+            </TextField>
+            <HBox prefWidth="5.0" />
+            <Button mnemonicParsing="false" onAction="#doBrowseOutputPath" text="%button.browse" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" prefWidth="1035.0" />
+        <HBox alignment="CENTER" prefWidth="1226.0">
+          <children>
+            <Button fx:id="advancedToolsBtnMergeResultFiles" mnemonicParsing="false" onAction="#doMergeResultFiles" text="%button.mergeResultFiles" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" prefWidth="1035.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Label fx:id="searchToolsLabelMergeResult" styleClass="errorInfoMessage" alignment="CENTER" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" prefWidth="1035.0" />
+      </children>
+    </VBox>
+    <VBox>
+      <children>
+        <HBox alignment="CENTER" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.multiUnencoder">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.toolsTab.multiUnencoderExplanation" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Label prefWidth="128.0" text="%label.selectSource" />
+            <HBox prefWidth="5.0" />
+            <TextField fx:id="advancedToolsTextFieldMultiSource" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0">
+              <tooltip>
+                <Tooltip text="%tooltip.toolsTab.multiSource" />
+              </tooltip>
+            </TextField>
+            <HBox prefWidth="5.0" />
+            <Button mnemonicParsing="false" onAction="#doBrowseMultiSourcePath" text="%button.browse" />
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Label prefWidth="128.0" text="%label.selectSave" />
+            <HBox prefWidth="5.0" />
+            <TextField fx:id="advancedToolsTextFieldMultiTarget" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0">
+              <tooltip>
+                <Tooltip text="%tooltip.toolsTab.multiTarget" />
+              </tooltip>
+            </TextField>
+            <HBox prefWidth="5.0" />
+            <Button mnemonicParsing="false" onAction="#doBrowseMultiTargetPath" text="%button.browse" />
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <HBox prefWidth="5.0" />
+            <Button fx:id="advancedToolsBtnMultiUnencode" mnemonicParsing="false" onAction="#doUnencodeFile" text="%button.multiUnencode" />
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Label fx:id="searchToolsLabelMultiUnencodeResultMessage" styleClass="errorInfoMessage" alignment="CENTER" />
+          </children>
+        </HBox>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+      </children>
+    </VBox>
+  </children>
+</VBox>

@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox prefWidth="1226.0" style="-fx-border-style: solid none none none;" xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.ConstructionTabController">
+  <children>
+    <VBox prefHeight="8.0" prefWidth="1226.0" styleClass="tabTopSpacer" />
+    <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.Construction">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.constructionTab.constructionExplanation" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox fx:id="constructionHBoxParentForComboAndCheckBoxes" alignment="CENTER">
+      <children>
+        <HBox minWidth="5.0" prefWidth="5.0" />
+        <VBox alignment="TOP_CENTER">
+          <children>
+            <Label text="%label.firstWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord01" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex00" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex01" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex02" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex03" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex04" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex05" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex06" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex07" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord01" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock01" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+            <Label text="%label.thirdWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord03" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex16" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex17" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex18" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex19" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex20" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex21" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex22" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex23" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord03" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock03" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+            <Label text="%label.fifthWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord05" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex32" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex33" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex34" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex35" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex36" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex37" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex38" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex39" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord05" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock05" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+            <Label prefHeight="21.0" prefWidth="95.0" text="%label.seventhWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord07" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex48" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex49" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex50" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex51" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex52" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex53" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex54" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex55" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox minWidth="5.0" prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord07" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock07" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+        <VBox alignment="TOP_CENTER">
+          <children>
+            <Label text="%label.secondWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord02" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex08" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex09" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex10" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex11" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex12" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex13" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex14" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex15" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord02" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock02" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+            <Label text="%label.fourthWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord04" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex24" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex25" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex26" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex27" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex28" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex29" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex30" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex31" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord04" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock04" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+            <Label text="%label.sixthWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord06" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex40" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex41" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex42" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex43" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex44" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex45" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex46" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex47" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord06" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock06" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+            <Label prefHeight="21.0" prefWidth="95.0" text="%label.eighthWord" />
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="561.0">
+              <children>
+                <HBox fx:id="privInputWord08" alignment="CENTER">
+                  <children>
+                    <ComboBox fx:id="comboIndex56" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex57" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex58" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex59" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex60" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex61" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex62" onAction="#doChangeInputValue" prefWidth="66.0" />
+                    <ComboBox fx:id="comboIndex63" onAction="#doChangeInputValue" prefWidth="66.0" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <CheckBox fx:id="checkboxWord08" mnemonicParsing="false">
+                  <tooltip>
+                    <Tooltip text="%tooltip.constructionTab.lock08" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+        <HBox minWidth="5.0" prefWidth="5.0" />
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <VBox>
+      <children>
+        <HBox alignment="CENTER">
+          <children>
+            <Label text="%label.currentInput" />
+            <HBox prefWidth="64.0" />
+            <HBox fx:id="constructionHBoxCurrentInputParent" alignment="CENTER" prefHeight="36.0" prefWidth="832.0">
+              <children>
+                <TextField id="currentInputWord01" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                <TextField id="currentInputWord02" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                <TextField id="currentInputWord03" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                <TextField id="currentInputWord04" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                <TextField id="currentInputWord05" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                <TextField id="currentInputWord06" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                <TextField id="currentInputWord07" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                <TextField id="currentInputWord08" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+              </children>
+            </HBox>
+            <HBox prefWidth="5.0" />
+            <HBox alignment="CENTER">
+              <children>
+                <Label text="[" />
+                <Label fx:id="constructionLabelCurrentInputLength" text="0" />
+                <Label text="]" />
+              </children>
+            </HBox>
+            <HBox prefWidth="5.0" />
+            <Button fx:id="constructionBtnCopyKey" alignment="CENTER" mnemonicParsing="false" onAction="#doCopyKeyFromCurrentInput" prefHeight="32.0" text="%button.copyKey" />
+            <HBox prefWidth="5.0" />
+            <Button fx:id="constructionBtnPasteKey" alignment="CENTER" mnemonicParsing="false" onAction="#doPasteKeyToCurrentInput" prefHeight="32.0" text="%button.pasteKey" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Button fx:id="constructionBtnGenerateRandom" mnemonicParsing="false" onAction="#doGenerateRandom" prefHeight="32.0" prefWidth="144.0" text="%button.generateRandom" />
+            <HBox prefWidth="5.0" />
+            <HBox>
+              <children>
+                <HBox alignment="CENTER">
+                  <children>
+                    <RadioButton fx:id="constructionRadioRandomFull" mnemonicParsing="false" selected="true" text="%label.randomFull">
+                      <tooltip>
+                        <Tooltip prefWidth="300" text="%tooltip.constructionTab.randomFullExplanation" wrapText="true" />
+                      </tooltip>
+                      <toggleGroup>
+                        <ToggleGroup fx:id="randomType" />
+                      </toggleGroup>
+                    </RadioButton>
+                    <HBox prefWidth="5.0" />
+                    <RadioButton fx:id="constructionRadioRandomSameWord" mnemonicParsing="false" text="%label.randomSameWord" toggleGroup="$randomType">
+                      <tooltip>
+                        <Tooltip prefWidth="300" text="%tooltip.constructionTab.randomSameWordExplanation" wrapText="true" />
+                      </tooltip>
+                    </RadioButton>
+                    <HBox prefWidth="15.0" />
+                    <HBox fx:id="constructionHBoxRandomPrefixParent" alignment="CENTER" disable="true">
+                      <children>
+                        <Label alignment="CENTER" text="%label.usePrefix" />
+                        <HBox prefWidth="5.0" />
+                        <TextField fx:id="constructionTextFieldRandomWordPrefix" styleClass="wordPKInput" alignment="CENTER" prefWidth="104.0" />
+                      </children>
+                    </HBox>
+                  </children>
+                </HBox>
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+    <HBox prefHeight="20.0" />
+    <VBox>
+      <children>
+        <HBox alignment="CENTER">
+          <children>
+            <Button fx:id="constructionBtnCalculate" mnemonicParsing="false" onAction="#doCalculatePKH" prefHeight="32.0" prefWidth="138.0" text="%button.calculatePublicKey" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Label fx:id="constructionLabelShowingResultsForMessage" />
+            <HBox prefWidth="5.0" />
+            <Label fx:id="constructionLabelShowingResultsForKey" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <HBox prefWidth="5.0" />
+            <Label prefWidth="150.0" text="%label.uncompressedPKH" />
+            <HBox alignment="CENTER" style="-fx-border-color: black;">
+              <children>
+                <HBox prefWidth="5.0" />
+                <Label text="%label.unencoded" />
+                <HBox prefWidth="5.0" />
+                <TextField fx:id="constructionTextFieldUUPub" styleClass="fullPKHInput" editable="false" prefHeight="32.0" prefWidth="440.0" />
+                <HBox prefWidth="5.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <Label text="[" />
+                    <Label fx:id="constructionLabelUUPubLength" text="0" />
+                    <Label text="]" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+              </children>
+            </HBox>
+            <HBox prefWidth="5.0" />
+            <HBox alignment="CENTER" style="-fx-border-color: black;">
+              <children>
+                <HBox prefWidth="5.0" />
+                <Label text="%label.encoded" />
+                <HBox prefWidth="5.0" />
+                <TextField fx:id="constructionTextFieldUEPub" styleClass="fullPKHInput" editable="false" prefWidth="376.0" />
+                <HBox prefWidth="5.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <Label text="[" />
+                    <Label fx:id="constructionLabelUEPubLength" text="0" />
+                    <Label text="]" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <HBox prefWidth="5.0" />
+            <Label prefWidth="150.0" text="%label.compressedPKH" />
+            <HBox alignment="CENTER" style="-fx-border-color: black;">
+              <children>
+                <HBox prefWidth="5.0" />
+                <Label text="%label.unencoded" />
+                <HBox prefWidth="5.0" />
+                <TextField fx:id="constructionTextFieldCUPub" styleClass="fullPKHInput" editable="false" prefHeight="32.0" prefWidth="440.0" />
+                <HBox prefWidth="5.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <Label text="[" />
+                    <Label fx:id="constructionLabelCUPubLength" text="0" />
+                    <Label text="]" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+              </children>
+            </HBox>
+            <HBox prefWidth="5.0" />
+            <HBox alignment="CENTER" style="-fx-border-color: black;">
+              <children>
+                <HBox prefWidth="5.0" />
+                <Label text="%label.encoded" />
+                <HBox prefWidth="5.0" />
+                <TextField fx:id="constructionTextFieldCEPub" styleClass="fullPKHInput" editable="false" prefWidth="376.0" />
+                <HBox prefWidth="5.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <Label text="[" />
+                    <Label fx:id="constructionLabelCEPubLength" text="0" />
+                    <Label text="]" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+      </children>
+    </VBox>
+    <HBox alignment="CENTER">
+      <children>
+        <Label fx:id="constructionLabelErrorSuccessMessage" styleClass="errorInfoMessage" alignment="CENTER" />
+      </children>
+    </HBox>
+  </children>
+</VBox>

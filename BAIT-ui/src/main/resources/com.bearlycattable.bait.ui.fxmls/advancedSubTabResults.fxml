@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="1226.0" alignment="TOP_CENTER"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedSubTabResultsController">
+
+  <children>
+    <HBox alignment="CENTER" prefHeight="5.0" prefWidth="1226.0" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" prefHeight="32.0" text="%label.topic.browseResults">
+          <font>
+            <Font size="23.0"/>
+          </font>
+        </Label>
+        <HBox prefWidth="5.0"/>
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.resultsTab.generalExplanation"/>
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0"/>
+    <HBox alignment="CENTER" prefHeight="64.0">
+      <children>
+        <HBox alignment="CENTER_LEFT">
+          <children>
+            <HBox prefWidth="5.0"/>
+            <Label alignment="CENTER_RIGHT" text="%label.selectAndLoad"/>
+            <HBox prefWidth="5.0"/>
+            <HBox alignment="CENTER">
+              <children>
+                <TextField fx:id="advancedResultsTextFieldSelectAndLoadFromFile" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0">
+                  <tooltip>
+                    <Tooltip text="%tooltip.resultsTab.importResultsExplanation"/>
+                  </tooltip>
+                </TextField>
+                <HBox prefWidth="5.0"/>
+                <Button fx:id="advancedResultsBtnBrowseResultFilePath" mnemonicParsing="false" onAction="#doBrowseForSearchResultFilePath" text="%button.browse"/>
+                <HBox layoutX="602.0" layoutY="10.0" prefWidth="5.0"/>
+                <Button fx:id="advancedResultsBtnDoLoadSearchResults" disable="true" mnemonicParsing="false" onAction="#doLoadSearchResults" text="%button.loadResultFile"/>
+                <HBox prefWidth="5.0"/>
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+      </children>
+    </HBox>
+    <VBox alignment="CENTER" prefWidth="1226.0">
+      <children>
+        <VBox prefHeight="5.0" prefWidth="1226.0"/>
+        <HBox alignment="CENTER" prefWidth="1226.0">
+          <children>
+            <HBox prefWidth="375.0">
+              <children>
+                <VBox alignment="CENTER" prefWidth="375.0">
+                  <children>
+                    <HBox alignment="CENTER" prefHeight="32.0" prefWidth="375.0">
+                      <children>
+                        <Label alignment="CENTER" text="%label.displayResultsFor"/>
+                      </children>
+                    </HBox>
+                    <HBox layoutX="10.0" layoutY="76.0" prefHeight="5.0" prefWidth="372.0"/>
+                    <HBox prefHeight="5.0" prefWidth="372.0">
+                      <children>
+                        <ComboBox fx:id="advancedResultsComboBoxSelectPubFromResults" onAction="#doShowResultsForSelectedHash" prefHeight="32.0" prefWidth="375.0"/>
+                      </children>
+                    </HBox>
+                    <HBox prefHeight="5.0" prefWidth="372.0"/>
+                    <HBox alignment="CENTER" prefHeight="32.0" prefWidth="375.0">
+                      <children>
+                        <Label alignment="CENTER" text="%label.forScaleFactor"/>
+                        <HBox prefWidth="5.0"/>
+                        <ComboBox fx:id="advancedResultsComboResultsScaleFactor" onAction="#doShowResultsForSelectedScaleFactor" prefWidth="80.0"/>
+                      </children>
+                    </HBox>
+                    <HBox prefHeight="5.0" prefWidth="372.0"/>
+                    <Button fx:id="advancedResultsBtnJustShowMeBest" disable="true" mnemonicParsing="false" onAction="#doShowBestMatch" prefHeight="32.0" text="%button.showBestMatch">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.showMeBestExplanation"/>
+                      </tooltip>
+                    </Button>
+                    <HBox layoutX="10.0" layoutY="116.0" prefHeight="5.0" prefWidth="372.0"/>
+                  </children>
+                </VBox>
+                <VBox prefHeight="126.0" prefWidth="5.0"/>
+              </children>
+            </HBox>
+            <VBox alignment="CENTER" prefWidth="852.0">
+              <children>
+                <HBox prefHeight="32.0" prefWidth="852.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="35.0" text="UHP">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.uhp"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsTextFieldUHPKey" styleClass="fullPKInput" prefHeight="32.0" prefWidth="692.0"/>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="41.0" text="%label.accuracyAbbreviation">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.accMeaning"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsUHPAcc" styleClass="accuracyInput" prefHeight="32.0" prefWidth="44.0"/>
+                    <Button fx:id="advancedResultsBtnShowHeatUHP" id="advancedBtnShowHeatUHP" mnemonicParsing="false" onAction="#doShowResultsInHeatComparisonTab" prefHeight="32.0" prefWidth="38.0" text="%button.globalSymbol.showInHeatComparisonTab">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.viewInHeatComparisonTab"/>
+                      </tooltip>
+                    </Button>
+                  </children>
+                </HBox>
+                <HBox prefHeight="5.0" prefWidth="200.0"/>
+                <HBox prefHeight="32.0" prefWidth="852.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="35.0" text="UHN">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.uhn"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsTextFieldUHNKey" styleClass="fullPKInput" prefHeight="32.0" prefWidth="692.0"/>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="41.0" text="%label.accuracyAbbreviation">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.accMeaning"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsUHNAcc" styleClass="accuracyInput" prefHeight="32.0" prefWidth="44.0"/>
+                    <Button fx:id="advancedResultsBtnShowHeatUHN" id="advancedBtnShowHeatUHN" mnemonicParsing="false" onAction="#doShowResultsInHeatComparisonTab" prefHeight="32.0" prefWidth="38.0" text="%button.globalSymbol.showInHeatComparisonTab">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.viewInHeatComparisonTab"/>
+                      </tooltip>
+                    </Button>
+                  </children>
+                </HBox>
+                <HBox prefHeight="5.0" prefWidth="200.0"/>
+                <HBox prefHeight="32.0" prefWidth="852.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="35.0" text="CHP">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.chp"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsTextFieldCHPKey" styleClass="fullPKInput" prefHeight="32.0" prefWidth="692.0"/>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="41.0" text="%label.accuracyAbbreviation">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.accMeaning"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsCHPAcc" styleClass="accuracyInput" prefHeight="32.0" prefWidth="44.0"/>
+                    <Button fx:id="advancedResultsBtnShowHeatCHP" id="advancedBtnShowHeatCHP" mnemonicParsing="false" onAction="#doShowResultsInHeatComparisonTab" prefHeight="32.0" prefWidth="38.0" text="%button.globalSymbol.showInHeatComparisonTab">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.viewInHeatComparisonTab"/>
+                      </tooltip>
+                    </Button>
+                  </children>
+                </HBox>
+                <HBox prefHeight="5.0" prefWidth="200.0"/>
+                <HBox prefHeight="32.0" prefWidth="852.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="35.0" text="CHN">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.chn"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsTextFieldCHNKey" styleClass="fullPKInput" prefHeight="32.0" prefWidth="692.0"/>
+                    <Label alignment="CENTER" prefHeight="32.0" prefWidth="41.0" text="%label.accuracyAbbreviation">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.accMeaning"/>
+                      </tooltip>
+                    </Label>
+                    <TextField fx:id="advancedResultsCHNAcc" styleClass="accuracyInput" prefHeight="32.0" prefWidth="44.0"/>
+                    <Button fx:id="advancedResultsBtnShowHeatCHN" id="advancedBtnShowHeatCHN" mnemonicParsing="false" onAction="#doShowResultsInHeatComparisonTab" prefHeight="32.0" prefWidth="38.0" text="%button.globalSymbol.showInHeatComparisonTab">
+                      <tooltip>
+                        <Tooltip text="%tooltip.resultsTab.viewInHeatComparisonTab"/>
+                      </tooltip>
+                    </Button>
+                  </children>
+                </HBox>
+                <HBox prefHeight="5.0"/>
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="32.0" prefWidth="1224.0" styleClass="topicMarkerAdditional">
+          <children>
+            <Label alignment="CENTER" prefHeight="31.0" prefWidth="130.0" text="%label.subtopic.filter">
+              <font>
+                <Font name="System Bold" size="16.0"/>
+              </font>
+            </Label>
+          </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="5.0" prefWidth="200.0"/>
+        <HBox alignment="CENTER" prefHeight="32.0" prefWidth="1224.0">
+          <children>
+            <Label alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="104.0" text="%label.filterStartsWith"/>
+            <HBox prefHeight="34.0" prefWidth="5.0"/>
+            <TextField fx:id="advancedResultsFilterPubPrefix" alignment="CENTER" prefHeight="31.0" prefWidth="328.0"/>
+            <Label alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="125.0" text="%label.accuracyMin"/>
+            <HBox prefHeight="34.0" prefWidth="5.0"/>
+            <TextField fx:id="advancedResultsFilterTextFieldAccuracyMin" alignment="CENTER" prefHeight="31.0" prefWidth="45.0" text="60"/>
+            <Label alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="105.0" text="%label.scaleFactor"/>
+            <HBox prefHeight="34.0" prefWidth="5.0"/>
+            <HBox prefHeight="34.0" prefWidth="5.0"/>
+            <ComboBox fx:id="advancedResultsComboFilterResultsScaleFactor" prefHeight="31.0" prefWidth="100.0"/>
+            <Label alignment="CENTER_RIGHT" prefHeight="31.0" prefWidth="110.0" text="%label.resultsMax"/>
+            <HBox prefHeight="34.0" prefWidth="5.0"/>
+            <TextField fx:id="advancedResultsFilterTextFieldMaxResults" alignment="CENTER" prefHeight="31.0" prefWidth="83.0" text="100"/>
+            <HBox prefHeight="34.0" prefWidth="5.0"/>
+            <Button fx:id="advancedResultsBtnFilterResults" disable="true" mnemonicParsing="false" onAction="#doFilterExistingResults" prefHeight="32.0" prefWidth="214.0" text="%button.filterResults"/>
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+    <HBox prefHeight="5.0"/>
+    <VBox alignment="CENTER" prefWidth="1226.0">
+      <children>
+        <HBox prefHeight="10.0" />
+        <Label fx:id="advancedResultsLabelFilterMessage" styleClass="errorInfoMessage"/>
+        <HBox prefHeight="10.0" />
+      </children>
+    </VBox>
+  </children>
+</VBox>

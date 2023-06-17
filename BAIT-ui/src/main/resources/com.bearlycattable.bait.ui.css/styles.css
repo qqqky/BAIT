@@ -1,0 +1,541 @@
+/*theme variables*/
+.root {
+    -fx-custom-violetLight: #9160ff; /*only for buttons*/
+    -fx-custom-violetDark: #772ce8; /*only for buttons (hover)*/
+    -fx-custom-violetMedium: #9046fe; /*everything else violet*/
+    -fx-custom-violetLightest: #bf94ff; /*only for nav text and borders*/
+
+    -fx-custom-whitish-text: #ebebee;
+    -fx-custom-input-and-hover-background: #464749;
+    -fx-custom-cbx-radio-background-selected: #1a1d25; /*only for CheckBox and RadioButton (background when selected)*/
+    -fx-custom-nav-menu-background: #18181a; /*nav background (tabs) */
+    -fx-custom-background-darkest : #0e0e11; /*default background color*/
+    -fx-custom-selected-input-black: black; /*log component, menus and input fields when focused*/
+
+    -fx-custom-main-banner-background: -fx-custom-nav-menu-background;
+    -fx-custom-main-banner-text: -fx-custom-whitish-text;
+    -fx-custom-subbanner-background: -fx-custom-cbx-radio-background-selected;
+    -fx-custom-subbanner-text: -fx-custom-whitish-text;
+}
+
+/*increase duration for all tooltips (default is 5s). Only works in JavaFX 9+*/
+/*.popup .tooltip {*/
+/*    -fx-show-duration: indefinite;*/
+/*}*/
+
+/*heat colors list*/
+.green0 {
+    -fx-background-color:#00ff00;
+}
+.lightGreenish1 {
+    -fx-background-color:#b4ff00;
+}
+.yellowish2 {
+    -fx-background-color:#d8ff00;
+}
+.yellow3 {
+    -fx-background-color:#ffff00;
+}
+.yellower4 {
+    -fx-background-color:#ffe700;
+}
+.darkYellow5 {
+    -fx-background-color:#ffd200;
+}
+.orangyYellow6 {
+    -fx-background-color:#ffbd00;
+}
+.moreOrangyYellow7 {
+    -fx-background-color:#ffa800;
+}
+.lightOrange8 {
+    -fx-background-color:#ff9300;
+}
+.stillOrange9 {
+    -fx-background-color:#ff7e00;
+}
+.normalOrangeA {
+    -fx-background-color:#ff6900;
+}
+.darkOrangeB {
+    -fx-background-color:#ff5400;
+}
+.reddishOrangeC {
+    -fx-background-color:#ff3f00;
+}
+.reddishOrangeDarkerD {
+    -fx-background-color:#ff2a00;
+}
+.redTamerE {
+    -fx-background-color:#ff1500;
+}
+.redPureF {
+    -fx-background-color:#ff0000;
+}
+
+/*other colors for background, text and borders*/
+
+/*background*/
+
+.bcgGray {
+    -fx-background-color: gray;
+}
+
+.bcgDarkGray {
+    -fx-background-color: darkgray;
+}
+
+.bcgLightGray {
+    -fx-background-color: lightgray;
+}
+
+.bcgIndianRed {
+    -fx-background-color: indianred;
+}
+
+.bcgBurlyWood {
+    -fx-background-color: burlywood;
+}
+
+.bcgLightGreen {
+    -fx-background-color: lightgreen;
+}
+
+.bcgLightPink {
+    -fx-background-color: lightpink;
+}
+
+.bcgPaleVioletRed {
+    -fx-background-color: palevioletred;
+}
+
+/*borders*/
+.borderRed {
+    -fx-border-color: red;
+}
+
+/*text colors*/
+.textGreen {
+    -fx-text-fill: green;
+}
+
+.textYellow {
+    -fx-text-fill: yellow;
+}
+
+.textDarkOrange {
+    -fx-text-fill: darkorange;
+}
+
+.textRed {
+    -fx-text-fill: red;
+}
+
+.textLightGray {
+    -fx-text-fill: lightgray;
+}
+
+.textDarkGray {
+    -fx-text-fill: darkgray;
+}
+
+.textDarkMode01 {
+    -fx-text-fill: -fx-custom-whitish-text;
+}
+
+.textWheat {
+    -fx-text-fill: wheat;
+}
+
+/* Special markers (for topics and subtopics) */
+.topicMarkerMain {
+    -fx-background-color: wheat;
+}
+.topicMarkerAdditional {
+    -fx-background-color: lightblue;
+}
+
+/* Styles for the main tabPane and its tabs */
+.mainTabPaneNormal {
+
+}
+.mainTabPaneTabNormal {
+
+}
+
+/*Dark mode styles*/
+.btnDark {
+    -fx-background-color: -fx-custom-violetLight;
+    -fx-text-fill: -fx-custom-whitish-text;
+}
+.btnDark:hover {
+    -fx-background-color: -fx-custom-violetDark;
+}
+
+.textFieldAndTextAreaDarkMode {
+    -fx-control-inner-background: -fx-custom-input-and-hover-background;
+    -fx-text-inner-color: -fx-custom-whitish-text;
+}
+.textFieldAndTextAreaDarkMode:focused {
+    -fx-control-inner-background: -fx-custom-selected-input-black;
+    -fx-border-color: -fx-custom-violetMedium;
+}
+
+.specialLabelTooltipNormal {
+    -fx-border-color: black;
+    -fx-text-fill: green;
+    -fx-background-color: limegreen;
+    -fx-font-size: 18;
+}
+.specialLabelTooltipNormal:hover {
+    -fx-background-color: lime;
+}
+
+.specialLabelTooltipDark {
+    -fx-border-color: -fx-custom-violetMedium;
+    -fx-text-fill: green;
+    -fx-background-color: limegreen;
+    -fx-font-size: 18;
+}
+.specialLabelTooltipDark:hover {
+    -fx-background-color: lime;
+}
+
+/**/
+.mainTabPaneDark .tab-header-background {
+    -fx-background-color: -fx-custom-nav-menu-background;
+}
+.mainTabPaneDark .tab:top {
+    -fx-background-color: -fx-custom-nav-menu-background;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 1), 4, 0, 0, 0);
+}
+.mainTabPaneTabDark .tab-label {
+    -fx-text-fill: #efeff1;
+    -fx-font-weight: bold;
+}
+.mainTabPaneTabDark:hover .tab-label {
+    -fx-text-fill: -fx-custom-violetLightest;
+}
+.mainTabPaneTabDark:selected {
+    -fx-border-color: -fx-custom-violetLightest;
+    -fx-border-radius: 2px;
+}
+.mainTabPaneTabDark.tab:selected .focus-indicator {
+    -fx-border-color: transparent; /*don't show the default border of selection*/
+}
+.mainTabPaneTabDark:selected .tab-label {
+    -fx-text-fill: -fx-custom-violetLightest; /*for the selected tab, keep text colored*/
+}
+
+/*parent container of 'advanced' tab (dark mode)*/
+.tabAdvancedMainPaneDark .tab-header-background {
+    -fx-background-color: -fx-custom-nav-menu-background;
+}
+.tabAdvancedMainPaneDark .tab:top {
+    -fx-background-color: -fx-custom-nav-menu-background;
+    /*-fx-background-insets: 0, 1; <--- this eliminates spacing between tabs*/
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 1), 4, 0, 0, 0);
+}
+
+/*children tabs of 'advanced' tab*/
+.subTabAdvancedDark .tab-label {
+    -fx-text-fill: -fx-custom-whitish-text;
+    -fx-font-weight: bold;
+}
+.subTabAdvancedDark:hover .tab-label {
+    -fx-text-fill: -fx-custom-violetLightest;
+}
+.subTabAdvancedDark:selected {
+    -fx-border-color: -fx-custom-violetLightest;
+    -fx-border-radius: 2px;
+}
+.subTabAdvancedDark.tab:selected .focus-indicator {
+    -fx-border-color: transparent; /*don't show the default border of selection*/
+}
+.subTabAdvancedDark:selected .tab-label {
+    -fx-text-fill: -fx-custom-violetLightest;
+}
+
+.bcgPaneDark {
+    -fx-background-color: -fx-custom-background-darkest;
+    -fx-text-fill: #eaeaec;
+}
+
+.tabTopSpacer {
+    -fx-background-color: -fx-background;
+}
+.tabTopSpacerDark {
+    -fx-background-color: -fx-custom-background-darkest;
+}
+
+.topicMarkerMainDark {
+    -fx-background-color: -fx-custom-main-banner-background;
+}
+.topicMarkerMainLabelTextDark {
+    -fx-text-fill: -fx-custom-main-banner-text;
+    /*-fx-font-weight: bold;*/
+    -fx-font-size: 23;
+}
+
+.topicMarkerAdditionalDark {
+    -fx-background-color: -fx-custom-subbanner-background;
+}
+.topicMarkerAdditionalLabelTextDark {
+    -fx-text-fill: -fx-custom-subbanner-text;
+    -fx-font-size: 18;
+}
+
+.cbxDark {
+    -fx-font-weight: 600;
+    -fx-text-fill: #eaeaec;
+}
+/*unselected*/
+.cbxDark > .box {
+    -fx-background-color: -fx-custom-cbx-radio-background-selected;
+    -fx-border-color: -fx-custom-violetMedium;
+    -fx-border-radius: 3px;
+}
+/*selected*/
+.cbxDark:selected > .box {
+    -fx-background-color: -fx-custom-violetMedium;
+}
+.cbxDark:selected .mark {
+    -fx-background-color: -fx-custom-cbx-radio-background-selected;
+}
+
+.radioDark {
+    -fx-font-weight: 600;
+    -fx-text-fill: #eaeaec;
+}
+.radioDark:selected .radio {
+    -fx-background-color: -fx-custom-violetMedium;
+    -fx-border-color: -fx-custom-violetMedium;
+    -fx-border-radius: 25px;
+}
+.radioDark:selected .radio .dot {
+    -fx-background-color: -fx-custom-cbx-radio-background-selected;
+    -fx-background-insets: 0;
+}
+
+.comboBoxDark {
+    -fx-border-color: -fx-custom-violetMedium;
+    -fx-background-color: -fx-custom-violetMedium;
+}
+.comboBoxDark:focused .list-cell {
+    -fx-text-fill: -fx-custom-whitish-text;
+    -fx-background-color: -fx-custom-selected-input-black;
+}
+.comboBoxDark .list-cell {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+}
+.comboBoxDark .arrow-button:hover {
+    -fx-background-color: -fx-custom-violetDark;
+}
+.comboBoxDark .combo-box-popup .list-view { /*fixes style when an empty ComboBox is opened*/
+    -fx-background-color: -fx-custom-selected-input-black;
+}
+.comboBoxDark .combo-box-popup .list-cell:hover {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+}
+.comboBoxDark .cell:selected {
+    -fx-text-fill: -fx-custom-whitish-text; /* selected item */
+}
+
+/*spinner*/
+.spinnerDark {
+    -fx-border-color: -fx-custom-violetMedium;
+    -fx-border-radius: 3;
+}
+.spinnerDark .increment-arrow-button,
+.spinnerDark .decrement-arrow-button {
+    /*button color is the last one. First 3 are borders (yes, a button has 3 borders - outer, middle and inner)*/
+    /*redefining these also helps if we want to get rid of the default selected/unselected highlight*/
+    -fx-background-color: -fx-custom-violetMedium, -fx-custom-input-and-hover-background, -fx-custom-violetMedium, -fx-custom-violetMedium;
+}
+.spinnerDark .increment-arrow-button:pressed,
+.spinnerDark .decrement-arrow-button:pressed {
+    -fx-background-color: -fx-custom-input-and-hover-background, -fx-custom-violetDark, -fx-custom-violetDark, -fx-custom-violetDark;
+}
+.spinnerDark > .text-field {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+    -fx-text-fill: -fx-custom-whitish-text;
+    -fx-border-color: -fx-custom-violetMedium;
+}
+
+/*choiceBox*/
+.choiceBoxDark {
+    -fx-border-color: -fx-custom-violetMedium;
+    -fx-background-color: -fx-custom-input-and-hover-background;
+    -fx-mark-color: -fx-custom-violetMedium; /*arrow color*/
+}
+.choiceBoxDark > .label {
+    -fx-text-fill: -fx-custom-whitish-text;
+}
+.choiceBoxDark .context-menu {
+    -fx-background-color: -fx-custom-selected-input-black;
+}
+.choiceBoxDark .menu-item:focused {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+}
+.choiceBoxDark .menu-item > .label {
+    -fx-text-fill: -fx-custom-whitish-text;
+}
+
+/*progressBar*/
+.progressBarDark {
+    -fx-accent: -fx-custom-violetMedium;
+}
+.progressBarDark > .track {
+    -fx-text-box-border: -fx-custom-violetMedium;
+    -fx-control-inner-background: -fx-custom-input-and-hover-background;
+}
+
+/*Priv heat containers and labels in 'Comparison' tab*/
+.heatContainerPrivWords {
+    -fx-border-color: black;
+}
+.heatContainerPrivWordsDark {
+    -fx-border-color: -fx-custom-violetLightest;
+}
+.privHeatNumericValueDark {
+    -fx-background-color: -fx-custom-background-darkest;
+    -fx-text-fill: -fx-custom-whitish-text;
+}
+
+/*ScrollPane*/
+.scrollPaneDark {
+    -fx-background-color: -fx-custom-background-darkest;
+}
+.scrollPaneDark > .scroll-bar:vertical,
+.scrollPaneDark > .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+.scrollPaneDark .thumb {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+}
+
+/*Accordion and its TitledPanes*/
+.accordionDark {
+    /*fixes whitespace artifact when switching between panes*/
+    -fx-background-color: transparent;
+}
+.titledPaneDark.first-titled-pane:collapsed .title,
+.titledPaneDark.titled-pane:collapsed .title {
+    -fx-background-color: -fx-custom-violetLight;
+}
+.titledPaneDark.first-titled-pane:collapsed .title .text,
+.titledPaneDark.titled-pane:collapsed .title .text {
+    -fx-fill: -fx-custom-whitish-text;
+}
+.titledPaneDark.first-titled-pane:expanded .title,
+.titledPaneDark.titled-pane:expanded .title {
+    -fx-background-color: -fx-custom-selected-input-black;
+    -fx-border-color: -fx-custom-whitish-text;
+}
+.titledPaneDark.first-titled-pane:expanded .title .text,
+.titledPaneDark.titled-pane:expanded .title .text {
+    -fx-fill: -fx-custom-whitish-text;
+}
+/*general color for arrow*/
+.titledPaneDark.first-titled-pane .arrow,
+.titledPaneDark.titled-pane .arrow {
+    -fx-background-color: -fx-custom-selected-input-black;
+}
+
+/*on hover styles (collapsed)*/
+.titledPaneDark.first-titled-pane:hover:collapsed .title,
+.titledPaneDark.titled-pane:hover:collapsed .title {
+    -fx-background-color: -fx-custom-violetDark;
+}
+.titledPaneDark.first-titled-pane:hover:collapsed .title .arrow,
+.titledPaneDark.titled-pane:hover:collapsed .title .arrow {
+    -fx-background-color: -fx-custom-whitish-text;
+}
+/*on hover styles (expanded)*/
+.titledPaneDark.first-titled-pane:hover:expanded .title,
+.titledPaneDark.titled-pane:hover:expanded .title {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+}
+.titledPaneDark.first-titled-pane:hover:expanded .title .arrow,
+.titledPaneDark.titled-pane:hover:expanded .title .arrow {
+    -fx-background-color: -fx-custom-whitish-text;
+}
+
+/*listView*/
+#logComponent.listViewDark {
+    /*this inits default color if/when ListView has no cells yet*/
+    -fx-background-color: -fx-custom-selected-input-black;
+}
+#logComponent.listViewDark .list-cell:even,
+#logComponent.listViewDark .list-cell:odd {
+    -fx-background-color: -fx-custom-selected-input-black;
+}
+#logComponent.listViewDark .list-cell:even:selected,
+#logComponent.listViewDark .list-cell:odd:selected {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+}
+
+/*right-click menu in #logComponent*/
+.contextMenuDark {
+    -fx-background-color: -fx-custom-selected-input-black;
+    -fx-border-color: -fx-custom-violetMedium;
+    -fx-text-fill: -fx-custom-whitish-text;
+}
+.menuItemDark .label {
+    -fx-text-fill: -fx-custom-whitish-text;
+}
+.menuItemDark:focused {
+    -fx-background-color: -fx-custom-input-and-hover-background;
+}
+
+/*alert*/
+.alertDark.dialog-pane {
+    -fx-border-color: -fx-custom-violetLightest;
+}
+/*button bar with buttons*/
+.alertDark.dialog-pane .button-bar .container {
+    -fx-background-color: -fx-custom-background-darkest;
+}
+.alertDark.dialog-pane .button {
+    -fx-background-color: -fx-custom-violetLight;
+    -fx-text-fill: -fx-custom-whitish-text;
+    -fx-wrap-text: true;
+    -fx-font-weight: bold;
+}
+.alertDark.dialog-pane .button:hover {
+    -fx-background-color: -fx-custom-violetDark;
+    -fx-text-fill: -fx-custom-whitish-text;
+    -fx-font-weight: bold;
+}
+/*middle content*/
+/*.alertDark.dialog-pane .content.label {*/
+/*    -fx-background-color: -fx-custom-input-and-hover-background;*/
+/*    -fx-text-fill: -fx-custom-whitish-text;*/
+/*}*/
+.alertDark.dialog-pane .content {
+    -fx-background-color: -fx-custom-background-darkest;
+}
+/*header*/
+.alertDark.dialog-pane .header-panel {
+    -fx-background-color: -fx-custom-background-darkest;
+}
+.alertDark.dialog-pane .header-panel .label {
+    -fx-wrap-text: true;
+    -fx-text-fill: green;
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+}
+
+.errorInfoMessage {
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+    -fx-padding: 0, 5, 0, 5;
+}
+
+.confirmDialogLabel {
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 13;
+    -fx-padding: 0, 4, 0, 4;
+}

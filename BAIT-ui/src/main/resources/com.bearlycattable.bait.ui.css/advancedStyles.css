@@ -1,0 +1,38 @@
+.tabAdvancedMainPane .tab-header-background  {
+    -fx-background-color: wheat;
+}
+
+.tabAdvancedMainPane .tab:top {
+    -fx-background-color: lightskyblue;
+    /*-fx-background-insets: 0, 1; <--- this eliminates spacing between tabs*/
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 1), 4, 0, 0, 0);
+}
+
+/*.tab-label {
+   -fx-text-fill: pink;
+} */
+
+
+.subTabAdvancedNormal.tab:selected {
+    -fx-background-color: cornflowerblue;
+    -fx-border-color: purple;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1.5, 1.5, 3, 1.5;
+}
+
+.subTabAdvancedNormal.tab:selected .tab-label {
+    -fx-text-fill: purple;
+}
+
+#logComponent .list-cell:odd {
+    -fx-background-color: white;
+}
+
+#logComponent .list-cell:odd:selected {
+    -fx-background-color: -fx-background;
+}
+
+/*.list-cell {*/
+/*    -fx-control-inner-background: white ;*/
+/*}*/
+

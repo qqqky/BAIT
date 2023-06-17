@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.bearlycattable</groupId>
+  <artifactId>bait</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>BAIT</name>
+  <description>Bitcoin Address Integrity Tester</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>bait-ui</module>
+    <module>bait-bl</module>
+    <module>bait-model</module>
+    <module>bait-utility</module>
+    <module>bait-resourceBundles</module>
+    <module>bait-advanced</module>
+    <module>bait-advancedRestricted</module>
+    <module>bait-commons</module>
+    <module>bait-advancedCommons</module>
+  </modules>
+
+  <properties>
+    <bait-ui.version>1.0.0</bait-ui.version>
+    <bait-model.version>1.0.0</bait-model.version>
+    <bait-bl.version>1.0.0</bait-bl.version>
+    <bait-utility.version>1.0.0</bait-utility.version>
+    <bait-advanced.version>1.0.0</bait-advanced.version>
+    <bait-resourceBundles.version>1.0.0</bait-resourceBundles.version>
+    <bait-advancedRestricted.version>1.0.0</bait-advancedRestricted.version>
+    <bait-advancedCommons.version>1.0.0</bait-advancedCommons.version>
+
+    <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+    <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>17</java.version>
+    <javafx.controls.version>17.0.0.1</javafx.controls.version>
+    <javafx.fxml.version>20</javafx.fxml.version>
+    <jackson.version>2.15.0</jackson.version>
+    <exec.maven.plugin.version>1.6.0</exec.maven.plugin.version>
+    <lombok.version>1.18.24</lombok.version>
+    <bitcoinj.core.version>0.16.1</bitcoinj.core.version>
+    <slf4j.version>1.7.30</slf4j.version>
+
+<!--    <jmetro.version>11.6.15</jmetro.version>-->
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+
+  </properties>
+
+  <!--<dependencyManagement>-->
+  <dependencies>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${javafx.controls.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${javafx.fxml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bitcoinj</groupId>
+      <artifactId>bitcoinj-core</artifactId>
+      <version>${bitcoinj.core.version}</version>
+    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.slf4j</groupId>-->
+<!--      <artifactId>slf4j-api</artifactId>-->
+<!--      <version>${slf4j.version}</version>-->
+<!--    </dependency>-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <!--    @NonNull annotations-->
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
+      <version>3.34.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+<!--    <dependency>-->
+<!--      <groupId>org.jfxtras</groupId>-->
+<!--      <artifactId>jmetro</artifactId>-->
+<!--      <version>${jmetro.version}</version>-->
+<!--      <exclusions>-->
+<!--        &lt;!&ndash; The following exclusions are necessary to override all hard coded dependencies &ndash;&gt;-->
+<!--        &lt;!&ndash; on outdated or not needed external libraries &ndash;&gt;-->
+<!--        <exclusion>-->
+<!--          <groupId>org.controlsfx</groupId>-->
+<!--          <artifactId>controlsfx</artifactId>-->
+<!--        </exclusion>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.openjfx</groupId>-->
+<!--          <artifactId>*</artifactId>-->
+<!--        </exclusion>-->
+<!--      </exclusions>-->
+<!--    </dependency>-->
+  </dependencies>
+  <!--</dependencyManagement>-->
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <release>${java.version}</release>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
+      <!-- skip by default, only the child that has 'main' class will override this-->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.maven.plugin.version}</version>
+        <configuration>
+          <skip>true</skip>
+          <executable>java</executable>
+          <mainClass>com.bearlycattable.bait.ui.launcher.AppLauncher</mainClass>
+        </configuration>
+      </plugin>
+
+<!--      <plugin>-->
+<!--        &lt;!&ndash;                This plugin is required to run JavaFX via Maven&ndash;&gt;-->
+<!--        <groupId>org.openjfx</groupId>-->
+<!--        <artifactId>javafx-maven-plugin</artifactId>-->
+<!--        <version>${javafx.maven.plugin.version}</version>-->
+<!--        <configuration>-->
+<!--          <skip>true</skip>-->
+<!--          &lt;!&ndash;                  Note this points to class that extends Application&ndash;&gt;-->
+<!--          <mainClass>com.bearlycattable.bait.launcher.App</mainClass>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
+
+    </plugins>
+  </build>
+
+</project>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox style="-fx-border-color: black;"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.QuickSearchTabController"
+        prefHeight="461.0" prefWidth="1226.0">
+  <children>
+    <VBox prefHeight="8.0" prefWidth="1226.0" styleClass="tabTopSpacer" />
+    <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.quickSearch">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.quickSearchTab.topicExplanation" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox alignment="CENTER">
+      <children>
+        <Label alignment="CENTER" text="%label.subTopic.explanation">
+          <font>
+            <Font size="18.0" />
+          </font>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+<!--    1.-->
+    <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.selectSearchType">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.quickSearchTab.searchTypeExplanation" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+      <children>
+        <HBox prefHeight="100.0" prefWidth="5.0" />
+        <HBox alignment="CENTER_LEFT">
+          <children>
+            <HBox alignment="CENTER_LEFT">
+              <children>
+                <HBox prefWidth="5.0" />
+                <Label text="%label.quickSearchType" />
+              </children>
+            </HBox>
+            <HBox alignment="CENTER">
+              <children>
+                <HBox prefWidth="5.0" />
+                <RadioButton fx:id="quickSearchRadioCollisionType" mnemonicParsing="false" text="%label.typeCollision">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="quickSearchType" />
+                  </toggleGroup>
+                </RadioButton>
+                <HBox prefWidth="5.0" />
+                <RadioButton fx:id="quickSearchRadioBlindType" mnemonicParsing="false" text="%label.typeBlind" toggleGroup="$quickSearchType" />
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+      </children>
+    </HBox>
+<!--    2.-->
+    <VBox prefHeight="5.0" prefWidth="1226.0">
+      <children>
+        <VBox prefHeight="5.0" prefWidth="1226.0" />
+        <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+          <children>
+            <Label alignment="CENTER" text="%label.topic.provideTarget">
+              <font>
+                <Font size="23.0" />
+              </font>
+            </Label>
+            <HBox prefWidth="5.0" />
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.quickSearchTab.provideTarget" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+    <HBox prefHeight="5.0" />
+<!--    target key fields are injected into this component-->
+    <HBox alignment="CENTER" fx:id="quickSearchHBoxTargetKeySelection" />
+    <HBox prefHeight="5.0" />
+<!--    3.-->
+    <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.setSearchParameters">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.quickSearchTab.provideParameters" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox alignment="CENTER" prefWidth="1226.0">
+      <children>
+        <Label alignment="CENTER_RIGHT" text="%label.similarity" />
+        <HBox prefWidth="5.0" />
+        <TextField fx:id="quickSearchTextFieldSimilarityPercent" styleClass="accuracyInput" alignment="CENTER" prefWidth="48.0" />
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER_RIGHT" text="%label.searchMode" />
+        <HBox prefWidth="5.0" />
+        <ChoiceBox fx:id="quickSearchChoiceBoxSearchMode" prefWidth="220.0" />
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER_RIGHT" text="%label.iterations" />
+        <HBox prefWidth="5.0" />
+        <TextField fx:id="quickSearchTextFieldIterations" styleClass="iterationsInput" alignment="CENTER" prefWidth="87.0" />
+        <HBox prefWidth="60.0" />
+        <Label alignment="CENTER_RIGHT" text="%label.scaleFactor" />
+        <HBox prefWidth="5.0" />
+        <ComboBox fx:id="quickSearchComboBoxScaleFactor" disable="true" prefWidth="100.0" />
+        <HBox prefWidth="10.0" />
+        <CheckBox fx:id="quickSearchCbxOverrideScaleFactor" mnemonicParsing="false" text="%label.overrideDefaultSf">
+          <tooltip>
+            <Tooltip prefWidth="300" text="%tooltip.quickSearchTab.overrideDefaultSf" wrapText="true" />
+          </tooltip>
+        </CheckBox>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+<!--    4.-->
+    <HBox alignment="CENTER" prefWidth="1261.0" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.selectSeed">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.quickSearchTab.seedExplanation" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox alignment="CENTER">
+      <children>
+        <CheckBox fx:id="quickSearchCbxSelfSeed" disable="true" mnemonicParsing="false" text="%label.selfSeedCbx" />
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.quickSearchTab.selfSeedExplanation" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox fx:id="quickSearchSelectSeedParentComponent" alignment="CENTER" prefWidth="1226.0">
+      <children>
+        <Label prefWidth="120.0" text="%label.startingSeed" />
+        <HBox prefWidth="5.0" />
+        <TextField fx:id="quickSearchTextFieldSeedPriv" styleClass="fullPKInput" alignment="CENTER" prefWidth="694.0">
+          <tooltip>
+            <Tooltip text="%tooltip.quickSearchTab.seedGoesHere" />
+          </tooltip>
+        </TextField>
+        <HBox prefWidth="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Label text="[" />
+            <Label fx:id="quickSearchLabelLengthSeed" text="0" />
+            <Label text="]" />
+          </children>
+        </HBox>
+        <HBox prefWidth="5.0" />
+        <Button fx:id="quickSearchBtnImportSeedPriv" mnemonicParsing="false" text="%button.importFromConstruction">
+          <tooltip>
+            <Tooltip text="%tooltip.quickSearchTab.importFromConstruction" />
+          </tooltip>
+        </Button>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox alignment="CENTER">
+      <Label alignment="CENTER_RIGHT" text="%label.lockWords" />
+      <HBox prefWidth="5.0" />
+      <HBox fx:id="quickSearchHBoxDisabledWordsParent" alignment="CENTER">
+        <children>
+          <CheckBox id="quickSearchCbxLock01" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="1" />
+          <CheckBox id="quickSearchCbxLock02" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="2" />
+          <CheckBox id="quickSearchCbxLock03" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="3" />
+          <CheckBox id="quickSearchCbxLock04" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="4" />
+          <CheckBox id="quickSearchCbxLock05" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="5" />
+          <CheckBox id="quickSearchCbxLock06" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="6" />
+          <CheckBox id="quickSearchCbxLock07" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="7" />
+          <CheckBox id="quickSearchCbxLock08" mnemonicParsing="false" prefHeight="21.0" prefWidth="40.0" text="8" />
+        </children>
+      </HBox>
+    </HBox>
+
+    <HBox alignment="CENTER" prefHeight="50.0">
+      <children>
+        <Label fx:id="quickSearchLabelErrorSuccessMessage" styleClass="errorInfoMessage" />
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox alignment="CENTER">
+      <children>
+        <CheckBox fx:id="quickSearchCbxMoveToHeatComparisonWhenSearchDone" mnemonicParsing="false" selected="true" text="%label.moveToHeatComparison" />
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox alignment="CENTER" prefWidth="1226.0">
+      <children>
+        <ProgressBar fx:id="quickSearchProgressBar" prefWidth="256.0" progress="0.0" />
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <HBox alignment="CENTER">
+      <children>
+        <Button fx:id="quickSearchBtnSearch" mnemonicParsing="false" onAction="#doQuickSearch" prefHeight="32.0" prefWidth="138.0" text="%button.quickSearch" />
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+  </children>
+</VBox>

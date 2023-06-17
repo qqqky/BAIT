@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox prefWidth="1226.0" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedSubTabInstructionsController">
+  <children>
+    <HBox alignment="CENTER" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.instructionsAdvanced">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+      </children>
+    </HBox>
+    <VBox prefHeight="5.0" prefWidth="1226.0" />
+    <ScrollPane fx:id="advancedInstructionsScrollPaneParent" fitToWidth="true" />
+    <VBox alignment="CENTER">
+      <children>
+        <HBox minHeight="5.0" prefHeight="5.0" />
+        <Button fx:id="advancedInstructionsBtnGoToAdvancedSearchTab" mnemonicParsing="false" onAction="#doGoToAdvancedSearchTab" text="%button.goToAdvancedSearchTab" />
+        <HBox minHeight="5.0" prefHeight="5.0" />
+      </children>
+    </VBox>
+  </children>
+</VBox>

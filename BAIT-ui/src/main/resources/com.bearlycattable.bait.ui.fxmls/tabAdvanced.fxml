@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+
+<TabPane stylesheets="@../com.bearlycattable.bait.ui.css/advancedStyles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedTabMainController"
+        styleClass="tabAdvancedMainPane"
+        minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+  <tabs>
+    <Tab text="%label.advancedTab.childSearch" fx:id="advancedSearchTab" styleClass="subTabAdvancedNormal">
+      <content>
+        <fx:include fx:id="advancedSubTabSearch" source="advancedSubTabSearch.fxml" />
+      </content>
+    </Tab>
+    <Tab text="%label.advancedTab.childTools" styleClass="subTabAdvancedNormal">
+      <content>
+        <fx:include fx:id="advancedSubTabTools" source="advancedSubTabTools.fxml" />
+      </content>
+    </Tab>
+    <Tab text="%label.advancedTab.childProgress" styleClass="subTabAdvancedNormal">
+      <content>
+        <fx:include fx:id="advancedSubTabProgress" source="advancedSubTabProgress.fxml" />
+      </content>
+    </Tab>
+    <Tab text="%label.advancedTab.childResults" styleClass="subTabAdvancedNormal">
+      <content>
+        <fx:include fx:id="advancedSubTabResults" source="advancedSubTabResults.fxml" />
+      </content>
+    </Tab>
+    <Tab text="%label.advancedTab.childLog" styleClass="subTabAdvancedNormal">
+      <content>
+        <fx:include fx:id="advancedSubTabLog" source="advancedSubTabLog.fxml" />
+      </content>
+    </Tab>
+    <Tab text="%label.advancedTab.childInstructions" styleClass="subTabAdvancedNormal">
+      <content>
+        <fx:include fx:id="advancedSubTabInstructions" source="advancedSubTabInstructions.fxml" />
+      </content>
+    </Tab>
+    <Tab text="%label.advancedTab.childConfig" styleClass="subTabAdvancedNormal">
+      <content>
+        <fx:include fx:id="advancedSubTabConfig" source="advancedSubTabConfig.fxml" />
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>

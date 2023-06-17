@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefWidth="1226.0"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.HeatVisualizerController">
+  <children>
+    <TabPane fx:id="tabPaneMain" prefWidth="1226.0" tabClosingPolicy="UNAVAILABLE" styleClass="mainTabPaneNormal">
+      <tabs>
+        <!--            fx:ids are REQUIRED for includes if we want to inject the controllers properly -->
+        <Tab fx:id="tabConstruction" text="%label.tab.construction" styleClass="mainTabPaneTabNormal">
+          <content>
+            <fx:include fx:id="constructionTab" source="tabConstruction.fxml" />
+          </content>
+        </Tab>
+        <Tab fx:id="tabHeatComparison" text="%label.tab.comparison" styleClass="mainTabPaneTabNormal">
+          <content>
+            <fx:include fx:id="heatComparisonTab" source="tabHeatComparison.fxml" />
+          </content>
+        </Tab>
+        <Tab fx:id="tabQuickSearch" text="%label.tab.quickSearch" styleClass="mainTabPaneTabNormal">
+          <content>
+            <fx:include fx:id="quickSearchTab" source="tabQuickSearch.fxml" />
+          </content>
+        </Tab>
+        <Tab fx:id="tabConverter" text="%label.tab.converter" styleClass="mainTabPaneTabNormal">
+          <content>
+            <fx:include fx:id="converterTab" source="tabConverter.fxml"/>
+          </content>
+        </Tab>
+        <Tab fx:id="tabGeneralInstructions" text="%label.tab.instructions" styleClass="mainTabPaneTabNormal">
+          <content>
+            <fx:include fx:id="generalInstructionsTab" source="tabGeneralInstructions.fxml" />
+          </content>
+        </Tab>
+        <Tab fx:id="tabAdvanced" text="%label.tab.advanced" styleClass="mainTabPaneTabNormal">
+          <content>
+            <fx:include fx:id="advancedTabMain" source="tabAdvanced.fxml"/>
+          </content>
+        </Tab>
+        <Tab fx:id="tabAboutTheProject" text="%label.tab.about" styleClass="mainTabPaneTabNormal">
+          <fx:include fx:id="aboutTheProjectTab" source="tabAboutTheProject.fxml" />
+        </Tab>
+      </tabs>
+    </TabPane>
+  </children>
+</VBox>

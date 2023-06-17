@@ -1,0 +1,184 @@
+package com.bearlycattable.bait.bl.controllers;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.regex.Pattern;
+
+import com.bearlycattable.bait.commons.CssConstants;
+import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.enums.TextColorEnum;
+import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
+import com.bearlycattable.bait.utility.BundleUtils;
+import com.bearlycattable.bait.utility.LocaleUtils;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import lombok.Getter;
+
+public class ConverterTabController {
+
+    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "ConverterTab", LocaleUtils.APP_LANGUAGE);
+    private HeatVisualizerController mainController;
+
+    @FXML
+    private TextField converterConversionTextFieldEncodedPub;
+    @FXML
+    @Getter
+    private TextField converterConversionTextFieldUnencodedPub;
+    @FXML
+    private TextField converterWIFTextFieldPriv;
+    @FXML
+    private TextField converterWIFTextFieldResultUncompressed;
+    @FXML
+    private TextField converterWIFTextFieldResultCompressed;
+    @FXML
+    private Label converterLabelSuccessErrorResultForEncoding;
+    @FXML
+    private Label converterLabelSuccessErrorResultForWIF;
+
+    void setMainController(HeatVisualizerController mainController) {
+        this.mainController = mainController;
+    }
+
+    @FXML
+    void initialize() {
+        System.out.println("CREATING: ConverterTabController......");
+    }
+
+    @FXML
+    private void doConvertToUnencoded() {
+        String input = converterConversionTextFieldEncodedPub.getText();
+
+        //P2PKH keys are of length 26-34 (some sources state length 35 is possible)
+        if (input.length() > 34 || input.length() < 26) {
+            addErrorMessageForEncodingAndRedBorder(rb.getString("error.validPubRequired"), converterConversionTextFieldEncodedPub);
+            removeRedBorder(converterConversionTextFieldUnencodedPub);
+            return;
+        }
+
+        if (!Validator.isValidEncodedPubKey(input)) {
+            addErrorMessageForEncodingAndRedBorder(rb.getString("error.invalidPub"), converterConversionTextFieldEncodedPub);
+            removeRedBorder(converterConversionTextFieldUnencodedPub);
+            return;
+        }
+
+        removeRedBorder(converterConversionTextFieldEncodedPub);
+        removeRedBorder(converterConversionTextFieldUnencodedPub);
+        removeErrorLabelEncoding();
+
+        try {
+            converterConversionTextFieldUnencodedPub.setText(helper.decodeFromBase58(input, true));
+        } catch (RuntimeException e) {
+            addErrorMessageForEncodingAndRedBorder("Not all keys starting with 1 are valid. This one isn't", converterConversionTextFieldEncodedPub);
+        }
+    }
+
+    @FXML
+    private void doConvertToEncoded() {
+        String input = converterConversionTextFieldUnencodedPub.getText();
+
+        if (input.length() != 40) {
+            addErrorMessageForEncodingAndRedBorder(rb.getString("error.validPkhRequired"), converterConversionTextFieldUnencodedPub);
+            removeRedBorder(converterConversionTextFieldEncodedPub);
+            return;
+        }
+
+        String fixed = input.toLowerCase(Locale.ROOT);
+
+        if (!Validator.isValidUnencodedPubKey(fixed)) {
+            addErrorMessageForEncodingAndRedBorder(rb.getString("error.invalidPkh"), converterConversionTextFieldUnencodedPub);
+            return;
+        }
+
+        removeRedBorder(converterConversionTextFieldUnencodedPub);
+        removeRedBorder(converterConversionTextFieldEncodedPub);
+        removeErrorLabelEncoding();
+
+        converterConversionTextFieldEncodedPub.setText(helper.encodeToBase58(0, input));
+    }
+
+    @FXML
+    private void doConvertToWIF() {
+        String input = converterWIFTextFieldPriv.getText();
+
+        if (!PrivKeyValidator.isValidPK(input)) {
+            addErrorMessageForWIFAndRedBorder(rb.getString("error.invalidPriv"), converterWIFTextFieldPriv);
+            return;
+        }
+
+        removeRedBorder(converterWIFTextFieldPriv);
+        removeErrorLabelWIF();
+
+        converterWIFTextFieldResultUncompressed.setText(helper.getWIF(input, false));
+        converterWIFTextFieldResultCompressed.setText(helper.getWIF(input, true));
+    }
+
+    private void removeErrorLabelWIF() {
+        converterLabelSuccessErrorResultForWIF.setText(HeatVisualizerConstants.EMPTY_STRING);
+    }
+
+    private void removeErrorLabelEncoding() {
+       converterLabelSuccessErrorResultForEncoding.setText(HeatVisualizerConstants.EMPTY_STRING);
+    }
+
+    private void addErrorMessageForWIFAndRedBorder(String message, TextInputControl component) {
+        insertErrorMessageForWIF(message);
+        addRedBorder(component);
+    }
+
+    private void addErrorMessageForEncodingAndRedBorder(String message, TextInputControl component) {
+        insertErrorMessageForEncoding(message);
+        addRedBorder(component);
+    }
+
+    private void insertErrorMessageForEncoding(String message) {
+        insertErrorMessageLabel(message, converterLabelSuccessErrorResultForEncoding);
+    }
+
+    private void insertErrorMessageForWIF(String message) {
+        insertErrorMessageLabel(message, converterLabelSuccessErrorResultForWIF);
+    }
+
+    private void insertErrorMessageLabel(String message, Label label) {
+        if (!label.getStyleClass().contains(TextColorEnum.RED.getStyleClass())) {
+            label.getStyleClass().add(TextColorEnum.RED.getStyleClass());
+        }
+        label.setText(message);
+    }
+
+    private void addRedBorder(Control component) {
+        if (!component.getStyleClass().contains(CssConstants.BORDER_RED)) {
+            component.getStyleClass().add(CssConstants.BORDER_RED);
+        }
+    }
+
+    private void removeRedBorder(Control component) {
+        component.getStyleClass().remove(CssConstants.BORDER_RED);
+    }
+
+    void insertUnencodedPublicKeyToUi(String unencodedPub) {
+        converterConversionTextFieldUnencodedPub.setText(unencodedPub);
+    }
+
+    String getUnencodedPublicKeyFromUi() {
+        return converterConversionTextFieldUnencodedPub.getText();
+    }
+
+    private static class Validator {
+
+        private static final Pattern ENCODED_PUB_PATTERN = Pattern.compile("[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{26,34}");
+
+        public static boolean isValidUnencodedPubKey(String key) {
+            return HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches();
+        }
+
+        public static boolean isValidEncodedPubKey(String key) {
+            return ENCODED_PUB_PATTERN.matcher(key).matches();
+       }
+    }
+}

@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox prefWidth="1226.0" style="-fx-border-style: solid none none none;" xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.HeatComparisonTabController">
+  <children>
+    <VBox prefHeight="8.0" prefWidth="1226.0" styleClass="tabTopSpacer" />
+    <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" text="%label.topic.heatComparison">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+        <HBox prefWidth="5.0" />
+        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+          <tooltip>
+            <Tooltip text="%tooltip.special.heatComparison.topicExplanation" />
+          </tooltip>
+        </Label>
+      </children>
+    </HBox>
+    <HBox prefHeight="5.0" />
+    <VBox alignment="CENTER">
+      <children>
+        <VBox alignment="CENTER" prefWidth="1226.0">
+          <children>
+            <HBox alignment="CENTER" styleClass="topicMarkerAdditional">
+              <children>
+                <Label text="%label.subtopic.selectKeys">
+                  <font>
+                    <Font name="System Bold" size="18.0" />
+                  </font>
+                </Label>
+              </children>
+            </HBox>
+            <HBox prefHeight="5.0" />
+            <HBox alignment="CENTER">
+              <children>
+                <HBox prefWidth="5.0" />
+                <Label prefWidth="110.0" text="%label.currentKey" />
+                <HBox prefWidth="56.0" />
+                <TextField fx:id="comparisonTextFieldCurrentKey" styleClass="fullPKInput" prefWidth="694.0" />
+                <HBox prefWidth="5.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <Label text="[" />
+                    <Label fx:id="comparisonLabelLengthCurrentKey" text="0" />
+                    <Label text="]" />
+                  </children>
+                </HBox>
+                <HBox prefWidth="5.0" />
+                <Button fx:id="comparisonBtnImportPrivFromConstruction" mnemonicParsing="false" onAction="#doImportPriv" text="%button.importFromConstruction">
+                  <tooltip>
+                    <Tooltip text="%tooltip.heatComparison.importSeed" />
+                  </tooltip>
+                </Button>
+                <HBox prefWidth="56.0" />
+              </children>
+            </HBox>
+            <HBox prefHeight="5.0" />
+            <HBox alignment="CENTER" prefHeight="20.0">
+              <children>
+                <Label text="%label.compareAgainst" />
+                <HBox prefWidth="5.0" />
+                <RadioButton fx:id="comparisonRadioReferenceKeyTypePK" mnemonicParsing="false" text="%label.knownPk">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="comparisonReferenceKeyType" />
+                  </toggleGroup>
+                </RadioButton>
+                <HBox prefWidth="5.0" />
+                <RadioButton fx:id="comparisonRadioReferenceKeyTypePKH" mnemonicParsing="false" text="%label.unknownPkh" toggleGroup="$comparisonReferenceKeyType" />
+              </children>
+            </HBox>
+            <HBox prefHeight="5.0" />
+            <VBox fx:id="comparisonVBoxReferenceKeyParent" />
+            <HBox prefHeight="5.0" />
+            <HBox alignment="CENTER">
+              <children>
+                <Label fx:id="labelPubComparisonScaleFactorMessage" text="%label.scaleFactor">
+                  <font>
+                    <Font name="System Bold" size="16.0" />
+                  </font>
+                </Label>
+                <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                  <tooltip>
+                    <Tooltip text="%tooltip.special.heatComparison.scaleFactorExplanation" />
+                  </tooltip>
+                </Label>
+                <HBox prefWidth="5.0" />
+                <ComboBox fx:id="comparisonComboBoxScaleFactor" prefWidth="100.0" />
+              </children>
+            </HBox>
+            <HBox prefHeight="5.0" />
+
+            <Button mnemonicParsing="false" onAction="#doCompare" prefHeight="32.0" prefWidth="140.0" text="%button.compare" />
+            <HBox prefHeight="5.0" />
+            <HBox alignment="CENTER">
+              <children>
+                <Label fx:id="comparisonLabelPubErrorSuccessResult" styleClass="errorInfoMessage" />
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+        <HBox prefHeight="5.0" />
+        <VBox alignment="CENTER">
+          <children>
+            <HBox alignment="CENTER" styleClass="topicMarkerAdditional">
+              <children>
+                <Label text="%label.subtopic.heatResultsPub">
+                  <font>
+                    <Font name="System Bold" size="18.0" />
+                  </font>
+                </Label>
+                <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                  <tooltip>
+                    <Tooltip text="%tooltip.special.heatComparison.pubComparisonExplanation" />
+                  </tooltip>
+                </Label>
+              </children>
+            </HBox>
+            <HBox prefHeight="5.0" />
+            <HBox alignment="CENTER">
+              <children>
+                <Label fx:id="comparisonLabelResultForScaleFactor" styleClass="errorInfoMessage" />
+              </children>
+            </HBox>
+            <VBox alignment="CENTER_LEFT">
+              <children>
+                <HBox alignment="CENTER">
+                  <children>
+                    <HBox prefWidth="110.0" />
+                    <HBox alignment="CENTER" prefWidth="440.0">
+                      <children>
+                        <HBox prefWidth="5.0" />
+                        <Label text="%label.pkhUU" />
+                        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                          <tooltip>
+                            <Tooltip text="%tooltip.spacial.heatComparison.pubComparisonU" />
+                          </tooltip>
+                        </Label>
+                      </children>
+                    </HBox>
+                    <HBox prefWidth="34.0" />
+                    <HBox alignment="CENTER" prefWidth="440.0">
+                      <children>
+                        <HBox prefWidth="5.0" />
+                        <Label text="%label.pkhUC" />
+                        <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                          <tooltip>
+                            <Tooltip text="%tooltip.spacial.heatComparison.pubComparisonC" />
+                          </tooltip>
+                        </Label>
+                      </children>
+                    </HBox>
+                    <HBox prefWidth="34.0" />
+                    <HBox prefWidth="110.0" />
+                  </children>
+                </HBox>
+                <HBox prefHeight="2.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <HBox prefWidth="5.0" />
+
+                    <Label fx:id="labelPubHeatPositive" prefWidth="110.0" text="%label.heatPositive" />
+                    <HBox fx:id="containerPubHeatPositiveUncompressed" prefHeight="32.0" prefWidth="440.0" style="-fx-border-color: black;">
+                      <children>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                    <Label fx:id="labelPercentUncompressedPositive" alignment="CENTER" prefHeight="32.0" prefWidth="34.0" />
+                    <HBox fx:id="containerPubHeatPositiveCompressed" prefHeight="32.0" prefWidth="440.0" style="-fx-border-color: black;">
+                      <children>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                    <Label fx:id="labelPercentCompressedPositive" alignment="CENTER" prefHeight="32.0" prefWidth="34.0" />
+                    <HBox prefWidth="110.0" />
+                  </children>
+                </HBox>
+                <HBox prefHeight="5.0" />
+                <HBox alignment="CENTER">
+                  <children>
+                    <HBox prefWidth="5.0" />
+
+                    <Label fx:id="labelPubHeatNegative" prefWidth="110.0" text="%label.heatNegative" />
+
+                    <HBox fx:id="containerPubHeatNegativeUncompressed" prefHeight="32.0" prefWidth="440.0" style="-fx-border-color: black;">
+                      <children>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                    <Label fx:id="labelPercentUncompressedNegative" alignment="CENTER" prefHeight="32.0" prefWidth="34.0" />
+
+                    <HBox fx:id="containerPubHeatNegativeCompressed" prefHeight="32.0" prefWidth="440.0" style="-fx-border-color: black;">
+                      <children>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                    <Label fx:id="labelPercentCompressedNegative" alignment="CENTER" prefHeight="32.0" prefWidth="34.0" />
+                    <HBox prefWidth="110.0" />
+                  </children>
+                </HBox>
+                <HBox prefHeight="5.0" />
+                <HBox alignment="CENTER" prefWidth="1226.0">
+                  <children>
+                    <HBox layoutX="85.0" prefWidth="5.0" />
+                    <Label prefWidth="110.0" text="%label.referencePkh" />
+                    <HBox fx:id="containerReferenceUncompressed" id="containerReferenceUncompressed" prefHeight="32.0" prefWidth="440.0" style="-fx-border-color: black;">
+                      <children>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                    <HBox layoutX="1036.0" prefWidth="34.0" />
+                    <HBox fx:id="containerReferenceCompressed" id="containerReferenceCompressed" prefHeight="32.0" prefWidth="440.0" style="-fx-border-color: black;">
+                      <children>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox>
+                          <children>
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                            <Label prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                    <HBox prefWidth="34.0" />
+                    <HBox layoutX="1039.0" prefWidth="110.0" />
+                  </children>
+                </HBox>
+                <HBox layoutX="10.0" prefHeight="5.0" />
+              </children>
+            </VBox>
+          </children>
+        </VBox>
+      </children>
+    </VBox>
+    <VBox>
+      <children>
+        <HBox alignment="CENTER" styleClass="topicMarkerAdditional">
+          <children>
+            <Label text="%label.subtopic.heatResultsPriv">
+              <font>
+                <Font name="System Bold" size="18.0" />
+              </font>
+            </Label>
+            <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+              <tooltip>
+                <Tooltip text="%tooltip.special.heatComparison.privComparisonExplanation" />
+              </tooltip>
+            </Label>
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <Button fx:id="comparisonBtnShowPrivStats" alignment="CENTER" mnemonicParsing="false" onAction="#doShowPrivStats" prefHeight="32.0" prefWidth="140.0" text="%button.comparePrivKeys" />
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+        <HBox alignment="CENTER">
+          <children>
+            <VBox>
+              <children>
+                <HBox>
+                  <children>
+                    <HBox alignment="CENTER_LEFT" prefWidth="230.0">
+                      <children>
+                        <Label text="%label.privWordsPositive" />
+                        <HBox layoutX="10.0" prefWidth="5.0" />
+                      </children>
+                    </HBox>
+                    <HBox fx:id="containerPrivHeatPositive" styleClass="heatContainerPrivWords" prefHeight="32.0" prefWidth="704.0">
+                      <children>
+                        <!--                        TODO: do we really need all these fxids here??-->
+                        <HBox fx:id="resultPrivHeatPositiveWord01">
+                          <children>
+                            <Label fx:id="word01PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatPositiveWord02">
+                          <children>
+                            <Label fx:id="word02PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox id="resultPrivHeatPositiveWord03">
+                          <children>
+                            <Label fx:id="word03PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatPositiveWord04">
+                          <children>
+                            <Label fx:id="word04PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatPositiveWord05">
+                          <children>
+                            <Label fx:id="word05PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatPositiveWord06">
+                          <children>
+                            <Label fx:id="word06PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatPositiveWord07">
+                          <children>
+                            <Label fx:id="word07PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatPositiveWord08">
+                          <children>
+                            <Label fx:id="word08PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                  </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT">
+                  <children>
+                    <HBox prefWidth="230.0" />
+                    <HBox fx:id="privHeatPositiveNumericLabelContainer" prefHeight="31.0" prefWidth="704.0">
+                      <children>
+                        <Label id="privHeatPositiveLabelNumericWord01" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatPositiveLabelNumericWord02" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatPositiveLabelNumericWord03" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatPositiveLabelNumericWord04" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatPositiveLabelNumericWord05" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatPositiveLabelNumericWord06" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatPositiveLabelNumericWord07" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatPositiveLabelNumericWord08" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                      </children>
+                    </HBox>
+                  </children>
+                </HBox>
+                <HBox>
+                  <children>
+                    <HBox alignment="CENTER_LEFT" prefWidth="230.0">
+                      <children>
+                        <Label text="%label.privWordsNegative" />
+                        <HBox layoutX="10.0" prefWidth="5.0" />
+                      </children>
+                    </HBox>
+                    <HBox fx:id="containerPrivHeatNegative" styleClass="heatContainerPrivWords" prefHeight="32.0" prefWidth="704.0">
+                      <children>
+                        <HBox fx:id="resultPrivHeatNegativeWord01">
+                          <children>
+                            <Label fx:id="word01NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word01NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatNegativeWord02">
+                          <children>
+                            <Label fx:id="word02NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word02NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatNegativeWord03">
+                          <children>
+                            <Label fx:id="word03NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word03NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatNegativeWord04">
+                          <children>
+                            <Label fx:id="word04NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word04NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatNegativeWord05">
+                          <children>
+                            <Label fx:id="word05NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word05NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatNegativeWord06">
+                          <children>
+                            <Label fx:id="word06NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word06NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatNegativeWord07">
+                          <children>
+                            <Label fx:id="word07NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word07NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                        <HBox fx:id="resultPrivHeatNegativeWord08">
+                          <children>
+                            <Label fx:id="word08NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label fx:id="word08NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                          </children>
+                        </HBox>
+                      </children>
+                    </HBox>
+                  </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT">
+                  <children>
+                    <HBox prefWidth="230.0" />
+                    <HBox fx:id="privHeatNegativeNumericLabelContainer" prefHeight="31.0" prefWidth="704.0">
+                      <children>
+                        <Label id="privHeatNegativeLabelNumericWord01" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatNegativeLabelNumericWord02" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatNegativeLabelNumericWord03" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatNegativeLabelNumericWord04" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatNegativeLabelNumericWord05" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatNegativeLabelNumericWord06" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatNegativeLabelNumericWord07" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                        <Label id="privHeatNegativeLabelNumericWord08" styleClass="privHeatNumericValue" alignment="CENTER" prefHeight="31.0" prefWidth="88.0" />
+                      </children>
+                    </HBox>
+                  </children>
+                </HBox>
+              </children>
+            </VBox>
+            <VBox prefWidth="30.0" />
+            <VBox alignment="TOP_CENTER" prefWidth="200.0">
+              <children>
+                <HBox alignment="CENTER">
+                  <children>
+                    <Label alignment="CENTER" text="%label.colorFocusPriv" />
+                    <Label alignment="CENTER" prefHeight="25.0" prefWidth="25.0" styleClass="specialLabelTooltipNormal" text="%tooltip.special.globalSymbol">
+                      <tooltip>
+                        <Tooltip text="%tooltip.special.heatComparison.privColorFocusExplanation" />
+                      </tooltip>
+                    </Label>
+                  </children>
+                </HBox>
+                <Spinner fx:id="comparisonSpinnerResolutionPriv" initialValue="1" max="3" min="1" prefWidth="60.0" />
+                <Label id="changeNumberFormatLabel" alignment="CENTER" text="%label.changeNumberFormat" />
+                <ChoiceBox fx:id="comparisonChoiceBoxNumberFormatType" onAction="#doChangeHeatResultFormat" prefWidth="150.0" />
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+        <HBox prefHeight="5.0" />
+      </children>
+    </VBox>
+  </children>
+</VBox>

@@ -1,0 +1,54 @@
+#
+# ADVANCED INSTRUCTIONS #
+#
+# note: newLine for FXML is ----> &#10;
+
+//[1]\\. Welcome to the advanced instructions tab test. This will not require a new label for each sentence. However, we will have to use the width and height options of: USE_COMPUTED_SIZE. Wrapping is impossible in TextFlow component, so new lines will have to be used...
+//[2]\\. Meow meow something advanced instructions test [[[tooltip: this is just as test tooltip*
+
+a multi-line tooltip! Wow! ]]]
+//[3]\\. Try hovering your mouse over these type of icons to find out more detailed information ---> [[[tooltip: Example tooltip with text]]]
+//[4]\\. What is 'Advanced Search'?
+    - Advanced Search is the main component of this program. The search results can be loaded, saved and merged with previous ones.
+    - It spawns searches on another thread (there is a limit of threads depending on your machine)
+    - For convenience, progress will be displayed in the UI for every running thread separately.
+    - Multiple PKHs can be used as references for heat comparison (unlike QuickSearch).
+        Here, number of allowed reference PKHs is not limited, but is advisable to be kept at < 4096.
+        For higher number of reference PKHs, the search templates cannot be cached and will result in
+        uncached search which is much slower and much more calculation-intense.
+
+        The shorter the reference PKH list is, the faster the search will be (linear dependence).
+        So don't exceed the recommended max value of 4096, even so, maybe test it out will a smaller number of PKHs first,
+        say 256.
+
+    - You can spawn multiple searches (each running on a separate thread) with different parameters.
+    - Iterations are not limited, but keep in mind the search won't stop until all iterations are completed.
+        Search can be cancelled at any time, but then its results won't be saved (results are saved when run is completed).
+    - You can run multiple loops of the same search (after each loop, the seed can be adjusted to your liking).
+    - 'Exact match' check can be enabled (it has no fixed constrictions on max number of PKHs allowed, but it
+        is advisable to keep the list at under a couple of millions of entries)
+    - Search keeps track of all possible heat comparisons:
+        UHP - for "Uncompressed, Heat Positive"
+        CHP - for "Compressed, Heat Positive"
+        UHN - for "Uncompressed, Heat Negative"
+        CHN - for "Compressed, Heat Negative"
+
+        What does it mean?
+            - All of these 4 different comparisons and their best results will be kept track of and updated as needed
+                by the searcher thread.
+            - For example, if a list of 250 PKHs is loaded, that means for every new key, the searcher will have
+                to do heat comparison for a 1000 times (250*4).
+
+    - Example of Advanced Search functionality:
+        We can set 3 different searches each with multiple loops. When all of them are finished, their results
+        can be merged (manually or automatically) into a single target file.
+        Merge function carefully checks for collisions and will recalculate and re-compare points to only keep the highest
+        result (actually, 4 results: UHP, UHN, CHP, CHN) for a particular PKH.
+
+        Next time, the results from any of the previous searches can be loaded and continued from as needed.
+
+//[5]\\. I only want to check my own list of addresses for exact match and nothing else, is it possible to
+    run the search without all the heat comparisons?
+    - Yes, make sure the following checkbox is ticked under 'Advanced Config' tab: "do only 'exact match' check".
+    - You will still have to setup and launch your advanced search normally though.
+

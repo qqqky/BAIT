@@ -1,0 +1,74 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="1226.0" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedSubTabProgressController">
+  <children>
+    <HBox alignment="CENTER" styleClass="topicMarkerMain">
+      <children>
+        <Label alignment="CENTER" prefHeight="32.0" text="%label.topic.advancedProgress">
+          <font>
+            <Font size="23.0" />
+          </font>
+        </Label>
+      </children>
+    </HBox>
+    <VBox fx:id="advancedProgressVBoxThreadProgressContainer">
+      <VBox.margin>
+        <Insets bottom="2.0" top="2.0" />
+      </VBox.margin>
+      <children>
+<!--        Thread progress components should be inserted below this comment-->
+      </children>
+    </VBox>
+    <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+      <children>
+        <Label fx:id="advancedProgressLabelMessageForShowInfo" alignment="CENTER" wrapText="true" />
+      </children>
+    </HBox>
+    <VBox prefHeight="79.0" prefWidth="1226.0">
+      <children>
+        <HBox alignment="CENTER" prefHeight="35.0" prefWidth="1226.0">
+          <children>
+            <HBox alignment="CENTER" prefHeight="32.0" prefWidth="1226.0">
+              <children>
+                <CheckBox fx:id="advancedProgressCbxEnableAutomerge" mnemonicParsing="false" text="%label.enableAutomerge">
+                  <tooltip>
+                    <Tooltip text="%tooltip.progressTab.cbxAutomergeExplanation" />
+                  </tooltip>
+                </CheckBox>
+              </children>
+            </HBox>
+          </children>
+        </HBox>
+        <HBox fx:id="advancedProgressHBoxAutomergePathParent" alignment="CENTER" prefHeight="42.0" prefWidth="1226.0">
+          <children>
+            <Label text="%label.automergeTarget" />
+            <HBox prefHeight="42.0" prefWidth="5.0" />
+            <TextField fx:id="advancedProgressTextFieldAutomergePath" styleClass="pathInput" prefHeight="31.0" prefWidth="854.0">
+              <tooltip>
+                <Tooltip text="%tooltip.progressTab.textFieldAutomergeExplanation" />
+              </tooltip>
+            </TextField>
+            <HBox prefHeight="47.0" prefWidth="5.0" />
+            <Button fx:id="advancedProgressBtnBrowseAutomergePath" mnemonicParsing="false" onAction="#doBrowseAutomergePath" text="%button.browse" />
+            <HBox prefHeight="76.0" prefWidth="5.0" />
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+    <HBox alignment="CENTER" prefHeight="38.0" prefWidth="1226.0">
+      <children>
+        <Label fx:id="advancedProgressLabelGeneralFinishMessage" styleClass="errorInfoMessage" />
+      </children>
+    </HBox>
+  </children>
+</VBox>
