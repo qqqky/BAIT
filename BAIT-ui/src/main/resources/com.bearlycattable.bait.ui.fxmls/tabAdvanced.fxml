@@ -5,7 +5,7 @@
 
 <TabPane stylesheets="@../com.bearlycattable.bait.ui.css/advancedStyles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedTabMainController"
+        fx:controller="com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController"
         styleClass="tabAdvancedMainPane"
         minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
   <tabs>

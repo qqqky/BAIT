@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.PredictableEnd;
-import com.bearlycattable.bait.bl.controllers.AdvancedSubTabSearchController;
+import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedSubTabSearchController;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
 import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;

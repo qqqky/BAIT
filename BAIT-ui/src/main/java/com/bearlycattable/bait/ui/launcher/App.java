@@ -3,7 +3,7 @@ package com.bearlycattable.bait.ui.launcher;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import com.bearlycattable.bait.bl.controllers.HeatVisualizerController;
+import com.bearlycattable.bait.bl.controllers.RootController;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
@@ -44,7 +44,7 @@ public class App extends Application {
 
         //apply verbose mode if necessary
         if (verbose) {
-            loader.<HeatVisualizerController>getController().setVerboseMode(verbose);
+            loader.<RootController>getController().setVerboseMode(verbose);
             System.out.println("App mode: verbose");
         }
 

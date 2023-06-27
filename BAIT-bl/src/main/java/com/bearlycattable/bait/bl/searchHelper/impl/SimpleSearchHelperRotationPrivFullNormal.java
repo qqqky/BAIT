@@ -14,6 +14,7 @@ import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.interfaces.IndexRotatorHorizontal;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
+import com.bearlycattable.bait.commons.wrappers.QuickSearchTaskWrapper;
 import com.bearlycattable.bait.utility.AddressModifier;
 
 public final class SimpleSearchHelperRotationPrivFullNormal extends AbstractSimpleSearchHelper implements IndexRotatorHorizontal {

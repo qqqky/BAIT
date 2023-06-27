@@ -10,6 +10,7 @@ module bait.advancedCommons {
     requires static org.checkerframework.checker.qual;
     requires static lombok;
     requires java.logging;
+    requires java.desktop; //for 'ShortSoundEffects'
 
     exports com.bearlycattable.bait.advancedCommons.helpers to bait.bl, bait.advanced;
     exports com.bearlycattable.bait.advancedCommons.validators to bait.bl;
@@ -19,5 +20,6 @@ module bait.advancedCommons {
     exports com.bearlycattable.bait.advancedCommons.models to bait.bl;
     exports com.bearlycattable.bait.advancedCommons.serialization to bait.bl, com.fasterxml.jackson.databind;
     exports com.bearlycattable.bait.advancedCommons.wrappers to bait.bl, bait.advanced;
+    exports com.bearlycattable.bait.advancedCommons to bait.advanced;
 
 }

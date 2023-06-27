@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -19,6 +20,8 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
@@ -32,12 +35,14 @@ import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javafx.util.Pair;
+
 public class P2PKHSingleResultDataHelper {
 
     private static final int OVERFLOW_REFERENCE = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
     private static final Map<Integer, BigDecimal> similarityMappings = initializeSimilarityMappings();
     private static final HeatVisualizerHelper helper = new HeatVisualizerHelper();
-    // private static final PubComparer pubComparer = new PubComparer();
+    private static final PubComparer pubComparer = new PubComparer();
     private static final Logger LOG = Logger.getLogger(P2PKHSingleResultDataHelper.class.getName());
 
     //this is used for merge function
@@ -50,7 +55,7 @@ public class P2PKHSingleResultDataHelper {
         return mappings;
     }
 
-    public static int calculateScaledAccuracy(int points, ScaleFactorEnum scaleFactor) {
+    private static int calculateScaledAccuracy(int points, ScaleFactorEnum scaleFactor) {
         return similarityMappings.get(helper.recalculateIndexForSimilarityMappings(points, scaleFactor)).setScale(0, RoundingMode.HALF_UP).intValue();
     }
 
@@ -159,7 +164,7 @@ public class P2PKHSingleResultDataHelper {
      * @param scaleFactor
      */
     public static synchronized void revalidateAndInitCacheForExistingPoints(P2PKHSingleResultData[] dataArray, JsonResultScaleFactorEnum scaleFactor) {
-        PubComparer pubComparer = new PubComparer();
+        PubComparer comparer = new PubComparer();
         System.out.println("Started caching the existing points for scaleFactor: " + scaleFactor);
 
         for (P2PKHSingleResultData item : dataArray) {
@@ -170,7 +175,7 @@ public class P2PKHSingleResultDataHelper {
                 if (currentBestKey.isEmpty()) {
                     item.getExistingPoints().put(type, 0);
                 } else {
-                    PubComparisonResultWrapper recalculatedResult = pubComparer.getCurrentResult(currentBestKey, hash, hash, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
+                    PubComparisonResultWrapper recalculatedResult = comparer.getCurrentResult(currentBestKey, hash, hash, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
                     item.getExistingPoints().put(type, recalculatedResult.getResultByType(type));
                 }
             }
@@ -206,7 +211,7 @@ public class P2PKHSingleResultDataHelper {
      * @param messageForUser
      * @return
      */
-    public static synchronized boolean serializeAndSave(String saveLocation, P2PKHSingleResultData[] data, String messageForUser) {
+    public static synchronized boolean serializeAndSave(String saveLocation, P2PKHSingleResultData[] data) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET); //if this was enabled - program would quit after calling ".writeValue()"
 
@@ -220,7 +225,6 @@ public class P2PKHSingleResultDataHelper {
             return false;
         }
 
-        LOG.info("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser);
         return true;
     }
 
@@ -233,10 +237,10 @@ public class P2PKHSingleResultDataHelper {
      * @return Map<targetKey, minPointsAcrossAllResultTypes>
      */
     public static synchronized Map<String, Integer> createCurrentMinPointsMap(P2PKHSingleResultData[] dataArray, JsonResultScaleFactorEnum scaleFactor) {
-        PubComparer pubComparer = new PubComparer(); //make our own pubComparer
+        PubComparer comparer = new PubComparer(); //make our own pubComparer
         Map<String, Integer> result = new HashMap<>();
         Arrays.stream(dataArray).forEach(item -> {
-            result.put(item.getHash(), findCurrentMinPoints(Collections.singletonList(item).toArray(new P2PKHSingleResultData[0]), scaleFactor, pubComparer));
+            result.put(item.getHash(), findCurrentMinPoints(Collections.singletonList(item).toArray(new P2PKHSingleResultData[0]), scaleFactor, comparer));
         });
         return result;
     }
@@ -264,5 +268,92 @@ public class P2PKHSingleResultDataHelper {
         }
 
         return min;
+    }
+
+    /**
+     * This method merges 2 valid data arrays. If collisions are found, the points are recalculated.
+     * That means for non-colliding elements a blind merge will be performed.
+     * @param one - data array which will be taken as base to merge @param 'two' into
+     * @param two - data array which will be merged into the @param 'one'
+     * @return
+     */
+    @Nullable
+    public static P2PKHSingleResultData[] merge(P2PKHSingleResultData[] one, P2PKHSingleResultData[] two) {
+        if (one == null || one.length == 0) {
+            return two != null && two.length != 0 ? two : null;
+        }
+
+        if (two == null || two.length == 0) {
+            return one;
+        }
+
+        Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> dataMapOne = toDataMap(one);
+        Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> dataMapTwo = toDataMap(two);
+
+        //merge
+        dataMapTwo.keySet().stream().forEach(key -> {
+            dataMapOne.merge(key, dataMapTwo.get(key), (v1,v2) -> resolveValueCollision(key, v1, v2));
+        });
+
+        return toArray(dataMapOne);
+    }
+
+    private static Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>> resolveValueCollision(String hash, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>> v1, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>> v2) {
+        Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>> finalResult = new LinkedHashMap<>();
+
+        Arrays.stream(JsonResultTypeEnum.values()).forEach(resultType -> {
+            finalResult.put(resultType, new LinkedHashMap<>());
+
+            Arrays.stream(JsonResultScaleFactorEnum.values()).forEach(scaleFactor -> {
+                Pair<String, Integer> pairOne = v1.get(resultType).get(scaleFactor);
+                Pair<String, Integer> pairTwo = v2.get(resultType).get(scaleFactor);
+
+                String keyOne = pairOne.getKey();
+                String keyTwo = pairOne.getKey();
+
+                //if one or both empty
+                if (keyOne.isEmpty() && (!keyTwo.isEmpty())) { //0,1
+                    finalResult.get(resultType).put(scaleFactor, pairTwo);
+                    return;
+                } else if (!keyOne.isEmpty() && keyTwo.isEmpty()) { //1,0
+                    finalResult.get(resultType).put(scaleFactor, pairOne);
+                    return;
+                } else if (keyOne.isEmpty()) { //0,0 - both empty
+                    finalResult.get(resultType).put(scaleFactor, new Pair<>(HeatVisualizerConstants.EMPTY_STRING, 0));
+                    return;
+                }
+
+                //1,1 - both not empty (we recalculate using non-cached version)
+                String unknownP2PKH = hash;
+                PubComparisonResultWrapper resultOne = pubComparer.getCurrentResult(pairOne.getKey(), unknownP2PKH, unknownP2PKH, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
+                PubComparisonResultWrapper resultTwo = pubComparer.getCurrentResult(pairTwo.getKey(), unknownP2PKH, unknownP2PKH, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
+
+                int pointsOne = resultOne.getResultByType(resultType);
+                int pointsTwo = resultTwo.getResultByType(resultType);
+
+                if (pointsOne >= pointsTwo) {
+                    finalResult.get(resultType).put(scaleFactor, new Pair<>(pairOne.getKey(), calculateScaledAccuracy(pointsOne, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor))));
+                } else {
+                    finalResult.get(resultType).put(scaleFactor, new Pair<>(pairTwo.getKey(), calculateScaledAccuracy(pointsTwo, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor))));
+                }
+            });
+        });
+
+        return finalResult;
+    }
+
+    public static P2PKHSingleResultData[] toArray(Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> searchDataMap) {
+        Objects.requireNonNull(searchDataMap);
+
+        return searchDataMap.keySet().stream()
+                .map(key -> new P2PKHSingleResultData(key, searchDataMap.get(key)))
+                .toArray(P2PKHSingleResultData[]::new);
+    }
+
+    public static Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> toDataMap(P2PKHSingleResultData[] dataArray) {
+        Objects.requireNonNull(dataArray);
+
+        return Arrays.stream(dataArray)
+                .collect(Collectors.toMap(P2PKHSingleResultData::getHash, P2PKHSingleResultData::getResults, (v1,v2) -> v1, LinkedHashMap::new));
     }
 }

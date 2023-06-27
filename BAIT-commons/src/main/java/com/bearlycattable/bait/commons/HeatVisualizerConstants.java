@@ -14,7 +14,7 @@ public final class HeatVisualizerConstants {
 
     private HeatVisualizerConstants() {}
 
-    public static final String CURRENT_VERSION = "v1.00";
+    public static final String CURRENT_VERSION = "v1.0.2";
     public static final Locale EN_US = new Locale("en", "US");
 
     public static final String ZERO_STRING = "0";

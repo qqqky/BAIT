@@ -32,13 +32,13 @@ public class QuickSearchTaskHelper {
     }
 
     private void doOnRunning(QuickSearchThreadContext context) {
-        if (context.getController().getMainController().isVerboseMode()) {
+        if (context.getController().getRootController().isVerboseMode()) {
             System.out.println("QuickSearch task is now RUNNING");
         }
     }
 
     private void doOnSucceeded(QuickSearchThreadContext context, WorkerStateEvent event) {
-        boolean verboseMode = context.getController().getMainController().isVerboseMode();
+        boolean verboseMode = context.getController().getRootController().isVerboseMode();
         if (verboseMode) {
             System.out.println("QuickSearch task has FINISHED.");
         }
@@ -60,7 +60,7 @@ public class QuickSearchTaskHelper {
 
     private void doOnCancelled(QuickSearchThreadContext context) {
         context.getController().getQuickSearchBtnSearch().setDisable(false);
-        if (context.getController().getMainController().isVerboseMode()) {
+        if (context.getController().getRootController().isVerboseMode()) {
             System.out.println("QuickSearch task is now CANCELLED");
         }
         context.getController().getTaskMap().remove(context.getThreadId());
@@ -68,7 +68,7 @@ public class QuickSearchTaskHelper {
 
     private void doOnFailed(QuickSearchThreadContext context) {
         context.getController().getQuickSearchBtnSearch().setDisable(false);
-        if (context.getController().getMainController().isVerboseMode()) {
+        if (context.getController().getRootController().isVerboseMode()) {
             System.out.println("QuickSearch task has FAILED");
         }
         context.getController().getTaskMap().remove(context.getThreadId());

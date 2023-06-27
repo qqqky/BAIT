@@ -13,7 +13,7 @@
 <VBox prefWidth="1226.0" alignment="TOP_CENTER"
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.bearlycattable.bait.bl.controllers.AdvancedSubTabResultsController">
+        fx:controller="com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedSubTabResultsController">
 
   <children>
     <HBox alignment="CENTER" prefHeight="5.0" prefWidth="1226.0" styleClass="topicMarkerMain">

@@ -301,7 +301,7 @@ public abstract class AbstractSimpleSearchHelper extends GeneralSearchHelper imp
 
         System.out.println("Current priv (current mode=" + searchMode + ") is " + "[" + (iteration + 1) + "]: " + subResult.getHighestResult().getCommonPriv());
 
-        PubComparisonResultWrapper current = getPubComparer().getCurrentResult(subResult.getHighestResult().getCommonPriv(), lockedPKHUncompressed, lockedPKHCompressed, getScaleFactor());
+        PubComparisonResultWrapper current = pubComparer.getCurrentResult(subResult.getHighestResult().getCommonPriv(), lockedPKHUncompressed, lockedPKHCompressed, getScaleFactor());
         if (isEmpty(current)) {
             highest.setResponseCommand(QuickSearchResponseEnum.CONTINUE);
             return highest;

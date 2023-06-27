@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>bait-bl</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -20,33 +20,33 @@
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-model</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-model.version}</version>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-advanced</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-advanced.version}</version>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-advancedCommons</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-advancedCommons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-advancedRestricted</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-advancedRestricted.version}</version>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-utility</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-utility.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-commons</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-commons.version}</version>
     </dependency>
 
     <!-- CORE DEPENDENCIES -->
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>checker-qual</artifactId>
-      <version>3.34.0</version>
+      <version>${checker-qual.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

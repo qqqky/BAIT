@@ -13,6 +13,7 @@ import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.wrappers.QuickSearchTaskWrapper;
 import com.bearlycattable.bait.utility.AddressModifier;
 
 public final class SimpleSearchHelperDecrementalWords extends AbstractSimpleSearchHelper implements CustomKeyGenerator {

@@ -18,6 +18,8 @@ import javafx.util.Pair;
 
 public class P2PKHSingleResultDataDeserializerCustom extends StdDeserializer<P2PKHSingleResultData> {
 
+    private static final long serialVersionUID = 8650412940587951497L;
+
     public P2PKHSingleResultDataDeserializerCustom() {
         super((JavaType) null); //uses Object.class, should not need a cast...
     }

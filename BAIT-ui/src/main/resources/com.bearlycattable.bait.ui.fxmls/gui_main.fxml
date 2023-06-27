@@ -6,7 +6,7 @@
 <VBox prefWidth="1226.0"
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.bearlycattable.bait.bl.controllers.HeatVisualizerController">
+        fx:controller="com.bearlycattable.bait.bl.controllers.RootController">
   <children>
     <TabPane fx:id="tabPaneMain" prefWidth="1226.0" tabClosingPolicy="UNAVAILABLE" styleClass="mainTabPaneNormal">
       <tabs>

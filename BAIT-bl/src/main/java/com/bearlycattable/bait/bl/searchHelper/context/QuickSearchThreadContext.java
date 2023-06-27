@@ -1,6 +1,6 @@
 package com.bearlycattable.bait.bl.searchHelper.context;
 
-import com.bearlycattable.bait.bl.controllers.QuickSearchTabController;
+import com.bearlycattable.bait.bl.controllers.quickSearchTab.QuickSearchTabController;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 
 import javafx.concurrent.Task;

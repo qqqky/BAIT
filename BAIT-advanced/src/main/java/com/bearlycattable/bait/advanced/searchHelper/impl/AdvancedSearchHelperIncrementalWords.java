@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.advanced.context.AdvancedSearchHelperCreationContext;
+import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
 import com.bearlycattable.bait.advanced.searchHelper.AbstractAdvancedSearchHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.PredictableEnd;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;

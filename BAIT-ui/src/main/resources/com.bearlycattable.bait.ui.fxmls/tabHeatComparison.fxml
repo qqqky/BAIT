@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <VBox prefWidth="1226.0" style="-fx-border-style: solid none none none;" xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.bearlycattable.bait.bl.controllers.HeatComparisonTabController">
+        fx:controller="com.bearlycattable.bait.bl.controllers.heatComparisonTab.HeatComparisonTabController">
   <children>
     <VBox prefHeight="8.0" prefWidth="1226.0" styleClass="tabTopSpacer" />
     <HBox alignment="CENTER" prefWidth="1226.0" styleClass="topicMarkerMain">

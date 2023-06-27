@@ -13,12 +13,12 @@
 
   <artifactId>bait-ui</artifactId>
 <!--  This is the main program version-->
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <packaging>jar</packaging>
 
   <properties>
     <!--  Version for MSI/exe installer-->
-    <client.version>1.0.2008</client.version>
+    <client.version>1.0.3001</client.version>
     <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
   </properties>
 
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-commons</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>
@@ -37,13 +37,13 @@
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-bl</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-bl.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-advanced</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-advanced.version}</version>
     </dependency>
 
     <!-- CORE DEPENDENCIES -->

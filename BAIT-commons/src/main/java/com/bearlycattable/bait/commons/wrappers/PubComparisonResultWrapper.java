@@ -18,7 +18,7 @@ import lombok.Getter;
 public class PubComparisonResultWrapper {
     private PubComparisonResult resultForUncompressed;
     private PubComparisonResult resultForCompressed;
-    //TODO: we can add some message here with run stats (eg: 'result found in X iterations')
+    //TODO: we can add some message here with run stats for QuickSearch (eg: 'result found in X iterations')
 
 
     public static PubComparisonResultWrapper empty() {

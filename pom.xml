@@ -25,9 +25,10 @@
   </modules>
 
   <properties>
-    <bait-ui.version>1.0.0</bait-ui.version>
+    <bait-ui.version>1.0.3</bait-ui.version>
     <bait-model.version>1.0.0</bait-model.version>
-    <bait-bl.version>1.0.0</bait-bl.version>
+    <bait-bl.version>1.0.2</bait-bl.version>
+    <bait-commons.version>1.0.0</bait-commons.version>
     <bait-utility.version>1.0.0</bait-utility.version>
     <bait-advanced.version>1.0.0</bait-advanced.version>
     <bait-resourceBundles.version>1.0.0</bait-resourceBundles.version>
@@ -45,6 +46,7 @@
     <lombok.version>1.18.24</lombok.version>
     <bitcoinj.core.version>0.16.1</bitcoinj.core.version>
     <slf4j.version>1.7.30</slf4j.version>
+    <checker-qual.version>3.34.0</checker-qual.version>
 
 <!--    <jmetro.version>11.6.15</jmetro.version>-->
     <maven.compiler.source>17</maven.compiler.source>
@@ -90,11 +92,6 @@
       <artifactId>bitcoinj-core</artifactId>
       <version>${bitcoinj.core.version}</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.slf4j</groupId>-->
-<!--      <artifactId>slf4j-api</artifactId>-->
-<!--      <version>${slf4j.version}</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
@@ -104,7 +101,7 @@
     <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>checker-qual</artifactId>
-      <version>3.34.0</version>
+      <version>${checker-qual.version}</version>
       <scope>provided</scope>
     </dependency>
 

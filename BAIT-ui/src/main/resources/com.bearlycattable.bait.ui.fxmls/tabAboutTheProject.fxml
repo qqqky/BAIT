@@ -7,7 +7,7 @@
 
 <VBox xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.bearlycattable.bait.bl.controllers.AboutTheProjectTabController"
+        fx:controller="com.bearlycattable.bait.bl.controllers.aboutTheProjectTab.AboutTheProjectTabController"
         prefWidth="1226.0" style="-fx-border-color: black;">
   <children>
     <VBox prefHeight="8.0" prefWidth="1226.0" styleClass="tabTopSpacer" />

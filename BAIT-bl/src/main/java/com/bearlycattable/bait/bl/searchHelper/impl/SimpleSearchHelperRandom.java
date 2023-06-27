@@ -12,6 +12,7 @@ import com.bearlycattable.bait.commons.contexts.SimpleSearchHelperCreationContex
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.wrappers.QuickSearchTaskWrapper;
 import com.bearlycattable.bait.utility.RandomAddressGenerator;
 
 public class SimpleSearchHelperRandom extends AbstractSimpleSearchHelper implements CustomKeyGenerator {

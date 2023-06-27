@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.bl.contexts.TaskPreparationContext;
-import com.bearlycattable.bait.bl.controllers.AdvancedTabMainController;
-import com.bearlycattable.bait.bl.controllers.HeatVisualizerController;
+import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
+import com.bearlycattable.bait.bl.controllers.RootController;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
@@ -52,19 +52,19 @@ public class AdvancedTabPageHelper {
 
     private final AddressModifier modifier = new AddressModifier(OutputCaseEnum.UPPERCASE);
     private final AdvancedTabMainController advancedTabMainController;
-    private final HeatVisualizerController mainController;
+    private final RootController rootController;
 
-    private AdvancedTabPageHelper(HeatVisualizerController mainController, AdvancedTabMainController controller) {
+    private AdvancedTabPageHelper(RootController rootController, AdvancedTabMainController controller) {
         this.advancedTabMainController = Objects.requireNonNull(controller);
-        this.mainController = Objects.requireNonNull(mainController);
+        this.rootController = Objects.requireNonNull(rootController);
     }
 
     private AdvancedTabPageHelper() {
         throw new IllegalStateException("Creation not allowed");
     }
 
-    public static AdvancedTabPageHelper create(HeatVisualizerController mainController, AdvancedTabMainController controller) {
-        return new AdvancedTabPageHelper(mainController, controller);
+    public static AdvancedTabPageHelper create(RootController rootController, AdvancedTabMainController controller) {
+        return new AdvancedTabPageHelper(rootController, controller);
     }
 
     public void prepareTask(TaskPreparationContext context) {
@@ -100,7 +100,7 @@ public class AdvancedTabPageHelper {
         advancedTabMainController.getTaskMap().put(threadNum, searchTask);
 
         //enable Automerge option if possible
-        enableAutomergeOption();
+        enableAutomergeOptionIfEligible();
 
         //log detailed 'Start of search' info message before the first loop only
         if (context.isFirstLoop()) {
@@ -135,7 +135,7 @@ public class AdvancedTabPageHelper {
         String threadNum = context.getAccessor().getThreadNum();
         taskResultsMap.put(threadNum, result);
 
-        if (mainController.isVerboseMode()) {
+        if (rootController.isVerboseMode()) {
             LOG.info("Result has been obtained from thread: " + threadNum);
             //debug
             // LOG.info(accessor.buildDebugInfo());
@@ -153,10 +153,16 @@ public class AdvancedTabPageHelper {
 
         //1. firstly, regardless of config, we save normally to the originally provided location
         // searchData = result; -- searchData is not loaded here
-        boolean savedNormally = P2PKHSingleResultDataHelper.serializeAndSave(saveLocation, result, "[saved normally after obtaining search results]");
-        if (!savedNormally) {
+        boolean savedNormally = P2PKHSingleResultDataHelper.serializeAndSave(saveLocation, result);
+        if (savedNormally) {
+            String messageForUser = "[saved normally after obtaining search results]";
+            LOG.info("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser);
+            advancedTabMainController.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
+        } else {
+            LOG.info("Results of thread " + threadNum + " could not be saved!");
             advancedTabMainController.logToUiBold("Results of thread " + threadNum + " could not be saved!", Color.RED, LogTextTypeEnum.END_OF_SEARCH);
         }
+
 
         //2. remove task from the map if automerge is disabled
         if (advancedTabMainController.isAutomergePossible()) {
@@ -178,12 +184,17 @@ public class AdvancedTabPageHelper {
                     return;
                 }
 
-                boolean automergeSucceeded = P2PKHSingleResultDataHelper.serializeAndSave(mergeLocation, mergedResults, "[saved after auto-merge]");
+                boolean automergeSucceeded = P2PKHSingleResultDataHelper.serializeAndSave(mergeLocation, mergedResults);
                 if (automergeSucceeded) {
+                    String messageForUser = "[saved after auto-merge]";
+                    LOG.info("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser);
+                    advancedTabMainController.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
                     advancedTabMainController.insertErrorOrSuccessMessageInAdvancedProgressSubTab(MessageFormat.format(rb.getString("info.automergeSuccess"), mergeLocation), TextColorEnum.GREEN);
                     advancedTabMainController.getTaskResultsMap().clear();
                     disableAutomergeOption();
                 } else {
+                    LOG.info("Data and path were valid for automerge, but operation did not succeed. Reason unknown");
+                    advancedTabMainController.logToUiBold("Data and path were valid for automerge, but operation did not succeed. Reason unknown", Color.RED, LogTextTypeEnum.END_OF_SEARCH);
                     advancedTabMainController.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("Data and path were valid for automerge, but operation did not succeed. Reason unknown"), TextColorEnum.RED);
                 }
                 Toolkit.getDefaultToolkit().beep();
@@ -212,7 +223,7 @@ public class AdvancedTabPageHelper {
             //apply the new seed
             model.setSeed(buildMutatedSeed(model.getSeed(), model.getDisabledWords(), new SeedMutationConfigDataAccessor(seedMutationConfigs)));
 
-            if (mainController.isVerboseMode()) {
+            if (rootController.isVerboseMode()) {
                 advancedTabMainController.logToUi("Seed before mutation [threadNum=" + threadNum + "]: " + seedBefore, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
                 advancedTabMainController.logToUi("Seed after mutation [threadNum=" + threadNum + "]: " + model.getSeed(), Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
             }
@@ -424,7 +435,7 @@ public class AdvancedTabPageHelper {
                 parent = softCopy.get(keys.get(i));
             } else {
                 additional = softCopy.get(keys.get(i));
-                parent = P2PKHSingleResultData.merge(parent, additional);
+                parent = P2PKHSingleResultDataHelper.merge(parent, additional);
             }
         }
 
@@ -465,7 +476,8 @@ public class AdvancedTabPageHelper {
         advancedTabMainController.modifyAutomergeAccessInProgressSubTab(false);
     }
 
-    private synchronized void enableAutomergeOption() {
+    //TODO: task tracking someday
+    private synchronized void enableAutomergeOptionIfEligible() {
         advancedTabMainController.modifyAutomergeAccessInProgressSubTab(advancedTabMainController.getTaskMap().size() > 1);
     }
 }

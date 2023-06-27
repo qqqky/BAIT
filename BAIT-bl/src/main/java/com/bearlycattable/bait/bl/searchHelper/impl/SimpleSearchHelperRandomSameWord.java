@@ -11,6 +11,7 @@ import com.bearlycattable.bait.commons.contexts.SimpleSearchHelperCreationContex
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.interfaces.PrefixedKeyGenerator;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.wrappers.QuickSearchTaskWrapper;
 import com.bearlycattable.bait.utility.RandomAddressGenerator;
 
 public final class SimpleSearchHelperRandomSameWord extends SimpleSearchHelperRandom implements PrefixedKeyGenerator {

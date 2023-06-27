@@ -1,39 +1,31 @@
 package com.bearlycattable.bait.advanced.searchHelper;
 
-import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.advanced.AdvancedSearchSingleItemComparisonModel;
-import com.bearlycattable.bait.advanced.context.AdvancedSearchHelperCreationContext;
-import com.bearlycattable.bait.advanced.helpers.ExactMatchHelperHelper;
-import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
+import com.bearlycattable.bait.advanced.searchHelper.comparisonModel.AdvancedSearchSingleItemComparisonModel;
+import com.bearlycattable.bait.advanced.searchHelper.helpers.ExactMatchHelper;
+import com.bearlycattable.bait.advancedCommons.ShortSoundEffects;
+import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
+import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
-import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
 import com.bearlycattable.bait.advancedCommons.other.AdvancedPubComparer;
+import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
@@ -45,8 +37,8 @@ import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.functions.TriConsumer;
 import com.bearlycattable.bait.commons.helpers.GeneralSearchHelper;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
+import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 import com.bearlycattable.bait.utility.DurationUtils;
 
 import javafx.application.Platform;
@@ -64,7 +56,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
     @Getter
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
     private final AdvancedPubComparer advancedPubComparer = new AdvancedPubComparer();
-    private final Map<String, Object> unknownPKHs = new HashMap<>();
+    private final Set<String> unknownPKHs = new HashSet<>();
 
     private final boolean exactMatchCheckEnabled;
 
@@ -156,8 +148,6 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                 String[] UPKHArray = new String[40];
                 String[] CPKHArray = new String[40];
 
-                String progressMessage;
-
                 final AdvancedSearchSingleItemComparisonModel dataModel = AdvancedSearchSingleItemComparisonModel.builder()
                         .logConsumer(logConsumer)
                         .verbose(verbose)
@@ -181,15 +171,11 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                     currentPriv = buildNextPrivFunction.apply(currentPriv); //disabled words are taken into account
 
                     if ((i + 1) % printSpacing == 0) {
-                        progressMessage = "Current priv [" + (i + 1) + "] (mode=" + searchMode + ") is: " + currentPriv + " (" + DurationUtils.getCurrentDateTime() + ")";
-                        System.out.println(progressMessage);
-                        String progressMessageForLambda = progressMessage;
-                        Platform.runLater(() -> logConsumer.accept(progressMessageForLambda, Color.GREEN, LogTextTypeEnum.SEARCH_PROGRESS));
+                        printCurrentKey(i, searchMode, currentPriv, logConsumer);
                     }
 
                     if ((i + 1) % updateSpacing == 0) {
-                        updateProgress((i + 1), iterations);
-                        updateProgressLabel((i + 1), observableProgressLabelValue);
+                        updateProgress(i, iterations, observableProgressLabelValue);
                     }
 
                     //do not check the same key multiple times
@@ -202,14 +188,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                     CPKH = helper.getPubKeyHashCompressed(currentPriv, true);
 
                     if (exactMatchCheckEnabled && isPresentInAdditionalMap(UPKH, CPKH)) {
-                        String exactMatchFoundMessage = "Exact map entry found in memory for key: " + currentPriv + " (matched either its UPKH[" + UPKH + "] or CPKH[" + CPKH + "])";
-                        LOG.info(exactMatchFoundMessage);
-                        String targetPath = Config.EXACT_MATCH_SAVE_PATH;
-                        ExactMatchHelperHelper.appendMatchToFile(currentPriv, unknownPKHs.containsKey(UPKH) ? UPKH : CPKH, targetPath);
-                        Toolkit.getDefaultToolkit().beep();
-                        updateProgress((i + 1), iterations);
-                        updateProgressLabel((i + 1), observableProgressLabelValue);
-                        Platform.runLater(() -> logConsumer.accept(exactMatchFoundMessage, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
+                        processExactMatchResult(i, iterations, currentPriv, UPKH, CPKH, logConsumer);
                         return dataArray;
                     }
 
@@ -251,6 +230,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                             }
 
                             count++;
+
                             if (diagnostics.getHighestAcquiredPoints() < pointsGained) {
                                 diagnostics.setHighestAcquiredPoints(pointsGained);
                             }
@@ -271,8 +251,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                 long end = System.nanoTime();
                 long seconds = (end - start) / 1000000000;
 
-                updateProgress(iterations, iterations);
-                updateProgressLabel(iterations, observableProgressLabelValue);
+                updateProgress(iterations, iterations, observableProgressLabelValue);
 
                 String messageForDiagnostics = buildEndOfSearchMessage(seconds, count, seed, currentPriv);
 
@@ -283,6 +262,28 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                 Platform.runLater(() -> logConsumer.accept(messageForDiagnostics, Color.WHEAT, LogTextTypeEnum.END_OF_SEARCH));
 
                 return dataArray;
+            }
+
+            private void processExactMatchResult(int i, int iterations, String currentPriv, String UPKH, String CPKH, TriConsumer<String, Color, LogTextTypeEnum> logConsumer) {
+                String exactMatchFoundMessage = "Exact map entry found in memory for key: " + currentPriv + " (matched either its UPKH[" + UPKH + "] or CPKH[" + CPKH + "])";
+                LOG.info(exactMatchFoundMessage);
+                String targetPath = Config.EXACT_MATCH_SAVE_PATH;
+                ExactMatchHelper.appendMatchToFile(currentPriv, unknownPKHs.contains(UPKH) ? UPKH : CPKH, targetPath);
+                ShortSoundEffects.DOUBLE_BEEP.play();
+                updateProgress((i + 1), iterations);
+                updateProgressLabel((i + 1), observableProgressLabelValue);
+                Platform.runLater(() -> logConsumer.accept(exactMatchFoundMessage, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
+            }
+
+            private void printCurrentKey(int i, SearchModeEnum searchMode, String currentPriv, TriConsumer<String, Color, LogTextTypeEnum> logConsumer) {
+                String progressMessage = "Current priv [" + (i + 1) + "] (mode=" + searchMode + ") is: " + currentPriv + " (" + DurationUtils.getCurrentDateTime() + ")";
+                System.out.println(progressMessage);
+                Platform.runLater(() -> logConsumer.accept(progressMessage, Color.GREEN, LogTextTypeEnum.SEARCH_PROGRESS));
+            }
+
+            private void updateProgress(int i, int iterations, ObservableStringValue observableProgressLabelValue) {
+                updateProgress((i + 1), iterations);
+                updateProgressLabel((i + 1), observableProgressLabelValue);
             }
 
             private String buildEndOfSearchMessage(long seconds, int totalNewResults, String firstKey, String lastKey) {
@@ -347,7 +348,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
         Platform.runLater(() -> buildContext.getLogConsumer().accept(betterResultFoundMessage, Color.GREEN, LogTextTypeEnum.POINTS_GAINED));
 
         if (buildContext.getPointThresholdForNotify() > 0 && pointsGained >= buildContext.getPointThresholdForNotify()) {
-            beepTwiceSpecial().run();
+            ShortSoundEffects.SINGLE_BEEP.play();
         }
 
         //save new result
@@ -384,80 +385,31 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
         return exactMatchCheckEnabled;
     }
 
-    /**
-     * Use 'doubleBeep.wav' as a notification sound
-     * @return
-     */
-    private Runnable beepTwiceSpecial() {
-        return () -> {
-            //must be wrapped into BufferedInputStream, or getAudioInputStream(), in some cases, will throw 'mark/reset not supported' exception
-            try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(
-                    "com.bearlycattable.bait.ui.sounds/doubleBeep.wav"))))) {
-                DataLine.Info info = new DataLine.Info(Clip.class, audioStream.getFormat());
-
-                try {
-                    Clip audioClip = (Clip) AudioSystem.getLine(info);
-                    audioClip.open(audioStream);
-                    audioClip.start();
-
-                    try {
-                        //sleep length depends on clip length. Current value is tailored for 'doubleBeep.wav' only
-                        Thread.sleep(850L);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    audioClip.close();
-                } catch (LineUnavailableException | IOException e) {
-                    e.printStackTrace();
-                }
-            } catch (UnsupportedAudioFileException | IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("You should have heard the notification sound already");
-        };
-    }
-
-    /**
-     * Beeps twice.
-     * @param delayBetweenBeeps
-     * @return
-     */
-    private Runnable beepTwice(long delayBetweenBeeps) {
-        return () -> {
-            Toolkit.getDefaultToolkit().beep();
-            try {
-                Thread.sleep(delayBetweenBeeps);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Toolkit.getDefaultToolkit().beep();
-        };
-    }
-
-    public void changeExactPKHMappingsTo(Map<String, Object> PKHsMap) {
+    @Override
+    public void updateTargetForExactMatchCheck(Set<String> unencodedAddresses) {
         if (!exactMatchCheckEnabled) {
             throw new IllegalStateException("Exact map check must be enabled before adding the map");
         }
 
-        if (PKHsMap == null || PKHsMap.isEmpty()) {
+        if (unencodedAddresses == null || unencodedAddresses.isEmpty()) {
             return;
         }
 
         LOG.info("Initializing PKHs for 'exact check option'...");
 
-        List<String> validPKHs = PKHsMap.keySet().stream()
+        List<String> validPKHs = unencodedAddresses.stream()
                 .filter(key -> HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches())
                 .map(key -> key.toLowerCase(Locale.ROOT))
                 .collect(Collectors.toList());
 
         unknownPKHs.clear();
-        validPKHs.stream().forEach(PKH -> unknownPKHs.put(PKH, null));
+        unknownPKHs.addAll(validPKHs);
 
         LOG.info(unknownPKHs.size() + " entries of PHKs have been put in memory for 'exact check option'");
     }
 
     protected boolean isPresentInAdditionalMap(String UPKH, String CPKH) {
-        return unknownPKHs.containsKey(UPKH) || unknownPKHs.containsKey(CPKH);
+        return unknownPKHs.contains(UPKH) || unknownPKHs.contains(CPKH);
     }
 
     public PubComparisonResultWrapper calculateCurrentResultCached(String currentPrivKey, String[] UPKHArray, String[] CPKHArray, P2PKHSingleResultData data) {

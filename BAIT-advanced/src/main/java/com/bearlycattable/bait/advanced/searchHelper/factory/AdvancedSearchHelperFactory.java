@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.advanced.context.AdvancedSearchHelperCreationContext;
+import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
 import com.bearlycattable.bait.advanced.searchHelper.impl.AdvancedSearchHelperDecrementalAbsolute;
 import com.bearlycattable.bait.advanced.searchHelper.impl.AdvancedSearchHelperDecrementalWords;
 import com.bearlycattable.bait.advanced.searchHelper.impl.AdvancedSearchHelperIncrementalAbsolute;
@@ -21,6 +21,10 @@ import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
 public class AdvancedSearchHelperFactory {
 
     private static AdvancedSearchHelper getSearchHelper(SearchModeEnum searchMode, @NonNull AdvancedSearchHelperCreationContext creationContext) {
+        if (searchMode == null) {
+            return null;
+        }
+
         switch (searchMode) {
             case DECREMENTAL_ABSOLUTE:
                 return new AdvancedSearchHelperDecrementalAbsolute(creationContext);
@@ -69,6 +73,7 @@ public class AdvancedSearchHelperFactory {
         // return advancedSearchHelper;
     }
 
+    //TODO: export this?
     public static Function<String, String> asNextPrivFunction(SearchModeEnum searchMode, List<Integer> disabledWords) {
         // if (SearchModeEnum.MIXED == searchMode) {
         //     throw new IllegalArgumentException("Cannot create 'next priv function' for type: " + searchMode);
@@ -76,7 +81,7 @@ public class AdvancedSearchHelperFactory {
 
         AdvancedSearchHelper sh = getSearchHelper(searchMode, AdvancedSearchHelperCreationContext.builder().build());
         if (SearchModeEnum.isRandomRelatedMode(sh.getSearchMode()) || SearchModeEnum.isIncDecRelatedMode(sh.getSearchMode())) {
-            CustomKeyGenerator generator = (CustomKeyGenerator)sh;
+            CustomKeyGenerator generator = (CustomKeyGenerator) sh;
             List<Integer> disabledWordsCopy = new ArrayList<>(disabledWords);
             return input -> generator.buildNextPriv(input, disabledWordsCopy);
         }

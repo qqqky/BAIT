@@ -20,7 +20,7 @@
     <dependency>
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-commons</artifactId>
-      <version>1.0.0</version>
+      <version>${bait-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>

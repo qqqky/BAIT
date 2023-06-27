@@ -3,7 +3,7 @@ package com.bearlycattable.bait.bl.helpers;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.bearlycattable.bait.bl.controllers.AdvancedTabMainController;
+import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
 
 import javafx.css.Styleable;
 import javafx.scene.Node;

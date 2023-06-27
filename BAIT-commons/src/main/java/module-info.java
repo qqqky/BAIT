@@ -17,6 +17,7 @@ module bait.commons {
     exports com.bearlycattable.bait.commons.other to bait.bl, bait.advanced, bait.advancedCommons;
     exports com.bearlycattable.bait.commons.interfaces to bait.bl, bait.advanced;
     exports com.bearlycattable.bait.commons.serialization to bait.bl;
+    exports com.bearlycattable.bait.commons.dataStructures to bait.bl;
 
     exports com.bearlycattable.bait.commons.functions;
     exports com.bearlycattable.bait.commons.validators to bait.bl, bait.advancedCommons, bait.advanced;

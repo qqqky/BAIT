@@ -19,9 +19,9 @@
 }
 
 /*increase duration for all tooltips (default is 5s). Only works in JavaFX 9+*/
-/*.popup .tooltip {*/
-/*    -fx-show-duration: indefinite;*/
-/*}*/
+.tooltip {
+    -fx-show-duration: 15s;
+}
 
 /*heat colors list*/
 .green0 {

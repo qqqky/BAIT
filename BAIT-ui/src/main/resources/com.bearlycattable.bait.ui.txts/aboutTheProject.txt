@@ -12,10 +12,8 @@ For this, the private key is known and is usually used as seed which is then mut
 //[5]\\. Just like some online scanners, this tool also supports checking for exact matches.
             Difference here is that you can be offline while doing so and there is no need to trust any third party.
             Just doing exact match check is orders of magnitude faster, but it is also quite boring.
-            Having a way to compare each check between each other, however, makes this activity more game-like and is more likely to hit that dopamine
+            Having a way to compare each check with each other, however, makes this activity more game-like and is more likely to hit that dopamine
             release more often.
 //[6]\\. This tool can be used completely offline.
 //[7]\\. This tool is open-source and free.
 //[8]\\. This tool only supports Bitcoin addresses and only of type P2PKH (legacy type).
-//[15]\\. Maybe someday, ability to output different statistics about the comparisons will be included, but there are no concrete plans yet.
-//[16]\\. More notes to be included in later releases?...

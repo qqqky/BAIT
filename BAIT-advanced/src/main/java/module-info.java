@@ -11,10 +11,8 @@ module bait.advanced {
     requires java.desktop;
     requires bait.utility;
 
-    exports com.bearlycattable.bait.advanced to bait.bl;
-    exports com.bearlycattable.bait.advanced.helpers to bait.bl;
-    exports com.bearlycattable.bait.advanced.searchHelper;
-    exports com.bearlycattable.bait.advanced.context;
-    exports com.bearlycattable.bait.advanced.searchHelper.factory;
-    exports com.bearlycattable.bait.advanced.searchHelper.impl;
+    exports com.bearlycattable.bait.advanced.providers to bait.bl;
+
+    provides com.bearlycattable.bait.advanced.providers.AdvancedSearchHelperProvider with com.bearlycattable.bait.advanced.searchHelper.providerImpl.AdvancedSearchHelperProviderImpl;
+    provides com.bearlycattable.bait.advanced.providers.UnencodedAddressListReaderProvider with com.bearlycattable.bait.advanced.addressReader.UnencodedAddressListReaderProviderImpl;
 }

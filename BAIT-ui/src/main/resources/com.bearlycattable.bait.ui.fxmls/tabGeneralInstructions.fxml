@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <VBox prefWidth="1226.0" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.bearlycattable.bait.bl.controllers.GeneralInstructionsTabController">
+        fx:controller="com.bearlycattable.bait.bl.controllers.generalInstructionsTab.GeneralInstructionsTabController">
   <children>
     <VBox prefHeight="8.0" prefWidth="1226.0" styleClass="tabTopSpacer" />
     <HBox alignment="CENTER" styleClass="topicMarkerMain">

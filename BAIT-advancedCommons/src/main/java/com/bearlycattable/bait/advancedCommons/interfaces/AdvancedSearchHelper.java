@@ -1,5 +1,8 @@
 package com.bearlycattable.bait.advancedCommons.interfaces;
 
+import java.util.Map;
+import java.util.Set;
+
 import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
@@ -13,6 +16,8 @@ public interface AdvancedSearchHelper {
      * @return
      */
     AdvancedSearchTaskWrapper createNewAdvancedSearchTask(AdvancedSearchContext advancedSearchContext);
+
+    void updateTargetForExactMatchCheck(Set<String> unencodedAddresses);
 
     ScaleFactorEnum getScaleFactor();
 

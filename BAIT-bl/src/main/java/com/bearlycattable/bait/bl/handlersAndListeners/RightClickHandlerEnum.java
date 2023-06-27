@@ -3,8 +3,6 @@ package com.bearlycattable.bait.bl.handlersAndListeners;
 import java.util.HashMap;
 import java.util.Map;
 
-// import com.sun.javafx.scene.control.LabeledText; //inaccessible in Java 9+
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -15,6 +13,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 
 public enum RightClickHandlerEnum implements EventHandler<MouseEvent> {
     INSTANCE;
@@ -31,18 +30,15 @@ public enum RightClickHandlerEnum implements EventHandler<MouseEvent> {
 
             String text = retrieveImportantTextFromEvent(event);
             boolean darkModeEnabled = retrieveDarkModeInfoFromEvent(event);
-            // System.out.println("Dark mode is enabled: " + darkModeEnabled);
             addMenuItemWithActionEvent("Copy text: " + text , text, darkModeEnabled);
 
-            if (darkModeEnabled) {
-                if (!contextMenu.getStyleClass().contains(contextMenuDark)) {
-                    contextMenu.getStyleClass().add(contextMenuDark);
-                }
-            } else {
+            if (!darkModeEnabled) {
                 contextMenu.getStyleClass().remove(contextMenuDark);
             }
 
-            // DarkModeHelper.toggleDarkModeForPopupItem(contextMenu, contextMenuDark, darkModeEnabled);
+            if (!contextMenu.getStyleClass().contains(contextMenuDark)) {
+                contextMenu.getStyleClass().add(contextMenuDark);
+            }
 
             //we pass null to make the contextMenu centered properly on the event's X/Y coords
             contextMenu.show((Node) event.getTarget(), null, event.getX(), event.getY());
@@ -77,9 +73,11 @@ public enum RightClickHandlerEnum implements EventHandler<MouseEvent> {
 
     private String retrieveImportantTextFromEvent(MouseEvent event) {
         if (event.getTarget() instanceof ListCell) {
-            return  ((ListCell<?>) event.getTarget()).getText();
+            return ((ListCell<?>) event.getTarget()).getText();
         // } else if (event.getTarget() instanceof LabeledText) {
         //     return  ((LabeledText) event.getTarget()).getText();
+        } else if (event.getTarget() instanceof Text) {
+            return ((Text) event.getTarget()).getText();
         } else {
             return null;
         }
@@ -91,6 +89,8 @@ public enum RightClickHandlerEnum implements EventHandler<MouseEvent> {
             data = ((ListCell<?>) event.getTarget()).getUserData();
         // } else if (event.getTarget() instanceof LabeledText) {
         //     data = ((LabeledText) event.getTarget()).getParent().getUserData();
+        } else if (event.getTarget() instanceof Text) {
+            data = ((Text) event.getTarget()).getUserData();
         }
 
 
