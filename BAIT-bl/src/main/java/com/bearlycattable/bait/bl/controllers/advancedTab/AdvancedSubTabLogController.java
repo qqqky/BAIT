@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.bearlycattable.bait.commons.dataStructures.CustomFixedSizeQueue;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
@@ -35,7 +36,7 @@ public class AdvancedSubTabLogController {
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "AdvancedSubTabLog", LocaleUtils.APP_LANGUAGE);
 
     private final Set<LogTextTypeEnum> disabledTypes = new HashSet<>();
-    private final Queue<LogText> unfilteredList = new CustomFixedSizeQueue<>(MAX_LOG_ENTRIES);
+    private final Queue<LogText> unfilteredQueue = new CustomFixedSizeQueue<>(MAX_LOG_ENTRIES);
 
     @FXML
     @Getter
@@ -80,7 +81,7 @@ public class AdvancedSubTabLogController {
         LogText text = LogTextFactory.build(textPiece, color, size, weight, type);
 
         if (isTypeDisabled(type)) {
-            unfilteredList.add(text);
+            unfilteredQueue.add(text);
             return;
         }
 
@@ -89,7 +90,7 @@ public class AdvancedSubTabLogController {
         }
 
         advancedLogListView.getItems().add(text);
-        unfilteredList.add(text);
+        unfilteredQueue.add(text);
     }
 
     public void addOrRemoveFilterType(CheckBox cbx, LogTextTypeEnum type) {
@@ -102,7 +103,7 @@ public class AdvancedSubTabLogController {
     }
 
     public void filterLog() {
-        List<LogText> list = new ArrayList<>(unfilteredList);
+        List<LogText> list = new ArrayList<>(unfilteredQueue);
         list.removeIf(item -> disabledTypes.contains(item.getType()));
 
         advancedLogListView.getItems().clear();
@@ -121,9 +122,10 @@ public class AdvancedSubTabLogController {
 
     @FXML
     private void doClearAll() {
-        int numTotalEntries = unfilteredList.size();
-        long numLogClearMessages = unfilteredList.stream().filter(item -> LogTextTypeEnum.LOG_CLEAR == item.getType()).count();
+        int numTotalEntries = unfilteredQueue.size();
+        long numLogClearMessages = unfilteredQueue.stream().filter(item -> LogTextTypeEnum.LOG_CLEAR == item.getType()).count();
         if (numTotalEntries - numLogClearMessages == 0) {
+            advancedLogBtnClearAll.setDisable(false);
             return;
         }
         advancedLogBtnClearAll.setDisable(true);
@@ -136,24 +138,33 @@ public class AdvancedSubTabLogController {
 
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.getDialogPane().setHeaderText(rb.getString("label.warningLogWillBeCleared"));
-        alert.getDialogPane().setContentText(rb.getString("label.doYouReallyWantToClear") + System.lineSeparator() + rb.getString("label.logClearMessagesWillNotBeCleared") + System.lineSeparator());
+        alert.getDialogPane().setContentText(rb.getString("label.doYouReallyWantToClear") + System.lineSeparator() + rb.getString("label.logClearMessagesWillNotBeCleared") + System.lineSeparator() + System.lineSeparator());
 
         //add our default stylesheet for Alert
         alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("com.bearlycattable.bait.ui.css/styles.css")).toExternalForm());
 
         if (parentController.isDarkModeEnabled()) {
+            alert.getDialogPane().getStyleClass().add("textRed");
             alert.getDialogPane().getStyleClass().add("alertDark");
         }
 
         alert.showAndWait().ifPresent(result -> {
             if (ButtonType.OK != result) {
+                advancedLogBtnClearAll.setDisable(false);
                 return;
             }
 
-            int numTotalEntries = unfilteredList.size();
-            long numLogClearMessages = unfilteredList.stream().filter(item -> LogTextTypeEnum.LOG_CLEAR == item.getType()).count();
+            int numTotalEntries = unfilteredQueue.size();
+            long numLogClearMessages = unfilteredQueue.stream().filter(item -> LogTextTypeEnum.LOG_CLEAR == item.getType()).count();
+
             advancedLogListView.getItems().removeIf(item -> LogTextTypeEnum.LOG_CLEAR != item.getType());
-            unfilteredList.removeIf(item -> LogTextTypeEnum.LOG_CLEAR != item.getType());
+
+            List<LogText> logClearedItems = unfilteredQueue.stream()
+                    .filter(logText -> LogTextTypeEnum.LOG_CLEAR == logText.getType())
+                    .collect(Collectors.toList());
+            unfilteredQueue.clear();
+            unfilteredQueue.addAll(logClearedItems);
+
             log(MessageFormat.format(rb.getString("info.logClearedWithDate"), (numTotalEntries - numLogClearMessages), DurationUtils.getCurrentDateTime()), Color.RED, 0, FontWeight.BOLD, LogTextTypeEnum.LOG_CLEAR);
         });
     }

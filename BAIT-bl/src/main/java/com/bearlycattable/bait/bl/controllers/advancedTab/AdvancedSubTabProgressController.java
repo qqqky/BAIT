@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.helpers.AdvancedSubTabProgressComponentHelper;
-import com.bearlycattable.bait.bl.helpers.DarkModeHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
-import com.bearlycattable.bait.commons.dataAccessors.ThreadComponentDataAccessor;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.commons.enums.BackgroundColorEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;

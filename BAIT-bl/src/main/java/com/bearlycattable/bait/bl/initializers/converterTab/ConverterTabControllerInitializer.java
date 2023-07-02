@@ -2,6 +2,7 @@ package com.bearlycattable.bait.bl.initializers.converterTab;
 
 import com.bearlycattable.bait.bl.controllers.converterTab.ConverterTabController;
 import com.bearlycattable.bait.bl.controllers.RootController;
+import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
 
 public final class ConverterTabControllerInitializer {
 
@@ -32,6 +33,8 @@ public final class ConverterTabControllerInitializer {
     }
 
     private void init() {
-        //empty
+        controller.getConverterConversionTextFieldUnencodedPub().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultUnencodedPublicKeyFormatter());
+        controller.getConverterConversionTextFieldEncodedPub().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultEncodedPublicKeyFormatter());
+        controller.getConverterWIFTextFieldPriv().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPrivateKeyFormatter());
     }
 }

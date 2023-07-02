@@ -1,5 +1,6 @@
-package com.bearlycattable.bait.advanced.searchHelper.providerImpl;
+package com.bearlycattable.bait.advanced.providerImpls;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -14,7 +15,7 @@ import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 public class AdvancedSearchHelperProviderImpl implements AdvancedSearchHelperProvider {
 
     @Override
-    public AdvancedSearchHelper findAdvancedSearchHelper(SearchModeEnum searchMode, @NonNull AdvancedSearchHelperCreationContext creationContext) {
+    public Optional<AdvancedSearchHelper> findAdvancedSearchHelper(SearchModeEnum searchMode, @NonNull AdvancedSearchHelperCreationContext creationContext) {
         return AdvancedSearchHelperFactory.findRequestedSearchHelper(searchMode, creationContext, HeatVisualizerConstants.MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM);
     }
 

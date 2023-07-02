@@ -2,6 +2,7 @@ package com.bearlycattable.bait.advanced.searchHelper.factory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -20,26 +21,26 @@ import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
 
 public class AdvancedSearchHelperFactory {
 
-    private static AdvancedSearchHelper getSearchHelper(SearchModeEnum searchMode, @NonNull AdvancedSearchHelperCreationContext creationContext) {
+    private static Optional<AdvancedSearchHelper> getSearchHelper(SearchModeEnum searchMode, @NonNull AdvancedSearchHelperCreationContext creationContext) {
         if (searchMode == null) {
-            return null;
+            return Optional.empty();
         }
 
         switch (searchMode) {
             case DECREMENTAL_ABSOLUTE:
-                return new AdvancedSearchHelperDecrementalAbsolute(creationContext);
+                return Optional.of(new AdvancedSearchHelperDecrementalAbsolute(creationContext));
             case DECREMENTAL_WORDS:
-                return new AdvancedSearchHelperDecrementalWords(creationContext);
+                return Optional.of(new AdvancedSearchHelperDecrementalWords(creationContext));
             case INCREMENTAL_ABSOLUTE:
-                return new AdvancedSearchHelperIncrementalAbsolute(creationContext);
+                return Optional.of(new AdvancedSearchHelperIncrementalAbsolute(creationContext));
             case INCREMENTAL_WORDS:
-                return new AdvancedSearchHelperIncrementalWords(creationContext);
+                return Optional.of(new AdvancedSearchHelperIncrementalWords(creationContext));
             case RANDOM:
-                return new AdvancedSearchHelperRandom(creationContext);
+                return Optional.of(new AdvancedSearchHelperRandom(creationContext));
             case RANDOM_PREFIXED_WORD:
-                return new AdvancedSearchHelperRandomPrefixedWord(creationContext);
+                return Optional.of(new AdvancedSearchHelperRandomPrefixedWord(creationContext));
             case RANDOM_SAME_WORD:
-                return new AdvancedSearchHelperRandomSameWord(creationContext);
+                return Optional.of(new AdvancedSearchHelperRandomSameWord(creationContext));
             // case ROTATION_PRIV_FULL_NORMAL:
             //     return new AdvancedSearchHelperRotationPrivFullNormal(creationContext);
             // case ROTATION_PRIV_FULL_PREFIXED:
@@ -61,7 +62,7 @@ public class AdvancedSearchHelperFactory {
     //     return new AdvancedSearchHelperMixed(creationContext);
     // }
 
-    public static synchronized AdvancedSearchHelper findRequestedSearchHelper(SearchModeEnum searchMode, AdvancedSearchHelperCreationContext context, List<SearchModeEnum> mixedSearchSequence) {
+    public static synchronized Optional<AdvancedSearchHelper> findRequestedSearchHelper(SearchModeEnum searchMode, AdvancedSearchHelperCreationContext context, List<SearchModeEnum> mixedSearchSequence) {
         return getSearchHelper(searchMode, context);
         // if (SearchModeEnum.MIXED != searchMode) {
         //     return getSearchHelper(searchMode, context);
@@ -73,19 +74,22 @@ public class AdvancedSearchHelperFactory {
         // return advancedSearchHelper;
     }
 
-    //TODO: export this?
     public static Function<String, String> asNextPrivFunction(SearchModeEnum searchMode, List<Integer> disabledWords) {
         // if (SearchModeEnum.MIXED == searchMode) {
         //     throw new IllegalArgumentException("Cannot create 'next priv function' for type: " + searchMode);
         // }
 
-        AdvancedSearchHelper sh = getSearchHelper(searchMode, AdvancedSearchHelperCreationContext.builder().build());
-        if (SearchModeEnum.isRandomRelatedMode(sh.getSearchMode()) || SearchModeEnum.isIncDecRelatedMode(sh.getSearchMode())) {
-            CustomKeyGenerator generator = (CustomKeyGenerator) sh;
+        CustomKeyGenerator generator = getSearchHelper(searchMode, AdvancedSearchHelperCreationContext.builder().build())
+                // .filter(sh -> SearchModeEnum.isRandomRelatedMode(sh.getSearchMode()) || SearchModeEnum.isIncDecRelatedMode(sh.getSearchMode()))
+                .filter(sh -> sh instanceof CustomKeyGenerator)
+                .map(CustomKeyGenerator.class::cast)
+                .orElse(null);
+
+        if (generator != null) {
             List<Integer> disabledWordsCopy = new ArrayList<>(disabledWords);
             return input -> generator.buildNextPriv(input, disabledWordsCopy);
         }
 
-        throw new IllegalArgumentException("Cannot create 'next priv function' for type: " + searchMode);
+        throw new IllegalArgumentException("Cannot create 'next priv function' for search mode: " + searchMode);
     }
 }

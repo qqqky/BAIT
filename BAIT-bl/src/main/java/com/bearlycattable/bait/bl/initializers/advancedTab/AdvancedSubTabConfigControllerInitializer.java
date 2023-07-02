@@ -1,8 +1,8 @@
 package com.bearlycattable.bait.bl.initializers.advancedTab;
 
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedSubTabConfigController;
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
-import com.bearlycattable.bait.bl.helpers.DarkModeHelper;
 
 public final class AdvancedSubTabConfigControllerInitializer {
 

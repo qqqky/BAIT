@@ -1,9 +1,9 @@
-package com.bearlycattable.bait.bl.helpers;
+package com.bearlycattable.bait.advancedCommons.helpers;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
+import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTabCommandExecutor;
 
 import javafx.css.Styleable;
 import javafx.scene.Node;
@@ -83,7 +83,7 @@ public class DarkModeHelper {
     private static final String privHeatNumericValue = "privHeatNumericValue";
     private static final String privHeatNumericValueDark = "privHeatNumericValueDark";
 
-    public static synchronized void toggleDarkModeGlobal(boolean enable, Control component, AdvancedTabMainController controller) {
+    public static synchronized void toggleDarkModeGlobal(boolean enable, Control component, AdvancedTabCommandExecutor commandExecutor) {
         if (component == null) {
             return;
         }
@@ -102,8 +102,8 @@ public class DarkModeHelper {
         rootVBox.getChildren().stream().forEach(child -> darkModeHelper(child, enable));
 
         // System.out.println(root);
-        controller.setDarkMode(enable);
-        controller.refreshLogView();
+        commandExecutor.setDarkMode(enable);
+        commandExecutor.refreshLogView();
         // System.out.println("Dark mode has been " + (enable ? "ENABLED" : "DISABLED"));
     }
 

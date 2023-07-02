@@ -1,9 +1,11 @@
 package com.bearlycattable.bait.commons.dataStructures;
 
 import java.util.AbstractQueue;
+import java.util.ArrayDeque;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 
 public class CustomFixedSizeQueue<E> extends AbstractQueue<E> {
 
@@ -108,7 +110,7 @@ public class CustomFixedSizeQueue<E> extends AbstractQueue<E> {
     private final class CustomFixedSizeQueueIterator implements Iterator<E> {
 
         private int cursor;
-        private final int expectedModCount = modCount;
+        private int expectedModCount = modCount;
 
         CustomFixedSizeQueueIterator() {}
 
@@ -128,7 +130,24 @@ public class CustomFixedSizeQueue<E> extends AbstractQueue<E> {
         }
 
         public void remove() {
-            throw new UnsupportedOperationException("Removal while iterating is not allowed for CustomFixedSizeQueue");
+            throw new IllegalStateException("Removal while iterating is not allowed for CustomFixedSizeQueue");
+            // if (expectedModCount != modCount) {
+            //     throw new ConcurrentModificationException();
+            // }
+            //
+            // if (lastRet != -1) {
+            //     E moved = CustomFixedSizeQueue.this.removeAt(lastRet);
+            //     lastRet = -1;
+            //     if (moved == null) {
+            //         cursor--;
+            //     }
+            // } else if (lastRetElt != null) {
+            //     PriorityQueue.this.removeEq(lastRetElt);
+            //     lastRetElt = null;
+            // } else {
+            //     throw new IllegalStateException();
+            // }
+            // expectedModCount = modCount;
         }
     }
 }

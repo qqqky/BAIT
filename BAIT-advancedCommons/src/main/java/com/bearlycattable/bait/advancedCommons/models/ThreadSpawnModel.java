@@ -12,7 +12,7 @@ import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.PredictableEnd;
 import com.bearlycattable.bait.commons.Config;
-import com.bearlycattable.bait.commons.dataAccessors.SeedMutationConfigDataAccessor;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
 import com.bearlycattable.bait.commons.enums.RandomWordPrefixMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;

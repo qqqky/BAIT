@@ -13,7 +13,6 @@ module bait.commons {
     exports com.bearlycattable.bait.commons.enums to bait.bl, bait.utility, bait.advancedCommons, bait.advanced;
     exports com.bearlycattable.bait.commons.helpers to bait.bl, bait.utility, bait.advancedCommons, bait.advanced;
     exports com.bearlycattable.bait.commons.contexts to bait.bl, bait.advanced, bait.advancedCommons;
-    exports com.bearlycattable.bait.commons.dataAccessors to bait.bl, bait.advancedCommons;
     exports com.bearlycattable.bait.commons.other to bait.bl, bait.advanced, bait.advancedCommons;
     exports com.bearlycattable.bait.commons.interfaces to bait.bl, bait.advanced;
     exports com.bearlycattable.bait.commons.serialization to bait.bl;

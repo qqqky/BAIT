@@ -372,12 +372,6 @@ public class ConstructionTabController {
                 .allMatch(str -> str != null && HeatVisualizerConstants.PATTERN_HEX_01.matcher(str).matches());
     }
 
-    //TODO: this is never false?
-    public boolean isCurrentPrivPresent() {
-        return inputFieldWordMappings.keySet().stream()
-                .allMatch(k -> inputFieldWordMappings.get(k).getText() != null);
-    }
-
     public void modifyWordComboBoxAndTextFieldAccess(int wordNum, boolean isChecked) {
         HBox currentComboBoxParentContainer = privWordComboBoxParentContainerMappings.get(wordNum);
         currentComboBoxParentContainer.setDisable(isChecked);

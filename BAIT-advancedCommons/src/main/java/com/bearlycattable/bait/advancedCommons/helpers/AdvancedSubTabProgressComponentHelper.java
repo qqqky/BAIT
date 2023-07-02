@@ -3,7 +3,7 @@ package com.bearlycattable.bait.advancedCommons.helpers;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.bearlycattable.bait.commons.dataAccessors.ThreadComponentDataAccessor;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

@@ -1,5 +1,6 @@
 package com.bearlycattable.bait.advanced.searchHelper;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -116,18 +117,23 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
 
         return new Task<P2PKHSingleResultData[]>() {
             private static final int FORTY = 40;
+            private final TaskDiagnosticsModel diagnostics = context.getTaskDiagnosticsModel();
+
             private final String seed = context.getSeed();
+            private final String parentThreadId = context.getParentThreadId();
+            private final String childThreadId = diagnostics.getChildThreadId();
+
             private final P2PKHSingleResultData[] dataArray = context.getDataArray();
             private final ObservableStringValue observableProgressLabelValue = context.getObservableProgressLabelValue();
-            private final TaskDiagnosticsModel diagnostics = context.getTaskDiagnosticsModel();
             private final int printSpacing = context.getPrintSpacing();
             private final int updateSpacing = context.getProgressSpacing();
+            private final int notifyThreshold = context.getPointThresholdForNotify();
             private final TriConsumer<String, Color, LogTextTypeEnum> logConsumer = Objects.requireNonNull(context.getLogConsumer());
             private final SearchModeEnum searchMode = Objects.requireNonNull(context.getSearchMode());
-            final int iterations = SearchHelperIterationsValidator.validateAndGet(searchMode, getIterations());
+            private final int iterations = SearchHelperIterationsValidator.validateAndGet(searchMode, getIterations());
             private final Function<String, String> buildNextPrivFunction = Objects.requireNonNull(context.getNextPrivFunction());
             private final boolean exactMatchCheckOnly = false; //TODO: cbx 'exact match check only'
-            // private final boolean exactMatchCheckEnabled = isExactMatchCheckEnabled();
+            private final boolean exactMatchCheckEnabled = AbstractAdvancedSearchHelper.this.exactMatchCheckEnabled;
             private final boolean verbose = context.isVerbose();
             private final Map<String, String> LOWERCASE_HEX_ALPHABET = HeatVisualizerHelper.newLowercaseHexMap();
 
@@ -152,7 +158,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                         .logConsumer(logConsumer)
                         .verbose(verbose)
                         .scaleFactor(currentScaleFactor)
-                        .pointThresholdForNotify(context.getPointThresholdForNotify())
+                        .pointThresholdForNotify(notifyThreshold)
                         .build();
 
                 int count = 0; //counting num of better results in the ongoing run
@@ -171,7 +177,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                     currentPriv = buildNextPrivFunction.apply(currentPriv); //disabled words are taken into account
 
                     if ((i + 1) % printSpacing == 0) {
-                        printCurrentKey(i, searchMode, currentPriv, logConsumer);
+                        printCurrentKey((i + 1), searchMode, currentPriv, logConsumer);
                     }
 
                     if ((i + 1) % updateSpacing == 0) {
@@ -202,6 +208,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
 
                     PubComparisonResultWrapper newResult;
                     String unknownP2PKH;
+
                     dataModel.setCurrentPrivKey(currentPriv);
 
                     for (P2PKHSingleResultData item : dataArray) {
@@ -210,10 +217,12 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                         unknownP2PKH = item.getHash();
                         newResult = allPointMappingsCached ? calculateCurrentResultCached(currentPriv, UPKHArray, CPKHArray, item) : calculateCurrentResult(currentPriv, unknownP2PKH, unknownP2PKH, getScaleFactor());
 
+                        int oldMinPoints;
                         int pointsGained;
+                        int pointsNew;
 
                         for (JsonResultTypeEnum type : JsonResultTypeEnum.values()) {
-                            int pointsNew = newResult.getResultByType(type);
+                            pointsNew = newResult.getResultByType(type);
 
                             //small optimization for long-running data sets (execution will rarely proceed past this point)
                             if (pointsNew <= currentMinPointsMap.get(unknownP2PKH)) {
@@ -236,10 +245,11 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                             }
 
                             //update currentMinPointsMap (slow, but on old templates it will happen MUCH too rarely to care about this
-                            int oldMinPoints = currentMinPointsMap.get(unknownP2PKH);
+                            oldMinPoints = currentMinPointsMap.get(unknownP2PKH);
                             currentMinPointsMap = P2PKHSingleResultDataHelper.createCurrentMinPointsMap(dataArray, ScaleFactorEnum.toJsonScaleFactorEnum(getScaleFactor()));
+
                             if (verbose && oldMinPoints != currentMinPointsMap.get(unknownP2PKH)) {
-                                String minStartingPointsUpdate = "Current min points for hash '" + unknownP2PKH + "' have been updated (from " + oldMinPoints + " to " + currentMinPointsMap.get(unknownP2PKH) + ")";
+                                String minStartingPointsUpdate = "Min points updated to: " + currentMinPointsMap.get(unknownP2PKH) + " [targetPKH=" + unknownP2PKH + ", updatedFrom=" + oldMinPoints + ", updatedTo=" + currentMinPointsMap.get(unknownP2PKH) + "]";
                                 LOG.info(minStartingPointsUpdate);
                                 Platform.runLater(() -> logConsumer.accept(minStartingPointsUpdate, Color.GREEN, LogTextTypeEnum.POINTS_GAINED));
                             }
@@ -265,25 +275,26 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
             }
 
             private void processExactMatchResult(int i, int iterations, String currentPriv, String UPKH, String CPKH, TriConsumer<String, Color, LogTextTypeEnum> logConsumer) {
-                String exactMatchFoundMessage = "Exact map entry found in memory for key: " + currentPriv + " (matched either its UPKH[" + UPKH + "] or CPKH[" + CPKH + "])";
+                String exactMatchFoundMessage = "Match found for key: " + currentPriv + " (matched either its UPKH[" + UPKH + "] or CPKH[" + CPKH + "])";
                 LOG.info(exactMatchFoundMessage);
+                Platform.runLater(() -> logConsumer.accept(exactMatchFoundMessage, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
+
                 String targetPath = Config.EXACT_MATCH_SAVE_PATH;
                 ExactMatchHelper.appendMatchToFile(currentPriv, unknownPKHs.contains(UPKH) ? UPKH : CPKH, targetPath);
                 ShortSoundEffects.DOUBLE_BEEP.play();
                 updateProgress((i + 1), iterations);
                 updateProgressLabel((i + 1), observableProgressLabelValue);
-                Platform.runLater(() -> logConsumer.accept(exactMatchFoundMessage, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
             }
 
             private void printCurrentKey(int i, SearchModeEnum searchMode, String currentPriv, TriConsumer<String, Color, LogTextTypeEnum> logConsumer) {
-                String progressMessage = "Current priv [" + (i + 1) + "] (mode=" + searchMode + ") is: " + currentPriv + " (" + DurationUtils.getCurrentDateTime() + ")";
+                String progressMessage = "Progress: " + calculateProgressPercent(i) + "% [parentTID=" + parentThreadId + ", childTID=" + childThreadId + ", i=" + i + ", key=" + currentPriv + ", mode=" + searchMode.getAbbr() + "] (" + DurationUtils.getCurrentDateTime() + ")";
                 System.out.println(progressMessage);
                 Platform.runLater(() -> logConsumer.accept(progressMessage, Color.GREEN, LogTextTypeEnum.SEARCH_PROGRESS));
             }
 
             private void updateProgress(int i, int iterations, ObservableStringValue observableProgressLabelValue) {
-                updateProgress((i + 1), iterations);
-                updateProgressLabel((i + 1), observableProgressLabelValue);
+                updateProgress(i, iterations);
+                updateProgressLabel(i, observableProgressLabelValue);
             }
 
             private String buildEndOfSearchMessage(long seconds, int totalNewResults, String firstKey, String lastKey) {
@@ -313,10 +324,13 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
             }
 
             private void updateProgressLabel(int i, ObservableStringValue observableProgressLabelValue) {
+                Platform.runLater(() -> ((SimpleStringProperty) observableProgressLabelValue).set(calculateProgressPercent(i) + "%"));
+            }
+
+            private BigDecimal calculateProgressPercent(int i) {
                 BigDecimal all = new BigDecimal(100).setScale(3, RoundingMode.HALF_UP).multiply(new BigDecimal(i));
                 //set RoundingMode for divisor to avoid 'Non-terminating decimal expansion' exception
-                BigDecimal res = all.divide(new BigDecimal(iterations), RoundingMode.HALF_UP).setScale(1, RoundingMode.HALF_UP);
-                Platform.runLater(() -> ((SimpleStringProperty) observableProgressLabelValue).set(res + "%"));
+                return all.divide(new BigDecimal(iterations), RoundingMode.HALF_UP).setScale(1, RoundingMode.HALF_UP);
             }
         };
     }
@@ -336,16 +350,25 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
         int newAccuracy = getSimilarityMappings().get(helper.recalculateIndexForSimilarityMappings(pointsNew, getScaleFactor())).setScale(0, RoundingMode.HALF_UP).intValue();
         int pointsGained = (pointsNew - pointsOld);
 
-        String betterResultFoundMessage = "Better result found at " + DurationUtils.getCurrentDateTime() + " --- +" + pointsGained + " point(s) --- (points: " + pointsOld + " --> " + pointsNew + "; accuracy: " + oldAccuracy + " --> " + newAccuracy + ")";
-        System.out.println(betterResultFoundMessage);
+        String betterResultFoundMessage = "Better result found: --- +" + pointsGained + " point(s) --- [total: " + pointsNew + "/" + getScaleFactor().getMaxPoints() + "; acc: " + oldAccuracy + " --> " + newAccuracy + "] (" + DurationUtils.getCurrentDateTime() + ")";
 
-        if (buildContext.isVerbose()) {
-            String keySwapMessage = "Swapped priv " + oldPriv + " with " + buildContext.getCurrentPrivKey() + " (for target " + buildContext.getResultContainer().getHash() + ", type " + buildContext.getType() + ")";
-            System.out.println(keySwapMessage);
-            Platform.runLater(() -> buildContext.getLogConsumer().accept(keySwapMessage, Color.GREEN, LogTextTypeEnum.KEY_SWAP));
+        //dev fun
+        if (System.getProperty("os.name").contains("Windows")) {
+            try {
+                Runtime.getRuntime().exec("PowerShell -Command \"Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('" + pointsGained + " points gained');\"");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
+        System.out.println(betterResultFoundMessage);
         Platform.runLater(() -> buildContext.getLogConsumer().accept(betterResultFoundMessage, Color.GREEN, LogTextTypeEnum.POINTS_GAINED));
+
+        if (buildContext.isVerbose()) {
+            String keySwapMessage = "Swapped key to: " + buildContext.getCurrentPrivKey() + "[targetPHK=" + buildContext.getResultContainer().getHash() + ", type " + buildContext.getType() + ", oldKey=" + oldPriv + "]";
+            LOG.info(keySwapMessage);
+            Platform.runLater(() -> buildContext.getLogConsumer().accept(keySwapMessage, Color.GREEN, LogTextTypeEnum.KEY_SWAP));
+        }
 
         if (buildContext.getPointThresholdForNotify() > 0 && pointsGained >= buildContext.getPointThresholdForNotify()) {
             ShortSoundEffects.SINGLE_BEEP.play();
@@ -405,7 +428,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
         unknownPKHs.clear();
         unknownPKHs.addAll(validPKHs);
 
-        LOG.info(unknownPKHs.size() + " entries of PHKs have been put in memory for 'exact check option'");
+        LOG.info(unknownPKHs.size() + " PHKs have been cached for 'exact check option'");
     }
 
     protected boolean isPresentInAdditionalMap(String UPKH, String CPKH) {

@@ -2,7 +2,6 @@ package com.bearlycattable.bait.bl.initializers.advancedTab;
 
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
 import com.bearlycattable.bait.bl.controllers.RootController;
-import com.bearlycattable.bait.bl.initializers.aboutTheProjectTab.AboutTheProjectTabControllerInitializer;
 
 public final class AdvancedTabMainControllerInitializer {
 
@@ -30,12 +29,10 @@ public final class AdvancedTabMainControllerInitializer {
         //root controller must be set before initialization
         controller.setRootController(rootController);
 
-        //advanced tab's helper must be initialized first (only for advanced tab)
-        controller.initAdvancedTabPageHelper(rootController);
         new AdvancedTabMainControllerInitializer(controller, rootController).init();
     }
 
     private void init() {
-        //empty
+        // empty
     }
 }

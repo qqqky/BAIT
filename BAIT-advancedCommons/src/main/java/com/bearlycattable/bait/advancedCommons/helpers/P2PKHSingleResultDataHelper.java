@@ -63,13 +63,13 @@ public class P2PKHSingleResultDataHelper {
      * Caches possible heat points of the whole dataCollection for the specified scale factor.
      * WARNING: this method should not be used if dataCollection.length() is ~5000 or more.
      * Reason: GC is not happy and won't allow it to be completed if the data set is too large.
-     * @param dataCollection
-     * @param scaleFactor
+     * @param dataCollection - array of search templates to be cached
+     * @param scaleFactor - scale factor, which these templates should be cached for
      */
     public static void initializeCaches(P2PKHSingleResultData[] dataCollection, JsonResultScaleFactorEnum scaleFactor) {
         PubComparer comparer = new PubComparer();
-        System.out.println("Started initializing caches [total: " + dataCollection.length + "]...");
 
+        System.out.println("Started initializing caches [total: " + dataCollection.length + "]...");
         String lineRemoval = Stream.generate(() -> "\b").limit(40).collect(Collectors.joining());
 
         //report progress roughly every ~1%
@@ -86,7 +86,8 @@ public class P2PKHSingleResultDataHelper {
             }
         }
 
-        System.out.println("Caches have been initialized.");
+        System.out.print(lineRemoval);
+        System.out.println("All caches for result templates have been initialized.");
     }
 
     private static void initializeCache(P2PKHSingleResultData data, JsonResultScaleFactorEnum scaleFactor, PubComparer comparer) {

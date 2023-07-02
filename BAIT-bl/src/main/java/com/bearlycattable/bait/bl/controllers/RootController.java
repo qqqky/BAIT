@@ -1,6 +1,7 @@
 package com.bearlycattable.bait.bl.controllers;
 
-import java.awt.*;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ import com.bearlycattable.bait.bl.controllers.converterTab.ConverterTabControlle
 import com.bearlycattable.bait.bl.controllers.generalInstructionsTab.GeneralInstructionsTabController;
 import com.bearlycattable.bait.bl.controllers.heatComparisonTab.HeatComparisonTabController;
 import com.bearlycattable.bait.bl.controllers.quickSearchTab.QuickSearchTabController;
-import com.bearlycattable.bait.bl.helpers.DarkModeHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.initializers.aboutTheProjectTab.AboutTheProjectTabControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedTabMainControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.constructionTab.ConstructionTabControllerInitializer;
@@ -124,10 +125,6 @@ public class RootController {
 
     public int getNormalizedMapIndexFromComparisonResult(int resultPoints, ScaleFactorEnum scaleFactor) {
         return quickSearchTabController.getNormalizedMapIndexFromComparisonResult(resultPoints, scaleFactor);
-    }
-
-    public boolean isCurrentPrivExistsInConstructionTab() {
-        return constructionTabController.isCurrentPrivPresent();
     }
 
     public String getCurrentInput() {

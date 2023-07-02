@@ -19,7 +19,7 @@ public class DurationUtils {
      * @param startNanos - nanoseconds of arbitrary point in time
      * @return - e.g.: "27 hours 46 mins and 40 seconds"
      */
-    public static String getDurationFromStartHMS(long startNanos) {
+    public static String getDurationHMSFromStartNanos(long startNanos) {
         return getDurationHMS(getSecondsFromStart(startNanos));
     }
 

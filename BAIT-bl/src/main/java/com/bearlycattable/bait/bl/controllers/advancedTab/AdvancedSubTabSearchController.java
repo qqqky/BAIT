@@ -17,8 +17,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advanced.providers.AdvancedSearchHelperProvider;
 import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
-import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
@@ -27,15 +27,13 @@ import com.bearlycattable.bait.advancedCommons.serialization.SerializedSearchRes
 import com.bearlycattable.bait.advancedCommons.validators.OptionalConfigValidationResponseType;
 import com.bearlycattable.bait.advancedCommons.validators.VRotationInputValidator;
 import com.bearlycattable.bait.advancedCommons.validators.ValidatorResponse;
-import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
-import com.bearlycattable.bait.bl.contexts.TaskPreparationContext;
-import com.bearlycattable.bait.bl.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.wrappers.InitialConditionsValidatorWrapper;
+import com.bearlycattable.bait.bl.wrappers.NotificationConfigsWrapper;
+import com.bearlycattable.bait.bl.wrappers.PrefixedModeConfigsWrapper;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
-import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
-import com.bearlycattable.bait.commons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
@@ -52,9 +50,6 @@ import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 import com.bearlycattable.bait.utility.PathUtils;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableStringValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -86,6 +81,7 @@ public class AdvancedSubTabSearchController {
 
     //format: Pair<PathToTemplate, TemplateData>
     private Pair<String, P2PKHSingleResultData[]> loadedSearchTemplateData;
+    private static final List<Integer> disabledWords = new ArrayList<>();
 
     @FXML
     private TextField advancedSearchTextFieldLoadSearchTemplateFromFile;
@@ -111,7 +107,6 @@ public class AdvancedSubTabSearchController {
     private Button advancedSearchBtnImportSeedFromConstruction;
     @FXML
     private Button advancedBtnExportSeedToConstruction;
-
 
     //general search parameters
     @FXML
@@ -172,7 +167,14 @@ public class AdvancedSubTabSearchController {
     @FXML
     private TextField advancedTextFieldRotateVerticallyAtIndexes;
 
-    //iterations log option
+    //notification options
+    @FXML
+    @Getter
+    private CheckBox advancedSearchCbxEnableSoundNotifications;
+    @FXML
+    @Getter
+    private HBox advancedSearchHBoxNotificationToleranceParent;
+
     @FXML
     private TextField advancedSearchTextFieldLogKeyEveryXIterations;
     @FXML
@@ -186,16 +188,9 @@ public class AdvancedSubTabSearchController {
     private RadioButton advancedSearchRadioRandomWordPrefixInc;
     private RadioButton advancedSearchRadioRandomWordPrefixDec;
     private TextField advancedSearchTextFieldRandomWordPrefixIncDecBy;
-
     private TextField advancedSearchTextFieldNotificationPointTolerance;
 
     private AdvancedTabMainController parentController;
-    @FXML
-    @Getter
-    private CheckBox advancedSearchCbxEnableSoundNotifications;
-    @FXML
-    @Getter
-    private HBox advancedSearchHBoxNotificationToleranceParent;
 
     @FXML
     void initialize() {
@@ -328,29 +323,13 @@ public class AdvancedSubTabSearchController {
     private void doAdvancedSearch() {
         advancedBtnSearch.setDisable(true);
 
-        if (parentController.getTaskMap().keySet().size() >= (Runtime.getRuntime().availableProcessors() - 1)) {
-            showErrorMessage("Enough tasks are already running. Cannot spawn more threads");
-            //TODO: also check if any of the tasks are finished already - remove them from UI?
-            //maybe it is better to return threadId rather than boolean from 'spawnBackgroundSearchThread'?
+        if (!isInitialContitionsValid()) {
             advancedBtnSearch.setDisable(false);
             return;
-        }
-
-        //must check if all 5 steps have been completed beforehand
-        if (loadedSearchTemplateData == null || loadedSearchTemplateData.getValue() == null) {
-            showErrorMessage(rb.getString("error.resultTemplateMustBeLoaded"));
-            addRedBorder(advancedSearchTextFieldLoadSearchTemplateFromFile);
-            addRedBorder(advancedBtnLoadExisting);
-            advancedBtnSearch.setDisable(false);
-            return;
-        } else {
-            removeRedBorder(advancedSearchTextFieldLoadSearchTemplateFromFile);
-            removeRedBorder(advancedBtnLoadExisting);
-            removeMessage();
         }
 
         //REMINDER: num of iterations are included while constructing the SimpleSearchHelper!
-        AdvancedSearchHelper advancedSearchHelper = constructSearchHelperFromUiData();
+        AdvancedSearchHelper advancedSearchHelper = constructSearchHelperFromUiData().orElse(null);
 
         if (advancedSearchHelper == null) {
             appendToErrorMessage(rb.getString("error.searchHelperConstructionError"));
@@ -366,7 +345,7 @@ public class AdvancedSubTabSearchController {
         //must validate seed for all modes (and generate any for random-related ones)
         String seed = buildSeed(advancedSearchHelper);
         if (seed.isEmpty()) {
-            addErrorMessageAndRedBorder("Invalid seed. Must be 64 hex characters", advancedSearchTextFieldContinueFromSeed);
+            addErrorMessageAndRedBorder(rb.getString("error.invalidSeed"), advancedSearchTextFieldContinueFromSeed);
             return;
         }
         removeRedBorder(advancedSearchTextFieldContinueFromSeed);
@@ -374,7 +353,7 @@ public class AdvancedSubTabSearchController {
         //validate save location
         String saveLocation = advancedSearchTextFieldSaveSearchToFile.getText();
         if (!saveLocation.endsWith(".json") || !PathUtils.isAccessibleToWrite(saveLocation)) {
-            addErrorMessageAndRedBorder("Invalid save location. Must be a .json file, must have write access", advancedSearchTextFieldSaveSearchToFile);
+            addErrorMessageAndRedBorder(rb.getString("error.invalidSaveLocation"), advancedSearchTextFieldSaveSearchToFile);
         }
         removeRedBorder(advancedSearchTextFieldSaveSearchToFile);
 
@@ -394,51 +373,31 @@ public class AdvancedSubTabSearchController {
         boolean randomRelatedMode = SearchModeEnum.isRandomRelatedMode(advancedSearchHelper.getSearchMode());
 
         if (!randomRelatedMode) {
-            Optional<Map<SeedMutationTypeEnum, Object>> maybeSeedMutationConfigs = buildSeedMutationConfigs();
-            if (!maybeSeedMutationConfigs.isPresent()) {
-                return;
-            }
-            seedMutationConfigs = maybeSeedMutationConfigs.get();
+            seedMutationConfigs = buildSeedMutationConfigs().orElse(null);
         }
 
         Pair<RandomWordPrefixMutationTypeEnum, String> modeSpecificConfigs = null;
         String randomWordPrefix = null;
 
         if (advancedSearchHelper instanceof PrefixedKeyGenerator) {
-            randomWordPrefix = advancedSearchTextFieldRandomWordPrefix.getText();
-            if (!randomWordPrefix.isEmpty()) {
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_08_OR_LESS.matcher(randomWordPrefix).matches()) {
-                    advancedBtnSearch.setDisable(false);
-                    addErrorMessageAndRedBorder(rb.getString("error.randomWordPrefixInvalid"), advancedSearchTextFieldRandomWordPrefix);
-                    return;
-                }
-                parentController.logToUi("Setting random word prefix to: " + randomWordPrefix, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
-                RandomWordPrefixMutationTypeEnum prefixMutationType = retrieveIncOrDecForRandomWordPrefix().orElse(null);
-                modeSpecificConfigs = new Pair<>(prefixMutationType, advancedSearchTextFieldRandomWordPrefixIncDecBy.getText());
+            PrefixedModeConfigsWrapper prefixedModeConfigsWrapper = gatherModeSpecificConfigs();
+            if (!prefixedModeConfigsWrapper.hasValidConfig()) {
+                return;
             }
+
+            randomWordPrefix = prefixedModeConfigsWrapper.getPrefix();
+            modeSpecificConfigs = prefixedModeConfigsWrapper.getModeSpecificConfigs();
         }
 
         //handle sound notification tolerance selection
         int soundNotificationTolerance = 0;
         if (advancedSearchCbxEnableSoundNotifications.isSelected()) {
-            Optional<Integer> notificationTolerance = getSoundNotificationTolerance();
-            if (!notificationTolerance.isPresent()) {
-                addErrorMessageAndRedBorder(rb.getString("error.notificationToleranceInvalidInput"), advancedSearchTextFieldNotificationPointTolerance);
-                advancedBtnSearch.setDisable(false);
-                return;
-            }
-            removeMessage();
-            removeRedBorder(advancedSearchTextFieldNotificationPointTolerance);
-
-            if (notificationTolerance.get() > getAdvancedSearchScaleFactorFromUi().getMaxPoints().intValue()) {
-                addErrorMessageAndRedBorder(rb.getString("error.notificationToleranceExceedsMax"), advancedSearchTextFieldNotificationPointTolerance);
-                advancedBtnSearch.setDisable(false);
+            NotificationConfigsWrapper notificationConfigsWrapper = gatherNotificationConfigs();
+            if (!notificationConfigsWrapper.hasValidConfig()) {
                 return;
             }
 
-            removeMessage();
-            removeRedBorder(advancedSearchTextFieldNotificationPointTolerance);
-            soundNotificationTolerance = notificationTolerance.get();
+            soundNotificationTolerance = notificationConfigsWrapper.getNotificationTolerance();
         }
 
         //need to make a proper copy for each thread
@@ -464,8 +423,12 @@ public class AdvancedSubTabSearchController {
                 .build();
 
         //confirm user choice
-        if (!confirmUserChoiceForNewSearchThread(threadSpawnModel.makeLabelListForUserNotification((t,u,v) -> parentController.getHelper().buildMutatedSeed(t, u, v)))) {
-            System.out.println("User did not accept the search parameters. Search will not proceed");
+        if (!confirmUserChoiceForNewSearchThread(threadSpawnModel.makeLabelListForUserNotification((t,u,v) -> parentController.getAdvancedTaskControl().buildMutatedSeed(t, u, v)))) {
+            if (parentController.isVerboseMode()) {
+                String msg = "User did not accept the search parameters. Search will not proceed";
+                System.out.println(msg);
+                parentController.logToUi(msg, Color.DARKORANGE, LogTextTypeEnum.GENERAL);
+            }
             advancedBtnSearch.setDisable(false);
             return;
         }
@@ -473,28 +436,145 @@ public class AdvancedSubTabSearchController {
         System.out.println("User accepted the search config!");
 
         //init caches if possible
-        if (deepCopy.length < Config.MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE) {
-            P2PKHSingleResultDataHelper.initializeCaches(deepCopy, ScaleFactorEnum.toJsonScaleFactorEnum(Objects.requireNonNull(advancedSearchHelper).getScaleFactor()));
-        } else {
-            String templateCannotBeCached = "Proceeding with uncached search! (user has been warned)";
-            if (parentController.isVerboseMode()) {
-                LOG.info(templateCannotBeCached);
-                parentController.logToUi(templateCannotBeCached, Color.DARKORANGE, LogTextTypeEnum.START_OF_SEARCH);
-            }
-        }
+        initializeTemplateCaches(deepCopy, Objects.requireNonNull(advancedSearchHelper).getScaleFactor());
 
         //TODO: only for testing
         System.out.println("Will now be spawning background search thread");
-        spawnBackgroundSearchThread(threadSpawnModel).ifPresent(threadNum -> {
-            String message = "New parent search thread " + threadNum + " has been spawned (manually by the user)";
-            if (parentController.isVerboseMode()) {
-                LOG.info(message);
-            }
-            parentController.logToUi(message, Color.GREEN, LogTextTypeEnum.GENERAL);
-            parentController.switchToChildTabX(2); //switch to 'Progress' tab
-        });
+
+        parentController.spawnBackgroundSearchThread(threadSpawnModel, this)
+                .ifPresent(threadNum -> {
+                    if (parentController.isVerboseMode()) {
+                        String message = "New parent search thread " + threadNum + " has been spawned (manually by the user)";
+                        LOG.info(message);
+                        parentController.logToUi(message, Color.GREEN, LogTextTypeEnum.GENERAL);
+                    }
+                    parentController.switchToChildTabX(2); //switch to 'Progress' tab
+                });
 
         advancedBtnSearch.setDisable(false);
+    }
+
+    private boolean isInitialContitionsValid() {
+        InitialConditionsValidatorWrapper initialConditionsValidatorWrapper = validateInitialConditions();
+        return initialConditionsValidatorWrapper.isValid();
+    }
+
+    private InitialConditionsValidatorWrapper validateInitialConditions() {
+        InitialConditionsValidatorWrapper.InitialConditionsValidatorWrapperBuilder result = InitialConditionsValidatorWrapper.builder();
+        String error;
+        if (!parentController.isTaskCreationAllowed(this)) {
+            error = "Enough tasks are already running. Cannot spawn more threads";
+            showErrorMessage(error);
+            //TODO: also check if any of the tasks are finished already - remove them from UI?
+            //maybe it is better to return threadId rather than boolean from 'spawnBackgroundSearchThread'?
+            advancedBtnSearch.setDisable(false);
+            return result
+                    .error(error)
+                    .build();
+        }
+
+        //must check if all 5 steps have been completed beforehand
+        if (loadedSearchTemplateData == null || loadedSearchTemplateData.getValue() == null) {
+            error = rb.getString("error.resultTemplateMustBeLoaded");
+            showErrorMessage(error);
+            addRedBorder(advancedSearchTextFieldLoadSearchTemplateFromFile);
+            addRedBorder(advancedBtnLoadExisting);
+            advancedBtnSearch.setDisable(false);
+            return result
+                    .error(error)
+                    .build();
+        }
+
+        removeRedBorder(advancedSearchTextFieldLoadSearchTemplateFromFile);
+        removeRedBorder(advancedBtnLoadExisting);
+        removeMessage();
+
+        return result.build();
+    }
+
+    private void initializeTemplateCaches(P2PKHSingleResultData[] deepCopy, ScaleFactorEnum scaleFactor) {
+        if (deepCopy.length <= Config.MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE) {
+            P2PKHSingleResultDataHelper.initializeCaches(deepCopy, ScaleFactorEnum.toJsonScaleFactorEnum(scaleFactor));
+            if (parentController.isVerboseMode()) {
+                String cachedSuccessfully = rb.getString("info.allTemplatesCached");
+                LOG.info(cachedSuccessfully);
+                parentController.logToUi(cachedSuccessfully, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
+            }
+            return;
+        }
+
+        if (parentController.isVerboseMode()) {
+            String templatesCannotBeCached = rb.getString("info.proceedingWithUncached");
+            LOG.info(templatesCannotBeCached);
+            parentController.logToUi(templatesCannotBeCached, Color.DARKORANGE, LogTextTypeEnum.START_OF_SEARCH);
+        }
+    }
+
+    @NonNull
+    private NotificationConfigsWrapper gatherNotificationConfigs() {
+        NotificationConfigsWrapper.NotificationConfigsWrapperBuilder result = NotificationConfigsWrapper.builder();
+
+        Optional<Integer> notificationTolerance = getSoundNotificationTolerance();
+        if (!notificationTolerance.isPresent()) {
+            String error = rb.getString("error.notificationToleranceInvalidInput");
+            addErrorMessageAndRedBorder(error, advancedSearchTextFieldNotificationPointTolerance);
+            advancedBtnSearch.setDisable(false);
+
+            return result
+                    .error(error)
+                    .build();
+        }
+
+        removeMessage();
+        removeRedBorder(advancedSearchTextFieldNotificationPointTolerance);
+
+        if (notificationTolerance.get() > getAdvancedSearchScaleFactorFromUi().getMaxPoints().intValue()) {
+            String error = rb.getString("error.notificationToleranceExceedsMax");
+            addErrorMessageAndRedBorder(error, advancedSearchTextFieldNotificationPointTolerance);
+            advancedBtnSearch.setDisable(false);
+            return result
+                    .error(error)
+                    .build();
+        }
+
+        removeMessage();
+        removeRedBorder(advancedSearchTextFieldNotificationPointTolerance);
+
+        return result
+                .notificationTolerance(notificationTolerance.get())
+                .build();
+    }
+
+    @NonNull
+    private PrefixedModeConfigsWrapper gatherModeSpecificConfigs() {
+        PrefixedModeConfigsWrapper.PrefixedModeConfigsWrapperBuilder result = PrefixedModeConfigsWrapper.builder();
+        String randomWordPrefix = advancedSearchTextFieldRandomWordPrefix.getText();
+
+        if (randomWordPrefix.isEmpty()) {
+            return result.build();
+        }
+
+        if (!HeatVisualizerConstants.PATTERN_SIMPLE_08_OR_LESS.matcher(randomWordPrefix).matches()) {
+            String error = rb.getString("error.randomWordPrefixInvalid");
+            advancedBtnSearch.setDisable(false);
+            addErrorMessageAndRedBorder(error, advancedSearchTextFieldRandomWordPrefix);
+
+            return result
+                    .error(error)
+                    .build();
+        }
+
+        if (parentController.isVerboseMode()) {
+            parentController.logToUi("Setting random word prefix to: " + randomWordPrefix, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
+        }
+
+        RandomWordPrefixMutationTypeEnum prefixMutationType = retrieveIncOrDecForRandomWordPrefix().orElse(null);
+        Pair<RandomWordPrefixMutationTypeEnum, String> modeSpecificConfigs = new Pair<>(prefixMutationType, advancedSearchTextFieldRandomWordPrefixIncDecBy.getText());
+
+        return result
+                .prefix(randomWordPrefix)
+                .modeSpecificConfigs(modeSpecificConfigs)
+                .build();
     }
 
     @NonNull
@@ -786,124 +866,6 @@ public class AdvancedSubTabSearchController {
                 .collect(Collectors.toList());
     }
 
-    //REMINDER: TASKS cannot be reused by design! So remove them from the list once done
-    //TODO: move this somewhere else?
-    public synchronized Optional<String> spawnBackgroundSearchThread(ThreadSpawnModel threadSpawnModel) {
-        //unpack
-        AdvancedSearchHelper advancedSearchHelper = threadSpawnModel.getAdvancedSearchHelper();
-        P2PKHSingleResultData[] data = threadSpawnModel.getDeepDataCopy();
-        String saveLocation = threadSpawnModel.getSaveLocation();
-        String seed = threadSpawnModel.getSeed();
-        int loops = threadSpawnModel.getRemainingLoops();
-        int logSpacing = threadSpawnModel.getLogSpacing();
-        // Map<SeedMutationTypeEnum, String> optionalConfigs = threadSpawnModel.getOptionalConfigs();
-        // List<Integer> verticalRotationIndexes = threadSpawnModel.getVerticalRotationIndexes();
-
-        //message displayed on parent's TitlePane
-        String titleMessage = "Search mode: " + advancedSearchHelper.getSearchMode() + ", iterations per loop: " + advancedSearchHelper.getIterations() + ", total loops: " + loops;
-
-        //gui message placeholders
-        String error;
-        String info;
-        
-        //create component in UI that will display the running thread
-        Optional<ThreadComponentDataAccessor> maybeAccessor = parentController.addNewThreadProgressContainerToProgressAndResultsTab(threadSpawnModel.getParentThreadId(), titleMessage);
-        if (!maybeAccessor.isPresent()) {
-            error = "Received wrong component handles at #spawnBackgroudSearchThread. Cannot continue.";
-            if (parentController.isVerboseMode()) {
-                parentController.logToUi(error, Color.RED, LogTextTypeEnum.START_OF_SEARCH);
-                System.out.println(error);
-            }
-            return Optional.empty();
-        }
-
-        ThreadComponentDataAccessor accessor = maybeAccessor.get();
-
-        List<Integer> disabledWordsCopy = new ArrayList<>(readDisabledWordsFromUi());
-        if (parentController.isVerboseMode()) {
-            info = "Disabled words at thread init are: " + disabledWordsCopy;
-            parentController.logToUi(info, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
-            System.out.println(info);
-        }
-
-        String threadNum = accessor.getThreadNum();
-        String parentThreadId = threadSpawnModel.getParentThreadId();
-
-        //used later for logging
-        boolean firstLoop = parentThreadId == null;
-
-        if (parentThreadId == null) {
-            parentThreadId = threadNum;
-            //set parent id to follow diagnostics properly
-            threadSpawnModel.setParentThreadId(parentThreadId);
-            parentController.getTaskDiagnosticsTree().put(parentThreadId, new HashMap<>());
-        }
-
-        //TODO: we must track the tree of threads branching from every parent
-        parentController.getTaskDiagnosticsTree().get(parentThreadId).put(threadNum, TaskDiagnosticsModel.empty());
-        // parentController.getTaskDiagnosticsTree().put(threadNum, TaskDiagnosticsModel.empty());
-
-        ObservableStringValue progressLabelValue = new SimpleStringProperty();
-
-        AdvancedSearchContext advancedSearchContext = AdvancedSearchContext.builder()
-                .dataArray(data)
-                .disabledWords(disabledWordsCopy)
-                .seed(seed)
-                .wordPrefix(threadSpawnModel.getPrefix())
-                .observableProgressLabelValue(progressLabelValue)
-                .printSpacing(logSpacing)
-                .progressSpacing(advancedSearchHelper.getIterations() / 1000 > 0 ? (advancedSearchHelper.getIterations() / 1000) : 1) //~0.1%
-                .taskDiagnosticsModel(parentController.getTaskDiagnosticsTree().get(parentThreadId).get(threadNum))
-                .pointThresholdForNotify(threadSpawnModel.getPointThresholdForNotify())
-                .logConsumer((message, color, type) -> parentController.logToUi(message, color, type))
-                .searchMode(advancedSearchHelper.getSearchMode())
-                .parentThreadId(parentThreadId)
-                .verbose(parentController.isVerboseMode())
-                .build();
-
-
-        //decrement remaining loops
-        threadSpawnModel.setRemainingLoops(threadSpawnModel.getRemainingLoops() - 1);
-        if (parentController.isVerboseMode()) {
-            info = "Loops remaining: " + threadSpawnModel.getRemainingLoops();
-            parentController.logToUi(info, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
-            System.out.println(info);
-        }
-        
-        AdvancedSearchTaskWrapper taskWrapper = advancedSearchHelper.createNewAdvancedSearchTask(advancedSearchContext);
-        if (!taskWrapper.hasTask()) {
-            error = taskWrapper.getError();
-            advancedBtnSearch.setDisable(threadSpawnModel.getRemainingLoops() > 0);
-            parentController.logToUi(error, Color.RED, LogTextTypeEnum.START_OF_SEARCH);
-            System.out.println(error);
-            return Optional.empty();
-        }
-        
-        Task<P2PKHSingleResultData[]> searchTask = taskWrapper.getTask();
-
-        parentController.prepareTask(TaskPreparationContext.builder()
-                .searchTask(searchTask)
-                .firstLoop(firstLoop)
-                .accessor(accessor)
-                .taskMap(parentController.getTaskMap())
-                .taskResultsMap(parentController.getTaskResultsMap())
-                .saveLocation(saveLocation)
-                .observableProgressLabelValue(progressLabelValue)
-                .taskDiagnosticsModel(parentController.getTaskDiagnosticsTree().get(parentThreadId).get(threadNum))
-                //options below are used for loops
-                .advancedSubTabSearchController(this)
-                .threadSpawnModel(threadSpawnModel)
-                .verboseMode(parentController.isVerboseMode())
-                .build());
-
-        //since we aren't using executor service (executorService.submit(searchTask)) - must construct and run the
-        //task on a separate thread manually:
-        Thread searchThread = new Thread(searchTask);
-        searchThread.start(); //do not call searchThread.run() or it will run on the same thread???
-
-        return Optional.of(threadNum);
-    }
-
     void showInfoMessage(String message, TextColorEnum color) {
         advancedSearchErrorLabel.getStyleClass().clear();
         advancedSearchErrorLabel.getStyleClass().add(CssConstants.ERROR_INFO_MESSAGE_STYLE_CLASS);
@@ -948,14 +910,14 @@ public class AdvancedSubTabSearchController {
         component.getStyleClass().remove(CssConstants.BORDER_RED);
     }
 
-    private AdvancedSearchHelper constructSearchHelperFromUiData() {
+    private Optional<AdvancedSearchHelper> constructSearchHelperFromUiData() {
         SearchModeEnum searchMode = getAdvancedSearchModeFromUi();
 
         String saveLocation = advancedSearchTextFieldSaveSearchToFile.getText();
         if (!saveLocation.endsWith(".json")) {
             addErrorMessageAndRedBorder(rb.getString("error.savePathNotJson"), advancedSearchTextFieldSaveSearchToFile);
             advancedBtnSearch.setDisable(false);
-            return null;
+            return Optional.empty();
         } else {
             removeRedBorder(advancedSearchTextFieldSaveSearchToFile);
         }
@@ -963,7 +925,7 @@ public class AdvancedSubTabSearchController {
         if (!SearchModeEnum.isRandomRelatedMode(searchMode) && !isValidSeedInUi()) {
             addErrorMessageAndRedBorder(rb.getString("error.seedRequired"), advancedSearchTextFieldContinueFromSeed);
             advancedBtnSearch.setDisable(false);
-            return null;
+            return Optional.empty();
         } else {
             removeRedBorder(advancedSearchTextFieldContinueFromSeed);
         }
@@ -1145,6 +1107,30 @@ public class AdvancedSubTabSearchController {
         }
 
         advancedSearchHBoxModeSpecificOptionsParent.getChildren().add(parent);
+    }
+
+    public void disableWord(int wordNum) {
+        if (!isValidWordNum(wordNum)) {
+            throw new IllegalArgumentException("Words are numbered 1-8. Received: " + wordNum);
+        }
+
+        if (!disabledWords.contains(wordNum)) {
+            disabledWords.add(wordNum);
+        }
+    }
+
+    public void enableWord(int wordNum) {
+        if (!isValidWordNum(wordNum)) {
+            throw new IllegalArgumentException("Words are numbered 1-8. Received: " + wordNum);
+        }
+
+        if (disabledWords.contains(wordNum)) {
+            disabledWords.remove((Integer) wordNum);
+        }
+    }
+
+    private boolean isValidWordNum(int wordNum) {
+        return wordNum > 0 && wordNum < 9;
     }
 
     public final boolean isParentValid() {

@@ -3,16 +3,16 @@ package com.bearlycattable.bait.resourceBundles.spi;
 import java.util.Locale;
 import java.util.spi.AbstractResourceBundleProvider;
 
-public class GeneralResourceBundleProviderImpl extends AbstractResourceBundleProvider
+public class GeneralResourceBundleImplProvider extends AbstractResourceBundleProvider
         implements ConstructionTabProvider, ConverterTabProvider, HeatComparisonTabProvider,
-            QuickSearchTabProvider, AdvancedTabPageHelperProvider, AdvancedSubTabConfigProvider,
+            QuickSearchTabProvider, AdvancedTaskControlImplProvider, AdvancedSubTabConfigProvider,
             AdvancedSubTabLogProvider, AdvancedSubTabProgressProvider, AdvancedSubTabResultsProvider,
             AdvancedSubTabSearchProvider, AdvancedSubTabToolsProvider, StaticLabelsProvider,
             BundleTestProvider {
 
-    public GeneralResourceBundleProviderImpl() {
+    public GeneralResourceBundleImplProvider() {
         super("java.properties");
-        // System.out.println("GeneralResourceBundleProviderImpl has been initialized");
+        // System.out.println("GeneralResourceBundleImplProvider has been initialized");
     }
 
     // this provider maps the resource bundle to per-language package

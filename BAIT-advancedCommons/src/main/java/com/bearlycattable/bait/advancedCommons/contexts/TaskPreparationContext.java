@@ -1,4 +1,4 @@
-package com.bearlycattable.bait.bl.contexts;
+package com.bearlycattable.bait.advancedCommons.contexts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +9,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.PredictableEnd;
-import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedSubTabSearchController;
-import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
-import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
 import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
-import com.bearlycattable.bait.commons.dataAccessors.SeedMutationConfigDataAccessor;
-import com.bearlycattable.bait.commons.dataAccessors.ThreadComponentDataAccessor;
+import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.commons.enums.RandomWordPrefixMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 
@@ -38,7 +36,7 @@ public class TaskPreparationContext {
     private final boolean verboseMode;
 
     //variables below are used for loops
-    private final AdvancedSubTabSearchController advancedSubTabSearchController;
+    // private final AdvancedSubTabSearchController advancedSubTabSearchController;
     private final ThreadSpawnModel threadSpawnModel;
 
     //Note: this method is very similar to ThreadSpawnModel#makeLabelListForUserNotification(),

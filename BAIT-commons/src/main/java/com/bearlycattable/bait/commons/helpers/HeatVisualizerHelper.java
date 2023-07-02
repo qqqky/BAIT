@@ -304,7 +304,7 @@ public class HeatVisualizerHelper {
     }
 
     private static String convertCharToString(char character, boolean uppercase) {
-        return uppercase ? Character.toString(character).toUpperCase() : Character.toString(character).toLowerCase();
+        return uppercase ? Character.toString(character).toUpperCase() : Character.toString(character);
     }
 
     private static boolean isValidHexNum(int num) {
@@ -318,21 +318,6 @@ public class HeatVisualizerHelper {
         return (num > 47 && num < 58) || ((num > 64 && num < 91) && num != 73 && num != 79) || ((num > 96 && num < 123) && num != 108);
     }
 
-    public List<String> processErrorMessage(String messageForUser, int maxWords, int maxWordLength) {
-        if (messageForUser == null) {
-            return Collections.singletonList(HeatVisualizerConstants.EMPTY_STRING);
-        }
-        return Arrays.stream(messageForUser.split(" "))
-                .limit(8)
-                .map(word -> {
-                    if (word != null && word.length() > 9) {
-                        return word.substring(0, 9);
-                    }
-                    return word;
-                })
-                .collect(Collectors.toList());
-    }
-
     public final String encodeToBase58(int versionPrefix, String unencodedHexString) {
        return base58.encodeChecked(versionPrefix, hexToByteData(unencodedHexString));
     }
@@ -341,22 +326,7 @@ public class HeatVisualizerHelper {
         return bytesToHexString(withChecksumValidation ? base58.decodeChecked(base58String) : base58.decodeUnchecked(base58String));
     }
 
-    public String checkAndRetrievePKH(TextField resultLockedOutputUncompressed, TextField resultLockedOutputCompressed) {
-        String one = resultLockedOutputUncompressed.getText();
-        String two = resultLockedOutputCompressed.getText();
-
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(one).matches() || !HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(two).matches()) {
-            throw new IllegalArgumentException("One or more locked PKHs are not valid. Cannot proceed");
-        }
-
-        if (!one.equals(two)) {
-            throw new IllegalStateException("Locked PKHs are different. They must be the same to proceed with the quickSearch");
-        }
-
-        return one;
-    }
-
-    public String extractWordFromPKH(String referencePKH, int wordNum) {
+    public static String extractWordFromPKH(String referencePKH, int wordNum) {
         if (referencePKH == null || !(wordNum > 0 && wordNum < 6)) {
             throw new IllegalArgumentException("PKH or requested word is not valid at #extractWordFromPKH");
         }
@@ -364,7 +334,7 @@ public class HeatVisualizerHelper {
         return referencePKH.substring((wordNum - 1) * 8, ((wordNum - 1) * 8) + 8);
     }
 
-    public String extractWordFromPK(String referencePK, int wordNum) {
+    public static String extractWordFromPK(String referencePK, int wordNum) {
         if (referencePK == null || !(wordNum > 0 && wordNum < 9)) {
             throw new IllegalArgumentException("PKH or requested word is not valid at #extractWordFromPK");
         }
@@ -380,9 +350,5 @@ public class HeatVisualizerHelper {
             map.put(current, current);
         }
         return map;
-    }
-
-    public void writeMatchToFile(String priv, String forPKH, String somePath) {
-        throw new IllegalStateException("writeMatchToFile not implemented");
     }
 }

@@ -13,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
 import com.bearlycattable.bait.bl.controllers.RootController;
-import com.bearlycattable.bait.bl.helpers.DarkModeHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;

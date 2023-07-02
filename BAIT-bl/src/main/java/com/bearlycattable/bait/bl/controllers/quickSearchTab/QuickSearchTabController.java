@@ -15,7 +15,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
 import com.bearlycattable.bait.bl.controllers.RootController;
-import com.bearlycattable.bait.bl.helpers.DarkModeHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
 import com.bearlycattable.bait.bl.helpers.QuickSearchTaskHelper;
 import com.bearlycattable.bait.commons.CssConstants;
@@ -207,12 +207,17 @@ public class QuickSearchTabController {
         quickSearchHBoxTargetKeySelection.getChildren().add(parent);
     }
 
-    //TODO: some validation needed
     private void exportPubUnencodedToConverterTab() {
-        String key = quickSearchTextFieldTargetKey.getText();
+        String key = quickSearchTextFieldTargetKey.getText().trim();
 
-        if (key.trim().isEmpty()) {
+        if (key.isEmpty()) {
             insertErrorMessage("Nothing to export");
+        }
+
+        if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches()) {
+            insertInfoMessage("Key has been exported, but it is not valid", TextColorEnum.GREEN);
+        } else {
+            insertInfoMessage("Key: " + key + " has been exported to 'Converter' tab", TextColorEnum.GREEN);
         }
 
         removeErrorMessage();

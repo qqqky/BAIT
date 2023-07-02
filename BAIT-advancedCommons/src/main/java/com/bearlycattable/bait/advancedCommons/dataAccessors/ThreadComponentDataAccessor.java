@@ -1,4 +1,4 @@
-package com.bearlycattable.bait.commons.dataAccessors;
+package com.bearlycattable.bait.advancedCommons.dataAccessors;
 
 import java.util.Map;
 

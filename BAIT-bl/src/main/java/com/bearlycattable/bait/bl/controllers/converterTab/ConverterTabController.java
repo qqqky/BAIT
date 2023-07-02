@@ -27,11 +27,13 @@ public class ConverterTabController {
     private RootController rootController;
 
     @FXML
+    @Getter
     private TextField converterConversionTextFieldEncodedPub;
     @FXML
     @Getter
     private TextField converterConversionTextFieldUnencodedPub;
     @FXML
+    @Getter
     private TextField converterWIFTextFieldPriv;
     @FXML
     private TextField converterWIFTextFieldResultUncompressed;
@@ -56,7 +58,7 @@ public class ConverterTabController {
         String input = converterConversionTextFieldEncodedPub.getText();
 
         //P2PKH keys are of length 26-34 (some sources state length 35 is possible)
-        if (input.length() > 34 || input.length() < 26) {
+        if (input.length() < 26 || input.length() > 34) {
             addErrorMessageForEncodingAndRedBorder(rb.getString("error.validPubRequired"), converterConversionTextFieldEncodedPub);
             removeRedBorder(converterConversionTextFieldUnencodedPub);
             return;
@@ -75,7 +77,7 @@ public class ConverterTabController {
         try {
             converterConversionTextFieldUnencodedPub.setText(helper.decodeFromBase58(input, true));
         } catch (RuntimeException e) {
-            addErrorMessageForEncodingAndRedBorder("Not all keys starting with 1 are valid. This one isn't", converterConversionTextFieldEncodedPub);
+            addErrorMessageForEncodingAndRedBorder(rb.getString("error.checksumMismatch"), converterConversionTextFieldEncodedPub);
         }
     }
 
@@ -89,9 +91,9 @@ public class ConverterTabController {
             return;
         }
 
-        String fixed = input.toLowerCase(Locale.ROOT);
+        String lowerCased = input.toLowerCase(Locale.ROOT);
 
-        if (!Validator.isValidUnencodedPubKey(fixed)) {
+        if (!Validator.isValidUnencodedPubKey(lowerCased)) {
             addErrorMessageForEncodingAndRedBorder(rb.getString("error.invalidPkh"), converterConversionTextFieldUnencodedPub);
             return;
         }

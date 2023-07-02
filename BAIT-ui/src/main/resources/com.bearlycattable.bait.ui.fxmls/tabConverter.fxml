@@ -137,7 +137,7 @@
                     <Label alignment="CENTER" prefWidth="500.0" text="%label.wifForUncompressed" />
                   </children>
                 </VBox>
-                <TextField fx:id="converterWIFTextFieldResultUncompressed" alignment="CENTER" prefHeight="32.0" prefWidth="440.0" />
+                <TextField fx:id="converterWIFTextFieldResultUncompressed" alignment="CENTER" editable="false" prefHeight="32.0" prefWidth="440.0" />
               </children>
             </VBox>
           </children>
@@ -152,7 +152,7 @@
                     <Label alignment="CENTER" text="%label.wifForCompressed" />
                   </children>
                 </VBox>
-                <TextField fx:id="converterWIFTextFieldResultCompressed" alignment="CENTER" />
+                <TextField fx:id="converterWIFTextFieldResultCompressed" alignment="CENTER" editable="false" prefHeight="32.0" prefWidth="440.0" />
               </children>
             </VBox>
           </children>

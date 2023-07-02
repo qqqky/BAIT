@@ -30,14 +30,15 @@
     <bait-bl.version>1.0.2</bait-bl.version>
     <bait-commons.version>1.0.0</bait-commons.version>
     <bait-utility.version>1.0.0</bait-utility.version>
-    <bait-advanced.version>1.0.0</bait-advanced.version>
-    <bait-resourceBundles.version>1.0.0</bait-resourceBundles.version>
+    <bait-advanced.version>1.0.1</bait-advanced.version>
+    <bait-resourceBundles.version>1.0.1</bait-resourceBundles.version>
     <bait-advancedRestricted.version>1.0.0</bait-advancedRestricted.version>
-    <bait-advancedCommons.version>1.0.0</bait-advancedCommons.version>
+    <bait-advancedCommons.version>1.0.1</bait-advancedCommons.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
     <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
     <javafx.controls.version>17.0.0.1</javafx.controls.version>
     <javafx.fxml.version>20</javafx.fxml.version>

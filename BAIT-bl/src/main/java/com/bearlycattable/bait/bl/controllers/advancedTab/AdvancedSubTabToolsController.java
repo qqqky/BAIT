@@ -9,10 +9,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.utility.UserInputUtils;
 import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
-import com.bearlycattable.bait.bl.helpers.DarkModeHelper;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
@@ -394,7 +394,7 @@ public class AdvancedSubTabToolsController {
             System.out.println("More than 3 items found. Only first 3 addresses will be used in template");
         }
 
-        return Optional.of(parentController.getAddressReaderProvider().createTemplateFromStringList(inputKeyList, max));
+        return parentController.getAddressReaderProvider().createTemplateFromStringList(inputKeyList, max);
     }
 
     private Optional<P2PKHSingleResultData[]> createPubTemplateFromFile() {

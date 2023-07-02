@@ -508,10 +508,9 @@
     -fx-font-weight: bold;
 }
 /*middle content*/
-/*.alertDark.dialog-pane .content.label {*/
-/*    -fx-background-color: -fx-custom-input-and-hover-background;*/
-/*    -fx-text-fill: -fx-custom-whitish-text;*/
-/*}*/
+.alertDark.dialog-pane .content.label {
+    -fx-text-fill: -fx-custom-whitish-text;
+}
 .alertDark.dialog-pane .content {
     -fx-background-color: -fx-custom-background-darkest;
 }
@@ -522,6 +521,12 @@
 .alertDark.dialog-pane .header-panel .label {
     -fx-wrap-text: true;
     -fx-text-fill: green;
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+}
+.alertDark.dialog-pane.textRed .header-panel .label {
+    -fx-wrap-text: true;
+    -fx-text-fill: red;
     -fx-font-weight: bold;
     -fx-font-size: 15;
 }
