@@ -70,24 +70,6 @@ public class SeedMutationConfigDataAccessor {
         return list;
     }
 
-    // public Pair<SeedMutationTypeEnum, String> getIncDecData() {
-    //     SeedMutationTypeEnum incDecType =  dataMap.keySet().stream()
-    //             .filter(SeedMutationTypeEnum::isIncDecGroup)
-    //             .findAny()
-    //             .orElse(null);
-    //
-    //     if (incDecType == null) {
-    //         return null;
-    //     }
-    //
-    //     String value = cast(dataMap.get(incDecType));
-    //
-    //     if (value == null || value.isEmpty()) {
-    //         return null;
-    //     }
-    //
-    //     return new Pair<>(incDecType, value);
-    // }
     public Optional<Pair<SeedMutationTypeEnum, String>> getIncDecPair() {
         return getData(SeedMutationTypeEnum::isIncDecGroup);
     }

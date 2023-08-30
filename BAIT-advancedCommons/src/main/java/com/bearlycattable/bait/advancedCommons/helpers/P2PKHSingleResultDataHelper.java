@@ -209,7 +209,6 @@ public class P2PKHSingleResultDataHelper {
      * General method for saving a search template once the search is done (.json format)
      * @param saveLocation
      * @param data
-     * @param messageForUser
      * @return
      */
     public static synchronized boolean serializeAndSave(String saveLocation, P2PKHSingleResultData[] data) {

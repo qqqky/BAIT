@@ -4,6 +4,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import com.bearlycattable.bait.advancedCommons.interfaces.DarkModeControl;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedConfigAccessProxy;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
 import com.bearlycattable.bait.utility.BundleUtils;
@@ -15,7 +17,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import lombok.Getter;
 
-public class AdvancedSubTabConfigController {
+public class AdvancedSubTabConfigController implements DarkModeControl {
 
     private static final Logger LOG = Logger.getLogger(AdvancedSubTabConfigController.class.getName());
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "AdvancedSubTabConfig", LocaleUtils.APP_LANGUAGE);
@@ -33,15 +35,16 @@ public class AdvancedSubTabConfigController {
     @Getter
     private CheckBox advancedConfigCbxDarkMode;
 
-    private AdvancedTabMainController parentController;
+    // private AdvancedTabMainController parentController;
+    private AdvancedConfigAccessProxy advancedConfigAccessProxy;
 
     @FXML
     void initialize() {
         System.out.println("CREATING (child): AdvancedSubTabConfigController......");
     }
 
-    public void setParentController(AdvancedTabMainController parentController) {
-        this.parentController = Objects.requireNonNull(parentController);
+    public void setAdvancedConfigAccessProxy(AdvancedConfigAccessProxy proxy) {
+        this.advancedConfigAccessProxy = Objects.requireNonNull(proxy);
     }
 
     @FXML
@@ -61,6 +64,16 @@ public class AdvancedSubTabConfigController {
     }
 
     public final boolean isParentValid() {
-        return parentController != null;
+        return advancedConfigAccessProxy != null;
+    }
+
+    @Override
+    public void setDarkModeEnabled(boolean enabled) {
+        advancedConfigAccessProxy.setDarkModeEnabled(enabled);
+    }
+
+    @Override
+    public void refreshLogView() {
+        advancedConfigAccessProxy.refreshLogView();
     }
 }

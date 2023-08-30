@@ -19,16 +19,14 @@ import javafx.scene.control.ChoiceBox;
 public final class AdvancedSubTabSearchControllerInitializer {
 
     private final AdvancedSubTabSearchController controller;
-    private final AdvancedTabMainController parentController;
     private final EventHandler<ActionEvent> disabledWordsCheckboxHandler;
 
     private AdvancedSubTabSearchControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AdvancedSubTabSearchControllerInitializer(AdvancedSubTabSearchController controller, AdvancedTabMainController parentController) {
+    private AdvancedSubTabSearchControllerInitializer(AdvancedSubTabSearchController controller) {
         this.controller = controller;
-        this.parentController = parentController;
         this.disabledWordsCheckboxHandler = event -> {
             CheckBox cbx = (CheckBox) event.getSource();
             String id = cbx.getId();
@@ -52,9 +50,10 @@ public final class AdvancedSubTabSearchControllerInitializer {
             return;
         }
 
-        //parent controller must be set before initialization
-        controller.setParentController(parentController);
-        new AdvancedSubTabSearchControllerInitializer(controller, parentController).init();
+        //only set implementations we need
+        controller.setAdvancedSearchAccessProxy(parentController);
+
+        new AdvancedSubTabSearchControllerInitializer(controller).init();
     }
 
     private void init() {

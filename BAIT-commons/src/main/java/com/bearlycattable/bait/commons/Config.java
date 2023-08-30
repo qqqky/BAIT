@@ -46,10 +46,10 @@ public class Config {
             SearchModeEnum.DECREMENTAL_ABSOLUTE.getLabel(), SearchModeEnum.DECREMENTAL_WORDS.getLabel()));
 
     //dev
-    public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/exactMatchCheckListExample.txt";
-    public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/matches.txt";
+    // public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/exactMatchCheckListExample.txt";
+    // public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/matches.txt";
 
     //prod
-    // public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/app/exactMatchCheckListExample.txt";
-    // public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/app/matches.txt";
+    public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/app/exactMatchCheckListExample.txt";
+    public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/app/matches.txt";
 }

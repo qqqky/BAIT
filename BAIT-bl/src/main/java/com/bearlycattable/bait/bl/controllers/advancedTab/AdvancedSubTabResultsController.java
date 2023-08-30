@@ -9,6 +9,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedResultsAccessProxy;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
@@ -40,7 +42,8 @@ public class AdvancedSubTabResultsController {
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "AdvancedSubTabResults", LocaleUtils.APP_LANGUAGE);
     private static final String BTN_ID_PREFIX = "advancedBtnShowHeat"; //for 'show result in main tab' buttons
     private static final int FILTERED_RESULTS_UI_LIMIT = 20;
-    private AdvancedTabMainController parentController;
+    // private AdvancedTabMainController parentController;
+    private AdvancedResultsAccessProxy advancedResultsAccessProxy;
     @Setter
     private P2PKHSingleResultData[] loadedResultTemplate;
     private volatile boolean filtered;
@@ -108,8 +111,8 @@ public class AdvancedSubTabResultsController {
         System.out.println("CREATING (child): AdvancedSubTabResultsController......");
     }
 
-    public void setParentController(AdvancedTabMainController parentController) {
-        this.parentController = Objects.requireNonNull(parentController);
+    public void setAdvancedResultsAccessProxy(AdvancedResultsAccessProxy proxy) {
+        this.advancedResultsAccessProxy = Objects.requireNonNull(proxy);
     }
 
     @FXML
@@ -159,7 +162,7 @@ public class AdvancedSubTabResultsController {
         removeErrorLabel();
 
         advancedResultsComboBoxSelectPubFromResults.getSelectionModel().select(bestResult);
-        if (parentController.isVerboseMode()) {
+        if (advancedResultsAccessProxy.isVerboseMode()) {
             System.out.println("Best result: " + bestResult + " (acc: " + bestAccuracy + ")");
         }
     }
@@ -249,16 +252,19 @@ public class AdvancedSubTabResultsController {
         String priv = getPrivFromResultMap(selectedHash, type, scaleFactor);
         int acc = getAccuracyFromResultMap(selectedHash, type, scaleFactor);
 
-        if (parentController.isVerboseMode()) {
+        if (advancedResultsAccessProxy.isVerboseMode()) {
             System.out.println("Expected accuracy for hash " + selectedHash + " at scale factor " + scaleFactor + " for priv key:\r\n" + priv + " - " + acc);
         }
 
-        parentController.setReferenceKeyInComparisonTab(selectedHash, QuickSearchComparisonType.BLIND);
-        parentController.setCurrentKeyInComparisonTab(priv);
-        parentController.setScaleFactorInComparisonTab(JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
-        parentController.calculateOutputsInHeatComparisonTab();
+        HeatComparisonContext heatComparisonContext = HeatComparisonContext.builder()
+                .targetPK(priv)
+                .referenceKey(selectedHash)
+                .comparisonType(QuickSearchComparisonType.BLIND)
+                .scaleFactor(JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor))
+                .build();
 
-        parentController.switchToComparisonTab();
+        advancedResultsAccessProxy.showFullHeatComparison(heatComparisonContext);
+        advancedResultsAccessProxy.switchToComparisonTab();
     }
 
     @FXML
@@ -287,8 +293,8 @@ public class AdvancedSubTabResultsController {
             return;
         }
         removeErrorLabel();
-        parentController.logToUi(P2PKHSingleResultData.toStringPretty(P2PKHSingleResultDataHelper.toArray(filteredMap)), Color.LIGHTGRAY, LogTextTypeEnum.GENERAL);
-        parentController.logToUi("Number of filtered items: " + filteredMap.keySet().size(), Color.GREEN, LogTextTypeEnum.GENERAL);
+        advancedResultsAccessProxy.logToUi(P2PKHSingleResultData.toStringPretty(P2PKHSingleResultDataHelper.toArray(filteredMap)), Color.LIGHTGRAY, LogTextTypeEnum.GENERAL);
+        advancedResultsAccessProxy.logToUi("Number of filtered items: " + filteredMap.keySet().size(), Color.GREEN, LogTextTypeEnum.GENERAL);
 
         showInfoLabel(rb.getString("info.filterSuccess") + filteredMap.keySet().size(), TextColorEnum.GREEN);
         loadFilteredResultsToUi(filteredMap, maxResults);
@@ -490,6 +496,6 @@ public class AdvancedSubTabResultsController {
     }
 
     public final boolean isParentValid() {
-        return parentController != null;
+        return advancedResultsAccessProxy != null;
     }
 }

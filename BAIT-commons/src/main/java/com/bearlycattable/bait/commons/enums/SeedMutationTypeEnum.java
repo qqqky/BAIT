@@ -13,7 +13,7 @@ public enum SeedMutationTypeEnum {
 
     private final MutationGroup mutationGroup;
 
-    public enum MutationGroup { INC_DEC, ROTATE_H, ROTATE_V };
+    public enum MutationGroup { INC_DEC, ROTATE_H, ROTATE_V }
 
     SeedMutationTypeEnum(MutationGroup mutationGroup) {
         this.mutationGroup = mutationGroup;

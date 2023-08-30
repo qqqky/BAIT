@@ -4,7 +4,8 @@ module bait.commons {
     requires com.fasterxml.jackson.databind;
     requires java.logging;
     requires javafx.controls;
-    requires org.bitcoinj.core;
+    requires org.bouncycastle.provider;
+    requires jdk.unsupported;   //for sun.misc.Unsafe
 
     requires static org.checkerframework.checker.qual;
     requires static lombok;
@@ -21,4 +22,6 @@ module bait.commons {
     exports com.bearlycattable.bait.commons.functions;
     exports com.bearlycattable.bait.commons.validators to bait.bl, bait.advancedCommons, bait.advanced;
     exports com.bearlycattable.bait.commons.wrappers to bait.advanced, bait.advancedCommons, bait.bl;
+
+    exports com.bearlycattable.bait.commons.extern.guavaExtern;
 }

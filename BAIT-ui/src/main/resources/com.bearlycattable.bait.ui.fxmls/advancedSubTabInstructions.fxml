@@ -24,7 +24,7 @@
     <VBox alignment="CENTER">
       <children>
         <HBox minHeight="5.0" prefHeight="5.0" />
-        <Button fx:id="advancedInstructionsBtnGoToAdvancedSearchTab" mnemonicParsing="false" onAction="#doGoToAdvancedSearchTab" text="%button.goToAdvancedSearchTab" />
+        <Button mnemonicParsing="false" onAction="#doGoToAdvancedSearchTab" text="%button.goToAdvancedSearchTab" />
         <HBox minHeight="5.0" prefHeight="5.0" />
       </children>
     </VBox>

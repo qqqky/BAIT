@@ -13,15 +13,13 @@ import javafx.scene.text.Font;
 public final class AdvancedSubTabLogControllerInitializer {
 
     private final AdvancedSubTabLogController controller;
-    private AdvancedTabMainController parentController;
 
     private AdvancedSubTabLogControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AdvancedSubTabLogControllerInitializer(AdvancedSubTabLogController controller, AdvancedTabMainController parentController) {
+    private AdvancedSubTabLogControllerInitializer(AdvancedSubTabLogController controller) {
         this.controller = controller;
-        this.parentController = parentController;
     }
 
     public static void initialize(AdvancedSubTabLogController controller, AdvancedTabMainController parentController) {
@@ -34,13 +32,14 @@ public final class AdvancedSubTabLogControllerInitializer {
         }
 
         //parent controller must be set before initialization
-        controller.setParentController(parentController);
-        new AdvancedSubTabLogControllerInitializer(controller, parentController).init();
+        controller.setAdvancedLogAccessProxy(parentController);
+
+        new AdvancedSubTabLogControllerInitializer(controller).init();
     }
 
     private void init() {
         initializeLogListView();
-        initializeLogFilteringCbxes();
+        initializeLogFilteringCheckBoxes();
     }
 
     private void initializeLogListView() {
@@ -58,14 +57,14 @@ public final class AdvancedSubTabLogControllerInitializer {
                     setPrefWidth(controller.getAdvancedLogListView().getPrefWidth() - 20); //must be lower than prefWidth of ListView to avoid unnecessary HBar display
                     setAlignment(Pos.CENTER_LEFT);
                     setFont(Font.font("System", logText.getWeight(), logText.getSize()));
-                    setUserData(parentController.isDarkModeEnabled()); //this data (of ListCell/LabeledText) will be used by event handler later
+                    setUserData(controller.isDarkModeEnabled()); //this data (of ListCell/LabeledText) will be used by event handler later
                     setOnMouseClicked(RightClickHandlerEnum.INSTANCE);
                 }
             }
         });
     }
 
-    private void initializeLogFilteringCbxes() {
+    private void initializeLogFilteringCheckBoxes() {
         controller.getAdvancedLogCbxInfoStartOfSearch().setSelected(true);
         controller.getAdvancedLogCbxInfoStartOfSearch().setOnAction(event -> {
             controller.addOrRemoveFilterType(controller.getAdvancedLogCbxInfoStartOfSearch(), LogTextTypeEnum.START_OF_SEARCH);

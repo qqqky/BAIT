@@ -12,7 +12,6 @@ import com.bearlycattable.bait.advancedCommons.serialization.P2PKHSingleResultDa
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
-import com.bearlycattable.bait.commons.other.PubComparer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

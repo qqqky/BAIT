@@ -36,7 +36,9 @@ module bait.bl {
     opens com.bearlycattable.bait.bl.controllers.heatComparisonTab to javafx.fxml;
 
     exports com.bearlycattable.bait.bl.controllers.quickSearchTab to bait.ui, javafx.fxml;
-    opens com.bearlycattable.bait.bl.controllers.quickSearchTab to javafx.fxml; //allow reflective access of private members
+    opens com.bearlycattable.bait.bl.controllers.quickSearchTab to javafx.fxml;
+    exports com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces to bait.ui, javafx.fxml;
+    opens com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces to javafx.fxml; //allow reflective access of private members
 
     uses com.bearlycattable.bait.resourceBundles.spi.AdvancedSubTabConfigProvider;
     uses com.bearlycattable.bait.resourceBundles.spi.AdvancedSubTabLogProvider;

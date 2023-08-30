@@ -1,6 +1,6 @@
 package com.bearlycattable.bait.advanced.interfaceImpls;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.contexts.TaskPreparationContext;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
-import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTabCommandExecutor;
+import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTaskControlAccessProxy;
 import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
 import com.bearlycattable.bait.commons.Config;
@@ -65,8 +65,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
     //Format: parentId, childId, TaskDiagnosticsModel
     private final ConcurrentMap<String, Map<String, TaskDiagnosticsModel>> taskDiagnosticsTree = new ConcurrentHashMap<>();
 
-    // private static volatile AdvancedTabMainController advancedTabMainController;
-    private static volatile AdvancedTabCommandExecutor advancedTabCommandExecutor;
+    private static volatile AdvancedTaskControlAccessProxy advancedTaskControlAccessProxy;
     private static volatile AdvancedTaskControl instance;
     private static volatile boolean initialized = false;
 
@@ -85,10 +84,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
     @Override
     public void initialize(Object args) {
-        // if (!(args instanceof AdvancedTabMainController)) {
-        //     return;
-        // }
-        if (!(args instanceof AdvancedTabCommandExecutor)) {
+        if (!(args instanceof AdvancedTaskControlAccessProxy)) {
             return;
         }
 
@@ -96,8 +92,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
             return;
         }
 
-        // advancedTabMainController = (AdvancedTabMainController) args;
-        advancedTabCommandExecutor = (AdvancedTabCommandExecutor) args;
+        advancedTaskControlAccessProxy = (AdvancedTaskControlAccessProxy) args;
         initialized = true;
     }
 
@@ -130,10 +125,10 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
             String parentThreadId = context.getThreadSpawnModel().getParentThreadId();
 
             if (currentText.equals(rb.getString("label.showInfo"))) {
-                advancedTabCommandExecutor.insertThreadInfoLabelsToUi(parentThreadId, threadNum, infoForCurrentLoopList);
+                advancedTaskControlAccessProxy.insertThreadInfoLabelsToUi(parentThreadId, threadNum, infoForCurrentLoopList);
                 btn.setText(rb.getString("label.hideInfo"));
             } else {
-                advancedTabCommandExecutor.removeThreadInfoLabelsFromUi(parentThreadId, threadNum);
+                advancedTaskControlAccessProxy.removeThreadInfoLabelsFromUi(parentThreadId, threadNum);
                 btn.setText(rb.getString("label.showInfo"));
             }
         });
@@ -146,7 +141,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
         //log detailed 'Start of search' info message before the first loop only
         if (context.isFirstLoop()) {
-            advancedTabCommandExecutor.logToUi(context.buildDetailedRunInfoForUi().stream().collect(Collectors.joining(System.lineSeparator())), Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
+            advancedTaskControlAccessProxy.logToUi("Start-of-search info: " + System.lineSeparator() + context.buildDetailedRunInfoForUi().stream().collect(Collectors.joining(System.lineSeparator())), Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
         }
 
         searchTask.setOnRunning(event -> doOnRunning(context));
@@ -154,23 +149,35 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         searchTask.setOnCancelled(event -> doOnCancelled(context));
         searchTask.setOnFailed(event -> doOnFailed(context));
 
-        if (advancedTabCommandExecutor.isVerboseMode()) {
-            String msg = "Task has been prepared for parent: " + context.getThreadSpawnModel().getParentThreadId();
-            advancedTabCommandExecutor.logToUi(msg, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
-            System.out.println(msg);
-        }
+        logTaskPreparedMessage(context);
+
         return searchTask;
+    }
+
+    private void logTaskPreparedMessage(TaskPreparationContext context) {
+        if (!advancedTaskControlAccessProxy.isVerboseMode()) {
+            return;
+        }
+
+        String msg = "Task has been prepared for parent: " + context.getThreadSpawnModel().getParentThreadId();
+        advancedTaskControlAccessProxy.logToUi(msg, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
+        System.out.println(msg);
     }
 
     private void doOnRunning(TaskPreparationContext context) {
         ThreadComponentDataAccessor accessor = context.getAccessor();
         LOG.info("Thread with id: " + accessor.getThreadNum() + " is now RUNNING.");
 
-        //debug
-        // LOG.info(accessor.buildDebugInfo());
+        logDebugInfoForAccessor(accessor, "Thread component info at 'doOnRunning'");
 
         accessor.getStopThreadButton().setDisable(false);
-        advancedTabCommandExecutor.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.BURLY_WOOD);
+        advancedTaskControlAccessProxy.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.BURLY_WOOD);
+    }
+
+    private void logDebugInfoForAccessor(ThreadComponentDataAccessor accessor, String message) {
+        if (!advancedTaskControlAccessProxy.isVerboseMode()) {
+            LOG.info(accessor.buildDebugInfo(message));
+        }
     }
 
     private void doOnSucceeded(TaskPreparationContext context, WorkerStateEvent workerStateEvent) {
@@ -184,12 +191,9 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         String threadNum = context.getAccessor().getThreadNum();
         taskResultsMap.put(threadNum, result);
 
-        if (advancedTabCommandExecutor.isVerboseMode()) {
-            LOG.info("Result has been obtained from thread: " + threadNum);
-            //debug
-            // LOG.info(accessor.buildDebugInfo());
-        }
-        advancedTabCommandExecutor.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.LIGHT_GREEN);
+        logDebugInfoForAccessor(accessor, "Thread component info at 'doOnSucceeded' (result obtained from thread " + threadNum + ")");
+
+        advancedTaskControlAccessProxy.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.LIGHT_GREEN);
 
         if (!taskMap.containsKey(threadNum)) {
             throw new IllegalStateException("Task map does not contain the specified thread id: " + threadNum);
@@ -206,30 +210,30 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         if (savedNormally) {
             String messageForUser = "[saved normally after obtaining search results]";
             LOG.info("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser);
-            advancedTabCommandExecutor.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
+            advancedTaskControlAccessProxy.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
         } else {
             LOG.info("Results of thread " + threadNum + " could not be saved!");
-            advancedTabCommandExecutor.logToUiBold("Results of thread " + threadNum + " could not be saved!", Color.RED, LogTextTypeEnum.END_OF_SEARCH);
+            advancedTaskControlAccessProxy.logToUiBold("Results of thread " + threadNum + " could not be saved!", Color.RED, LogTextTypeEnum.END_OF_SEARCH);
         }
 
 
         //2. remove task from the map if automerge is disabled
-        if (advancedTabCommandExecutor.isAutomergePossible()) {
-            Optional<String> automergePath = advancedTabCommandExecutor.getAutomergePathFromProgressAndResultsTab();
+        if (advancedTaskControlAccessProxy.isAutomergePossible()) {
+            Optional<String> automergePath = advancedTaskControlAccessProxy.getAutomergePathFromProgressAndResultsTab();
 
             if (!automergePath.isPresent()) {
-                advancedTabCommandExecutor.showErrorMessageInAdvancedSearchSubTab(rb.getString("error.automergePathInvalid"));
+                advancedTaskControlAccessProxy.showErrorMessageInAdvancedSearchSubTab(rb.getString("error.automergePathInvalid"));
             }
 
             automergePath.ifPresent(mergeLocation -> {
                 if (!PathUtils.isAccessibleToReadWrite(mergeLocation)) {
-                    advancedTabCommandExecutor.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("error.automergePathInaccessible"), TextColorEnum.RED);
+                    advancedTaskControlAccessProxy.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("error.automergePathInaccessible"), TextColorEnum.RED);
                    return;
                 }
 
                 P2PKHSingleResultData[] mergedResults = mergeAllExistingTaskResults();
                 if (mergedResults == null) { //if not all tasks are done (done means any state other than 'NEW')
-                    advancedTabCommandExecutor.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("error.notAllTasksDone"), TextColorEnum.RED);
+                    advancedTaskControlAccessProxy.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("error.notAllTasksDone"), TextColorEnum.RED);
                     return;
                 }
 
@@ -237,14 +241,14 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
                 if (automergeSucceeded) {
                     String messageForUser = "[saved after auto-merge]";
                     LOG.info("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser);
-                    advancedTabCommandExecutor.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
-                    advancedTabCommandExecutor.insertErrorOrSuccessMessageInAdvancedProgressSubTab(MessageFormat.format(rb.getString("info.automergeSuccess"), mergeLocation), TextColorEnum.GREEN);
+                    advancedTaskControlAccessProxy.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
+                    advancedTaskControlAccessProxy.insertErrorOrSuccessMessageInAdvancedProgressSubTab(MessageFormat.format(rb.getString("info.automergeSuccess"), mergeLocation), TextColorEnum.GREEN);
                     taskResultsMap.clear();
                     disableAutomergeOption();
                 } else {
                     LOG.info("Data and path were valid for automerge, but operation did not succeed. Reason unknown");
-                    advancedTabCommandExecutor.logToUiBold("Data and path were valid for automerge, but operation did not succeed. Reason unknown", Color.RED, LogTextTypeEnum.END_OF_SEARCH);
-                    advancedTabCommandExecutor.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("Data and path were valid for automerge, but operation did not succeed. Reason unknown"), TextColorEnum.RED);
+                    advancedTaskControlAccessProxy.logToUiBold("Data and path were valid for automerge, but operation did not succeed. Reason unknown", Color.RED, LogTextTypeEnum.END_OF_SEARCH);
+                    advancedTaskControlAccessProxy.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("Data and path were valid for automerge, but operation did not succeed. Reason unknown"), TextColorEnum.RED);
                 }
                 Toolkit.getDefaultToolkit().beep();
             });
@@ -272,9 +276,9 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
             //apply the new seed
             model.setSeed(buildMutatedSeed(model.getSeed(), model.getDisabledWords(), new SeedMutationConfigDataAccessor(seedMutationConfigs)));
 
-            if (advancedTabCommandExecutor.isVerboseMode()) {
-                advancedTabCommandExecutor.logToUi("Seed before mutation [threadNum=" + threadNum + "]: " + seedBefore, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
-                advancedTabCommandExecutor.logToUi("Seed after mutation [threadNum=" + threadNum + "]: " + model.getSeed(), Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
+            if (advancedTaskControlAccessProxy.isVerboseMode()) {
+                advancedTaskControlAccessProxy.logToUi("Seed before mutation [threadNum=" + threadNum + "]: " + seedBefore, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
+                advancedTaskControlAccessProxy.logToUi("Seed after mutation [threadNum=" + threadNum + "]: " + model.getSeed(), Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
             }
         });
 
@@ -286,14 +290,14 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
                     String prefixMutationHexValue = model.getPrefixMutationConfig().getValue();
                     String newPrefix = buildNewPrefix(currentRandomWordPrefix, prefixMutationType, prefixMutationHexValue);
                     model.setPrefix(newPrefix);
-                    advancedTabCommandExecutor.logToUi(rb.getString("info.newRandomWordPrefixChanged") + newPrefix, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
+                    advancedTaskControlAccessProxy.logToUi(rb.getString("info.newRandomWordPrefixChanged") + newPrefix, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
                 });
             }
         }
 
         //spawn child thread using updated model
         spawnBackgroundSearchThread(context.getThreadSpawnModel()).ifPresent(threadId -> {
-            advancedTabCommandExecutor.logToUi(MessageFormat.format(rb.getString("info.childThreadSpawned"), threadId, threadNum), Color.GREEN, LogTextTypeEnum.GENERAL);
+            advancedTaskControlAccessProxy.logToUi(MessageFormat.format(rb.getString("info.childThreadSpawned"), threadId, threadNum), Color.GREEN, LogTextTypeEnum.GENERAL);
         });
     }
 
@@ -303,7 +307,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
                 .forEach((key, value) -> count.addAndGet(value.getTotalNumOfResultsFound()));
         String totalCombinedResultsMessage = rb.getString("info.totalNumOfResultsInAllLoops") + count.get();
         LOG.info(totalCombinedResultsMessage);
-        advancedTabCommandExecutor.logToUiBold(totalCombinedResultsMessage, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
+        advancedTaskControlAccessProxy.logToUiBold(totalCombinedResultsMessage, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
 
         taskDiagnosticsTree.get(parentThreadId).clear();
         taskDiagnosticsTree.remove(parentThreadId);
@@ -313,31 +317,20 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         //when thread is cancelled, the returned value is null immediately
         //(P2PKHSingleResultData[]) event.getSource().getValue() == null...
 
-        Task<P2PKHSingleResultData[]> searchTask = context.getSearchTask();
         ThreadComponentDataAccessor accessor = context.getAccessor();
         String threadNum = accessor.getThreadNum();
 
-        //diagnostics:
-        String message = searchTask.getMessage();
-        String iteration = message.substring(0, message.indexOf(":"));
-        String lastPriv = message.substring(message.indexOf(":") + 1);
-        String errorMessage = MessageFormat.format(rb.getString("error.threadCancelledAtIteration"), threadNum, iteration, searchTask.getProgress() * 100)
-                + System.lineSeparator()
-                + rb.getString("error.lastCheckedPkWas") + lastPriv
-                + System.lineSeparator()
-                + rb.getString("error.resultsNotSavedClickRemove");
-        LOG.info(errorMessage);
+        String errorMessage = buildErrorMessageOnCancelled(context);
+        logErrorMessage(errorMessage);
 
         accessor.getRemoveButton().setDisable(false);
         accessor.getStopThreadButton().setDisable(true);
         accessor.getStopThreadButton().setOnAction(event -> LOG.info("Thread is not running"));
         accessor.getShowHideInfoButton().setOnAction(event -> showHideThreadError(event, threadNum, context, errorMessage));
 
-        if (context.isVerboseMode()) {
-            LOG.info(accessor.buildDebugInfo());
-        }
+        logDebugInfoForAccessor(accessor, "Thread component info at 'doOnCancelled'");
 
-        advancedTabCommandExecutor.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.GRAY);
+        advancedTaskControlAccessProxy.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.GRAY);
 
         context.getTaskMap().remove(threadNum);
     }
@@ -346,28 +339,48 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         ThreadComponentDataAccessor accessor = context.getAccessor();
         String threadNum = accessor.getThreadNum();
 
-        String message = context.getSearchTask().getMessage();
-        String iteration = message.substring(0, message.indexOf(":"));
-        String lastPriv = message.substring(message.indexOf(":") + 1);
+        logDebugInfoForAccessor(accessor, "Thread component info at 'doOnFailed'");
 
-        String errorMessage = MessageFormat.format(rb.getString("error.threadFailedAtIteration"), threadNum, iteration, context.getSearchTask().getProgress() * 100)
-                + System.lineSeparator()
-                + rb.getString("error.lastCheckedPkWas") + lastPriv
-                + System.lineSeparator()
-                + rb.getString("error.resultsNotSavedClickRemove");
-        if (context.isVerboseMode()) {
-            LOG.info(errorMessage);
-        }
-        advancedTabCommandExecutor.logToUi(errorMessage, Color.RED, LogTextTypeEnum.GENERAL);
+        String errorMessage = buildErrorMessageOnFailed(context);
+        logErrorMessage(errorMessage);
 
         accessor.getRemoveButton().setDisable(false);
         accessor.getStopThreadButton().setDisable(true);
         accessor.getStopThreadButton().setOnAction(event -> LOG.info("Thread is not running"));
         accessor.getShowHideInfoButton().setOnAction(event -> showHideThreadError(event, threadNum, context, errorMessage));
 
-        advancedTabCommandExecutor.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.INDIAN_RED);
+        advancedTaskControlAccessProxy.setBackgroundColorForProgressHBox(accessor.getParentThreadId(), accessor.getThreadNum(), BackgroundColorEnum.INDIAN_RED);
 
         context.getTaskMap().remove(context.getAccessor().getThreadNum());
+    }
+
+    private String buildErrorMessageOnFailed(TaskPreparationContext context) {
+        String message = context.getSearchTask().getMessage();
+        String iteration = message.substring(0, message.indexOf(":"));
+        String lastKey = message.substring(message.indexOf(":") + 1);
+
+        return MessageFormat.format(rb.getString("error.threadFailedAtIteration"), context.getAccessor().getThreadNum(), iteration, context.getSearchTask().getProgress() * 100)
+                + System.lineSeparator()
+                + rb.getString("error.lastCheckedPkWas") + lastKey
+                + System.lineSeparator()
+                + rb.getString("error.resultsNotSavedClickRemove");
+    }
+
+    private String buildErrorMessageOnCancelled(TaskPreparationContext context) {
+        String message = context.getSearchTask().getMessage();
+        String iteration = message.substring(0, message.indexOf(":"));
+        String lastKey = message.substring(message.indexOf(":") + 1);
+
+        return MessageFormat.format(rb.getString("error.threadCancelledAtIteration"), context.getAccessor().getThreadNum(), iteration, context.getSearchTask().getProgress() * 100)
+                + System.lineSeparator()
+                + rb.getString("error.lastCheckedPkWas") + lastKey
+                + System.lineSeparator()
+                + rb.getString("error.resultsNotSavedClickRemove");
+    }
+
+    private void logErrorMessage(String errorMessage) {
+        LOG.info(errorMessage);
+        advancedTaskControlAccessProxy.logToUi(errorMessage, Color.RED, LogTextTypeEnum.END_OF_SEARCH);
     }
 
     private void showHideThreadError(ActionEvent event, String threadNum, TaskPreparationContext context, String errorMessage) {
@@ -376,10 +389,10 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         String parentThreadId = context.getThreadSpawnModel().getParentThreadId();
 
         if (currentText.equals(rb.getString("label.showInfo"))) {
-            advancedTabCommandExecutor.insertThreadInfoLabelsToUi(parentThreadId, threadNum, Arrays.stream(errorMessage.split(System.lineSeparator())).collect(Collectors.toList()));
+            advancedTaskControlAccessProxy.insertThreadInfoLabelsToUi(parentThreadId, threadNum, Arrays.stream(errorMessage.split(System.lineSeparator())).collect(Collectors.toList()));
             btn.setText(rb.getString("label.hideInfo"));
         } else {
-            advancedTabCommandExecutor.removeThreadInfoLabelsFromUi(parentThreadId, threadNum);
+            advancedTaskControlAccessProxy.removeThreadInfoLabelsFromUi(parentThreadId, threadNum);
             btn.setText(rb.getString("label.showInfo"));
         }
     }
@@ -433,8 +446,6 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
             parentThreadId = elevateToParent(threadNum, threadSpawnModel);
         }
 
-        logDisabledWordsInfo(threadSpawnModel.getDisabledWords());
-
         //TODO: we must track the tree of threads branching from every parent
         taskDiagnosticsTree.get(parentThreadId).put(threadNum, TaskDiagnosticsModel.empty());
         AdvancedSearchContext advancedSearchContext = buildAdvancedSearchContext(threadSpawnModel, parentThreadId, threadNum);
@@ -450,8 +461,8 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
             return Optional.empty();
         }
 
-        //we aren't using executor service (executorService.submit(searchTask)).
-        //instead, launch the prepared task on a separate thread manually:
+        //Could be using executor service (executorService.submit(searchTask)),
+        //but, we launch the prepared task on a separate thread manually:
         Thread searchThread = new Thread(preparedTask.get());
         searchThread.setDaemon(true);
         searchThread.start(); //do not call searchThread.run()
@@ -470,26 +481,26 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
                 .observableProgressLabelValue(advancedSearchContext.getObservableProgressLabelValue())
                 .taskDiagnosticsModel(advancedSearchContext.getTaskDiagnosticsModel())
                 //options below are used for loops
-                // .advancedSubTabSearchController(advancedSubTabSearchController)
                 .threadSpawnModel(threadSpawnModel)
-                .verboseMode(advancedTabCommandExecutor.isVerboseMode())
+                .verboseMode(advancedTaskControlAccessProxy.isVerboseMode())
                 .build();
     }
 
     private Optional<AdvancedSearchTaskWrapper> createNewAdvancedSearchTask(AdvancedSearchContext advancedSearchContext, ThreadSpawnModel threadSpawnModel) {
         AdvancedSearchTaskWrapper taskWrapper = threadSpawnModel.getAdvancedSearchHelper().createNewAdvancedSearchTask(advancedSearchContext);
         String message;
+
         if (!taskWrapper.hasTask()) {
             message = taskWrapper.getError();
-            advancedTabCommandExecutor.disableAdvancedSearchBtn(threadSpawnModel.getRemainingLoops() > 0);
-            advancedTabCommandExecutor.logToUi(message, Color.RED, LogTextTypeEnum.START_OF_SEARCH);
+            advancedTaskControlAccessProxy.disableAdvancedSearchBtn(threadSpawnModel.getRemainingLoops() > 0);
+            advancedTaskControlAccessProxy.logToUi(message, Color.RED, LogTextTypeEnum.START_OF_SEARCH);
             System.out.println(message);
             return Optional.empty();
         }
 
-        if (advancedTabCommandExecutor.isVerboseMode()) {
-            message = "Task has been created for parent (unprepared): " + advancedSearchContext.getParentThreadId();
-            advancedTabCommandExecutor.logToUi(message, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
+        if (advancedTaskControlAccessProxy.isVerboseMode()) {
+            message = "Task (unprepared) has been created for parent thread: " + advancedSearchContext.getParentThreadId();
+            advancedTaskControlAccessProxy.logToUi(message, Color.GREEN, LogTextTypeEnum.GENERAL);
             System.out.println(message);
         }
 
@@ -498,12 +509,12 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
     private void decrementRemainingLoops(ThreadSpawnModel threadSpawnModel) {
         threadSpawnModel.setRemainingLoops(threadSpawnModel.getRemainingLoops() - 1);
-        if (!advancedTabCommandExecutor.isVerboseMode()) {
+        if (!advancedTaskControlAccessProxy.isVerboseMode()) {
             return;
         }
 
         String msg = "Loops remaining: " + threadSpawnModel.getRemainingLoops();
-        advancedTabCommandExecutor.logToUi(msg, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
+        advancedTaskControlAccessProxy.logToUi(msg, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
         System.out.println(msg);
     }
 
@@ -511,28 +522,18 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         //message displayed on parent's (Accordion's) TitledPane
         String titleMessage = "Search mode: " + threadSpawnModel.getAdvancedSearchHelper().getSearchMode() + ", iterations per loop: " + threadSpawnModel.getAdvancedSearchHelper().getIterations() + ", total loops: " + threadSpawnModel.getRemainingLoops();
 
-        Optional<ThreadComponentDataAccessor> maybeAccessor = advancedTabCommandExecutor.addNewThreadProgressContainerToProgressAndResultsTab(threadSpawnModel.getParentThreadId(), titleMessage);
+        Optional<ThreadComponentDataAccessor> maybeAccessor = advancedTaskControlAccessProxy.addNewThreadProgressContainerToProgressAndResultsTab(threadSpawnModel.getParentThreadId(), titleMessage);
 
         if (maybeAccessor.isPresent()) {
             return maybeAccessor;
         }
 
-        if (advancedTabCommandExecutor.isVerboseMode()) {
+        if (advancedTaskControlAccessProxy.isVerboseMode()) {
             String error = "Received wrong component handles at #createComponentInUi. Cannot continue.";
-            advancedTabCommandExecutor.logToUi(error, Color.RED, LogTextTypeEnum.START_OF_SEARCH);
+            advancedTaskControlAccessProxy.logToUi(error, Color.RED, LogTextTypeEnum.START_OF_SEARCH);
             System.out.println(error);
         }
         return Optional.empty();
-    }
-
-    private void logDisabledWordsInfo(List<Integer> disabledWords) {
-        if (!advancedTabCommandExecutor.isVerboseMode()) {
-            return;
-        }
-
-        String msg = "Disabled words at thread init are: " + disabledWords;
-        advancedTabCommandExecutor.logToUi(msg, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
-        System.out.println(msg);
     }
 
     private String elevateToParent(String threadNum, ThreadSpawnModel threadSpawnModel) {
@@ -552,10 +553,10 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
                 .progressSpacing(threadSpawnModel.getAdvancedSearchHelper().getIterations() / 1000 > 0 ? (threadSpawnModel.getAdvancedSearchHelper().getIterations() / 1000) : 1) //~0.1%
                 .taskDiagnosticsModel(taskDiagnosticsTree.get(parentThreadId).get(currentThreadId))
                 .pointThresholdForNotify(threadSpawnModel.getPointThresholdForNotify())
-                .logConsumer(advancedTabCommandExecutor::logToUi)
+                .logConsumer(advancedTaskControlAccessProxy::logToUi)
                 .searchMode(threadSpawnModel.getAdvancedSearchHelper().getSearchMode())
                 .parentThreadId(parentThreadId)
-                .verbose(advancedTabCommandExecutor.isVerboseMode())
+                .verbose(advancedTaskControlAccessProxy.isVerboseMode())
                 .build();
     }
 
@@ -659,7 +660,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         alert.getDialogPane().setContentText(rb.getString("label.doYouReallyWantToStop") + System.lineSeparator() + rb.getString("label.resultsWillNotBeSaved") + System.lineSeparator());
 
         //must add our default stylesheet for styles to work on Alert
-        boolean darkModeEnabled = advancedTabCommandExecutor.isDarkModeEnabled();
+        boolean darkModeEnabled = advancedTaskControlAccessProxy.isDarkModeEnabled();
         if (darkModeEnabled) {
             alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("com.bearlycattable.bait.ui.css/styles.css")).toExternalForm());
             alert.getDialogPane().getStyleClass().add("alertDark");
@@ -669,7 +670,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
             if (ButtonType.OK == result) {
                 if (taskMap.get(threadNum) == null) {
                     //This happens if we have dialog open when search finishes and then click 'OK'
-                    advancedTabCommandExecutor.removeThreadProgressContainerFromProgressAndResultsTab(threadNum);
+                    advancedTaskControlAccessProxy.removeThreadProgressContainerFromProgressAndResultsTab(threadNum);
                     return;
                 }
                 taskMap.get(threadNum).cancel();
@@ -681,11 +682,11 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
     }
 
     private synchronized void disableAutomergeOption() {
-        advancedTabCommandExecutor.modifyAutomergeAccessInProgressSubTab(false);
+        advancedTaskControlAccessProxy.modifyAutomergeAccessInProgressSubTab(false);
     }
 
     //TODO: task tracking someday
     private synchronized void enableAutomergeOptionIfEligible() {
-        advancedTabCommandExecutor.modifyAutomergeAccessInProgressSubTab(taskMap.size() > 1);
+        advancedTaskControlAccessProxy.modifyAutomergeAccessInProgressSubTab(taskMap.size() > 1);
     }
 }

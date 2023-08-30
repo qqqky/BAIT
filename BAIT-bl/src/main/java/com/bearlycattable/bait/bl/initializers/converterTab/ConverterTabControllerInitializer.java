@@ -7,15 +7,13 @@ import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
 public final class ConverterTabControllerInitializer {
 
     private final ConverterTabController controller;
-    private RootController rootController;
 
     private ConverterTabControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private ConverterTabControllerInitializer(ConverterTabController controller, RootController rootController) {
+    private ConverterTabControllerInitializer(ConverterTabController controller) {
         this.controller = controller;
-        this.rootController = rootController;
     }
 
     public static void initialize(ConverterTabController controller, RootController rootController) {
@@ -28,8 +26,9 @@ public final class ConverterTabControllerInitializer {
         }
 
         //root controller must be set before initialization
-        controller.setRootController(rootController);
-        new ConverterTabControllerInitializer(controller, rootController).init();
+        controller.setConverterTabAccessProxy(rootController);
+
+        new ConverterTabControllerInitializer(controller).init();
     }
 
     private void init() {

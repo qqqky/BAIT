@@ -91,11 +91,17 @@ public class ThreadComponentDataAccessor {
         return id.substring(id.indexOf(PARENT_VBOX_ID_PREFIX) + PARENT_VBOX_ID_PREFIX.length());
     }
 
-    public String buildDebugInfo() {
-        return "Thread num: " + threadNum + System.lineSeparator()
-                + "ParentHBox id: " + (getChildProgressHBox() == null ? "ParentHBox is null" : getChildProgressHBox().getId()) + System.lineSeparator()
-                + "ParentWrapper id: " + (getParentWrapper() == null ? "ParentWrapper is null" : getParentWrapper().getId()) + System.lineSeparator()
-                + "Parent thread id: " + getParentThreadId();
+    public String buildDebugInfo(String optionalMessage) {
+        StringBuilder sb = new StringBuilder();
+        if (optionalMessage != null && !optionalMessage.isEmpty()) {
+            sb.append(optionalMessage).append(":").append(System.lineSeparator());
+        }
+        sb.append("Thread num: ").append(threadNum).append(System.lineSeparator())
+                .append("ParentHBox id: ").append(getChildProgressHBox() == null ? "ParentHBox is null" : getChildProgressHBox().getId()).append(System.lineSeparator())
+                .append("ParentWrapper id: ").append(getParentWrapper() == null ? "ParentWrapper is null" : getParentWrapper().getId()).append(System.lineSeparator())
+                .append("Parent thread id: ").append(getParentThreadId());
+
+        return sb.toString();
     }
 
     @SuppressWarnings("unchecked")

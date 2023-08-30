@@ -1,10 +1,10 @@
 package com.bearlycattable.bait.bl.controllers.advancedTab;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -13,10 +13,22 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import com.bearlycattable.bait.advanced.interfaceImpls.AdvancedTaskControlImpl;
 import com.bearlycattable.bait.advanced.interfaces.AdvancedTaskControl;
 import com.bearlycattable.bait.advanced.providers.UnencodedAddressListReaderProvider;
+import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
 import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
-import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTabCommandExecutor;
-import com.bearlycattable.bait.bl.controllers.RootController;
+import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTaskControlAccessProxy;
+import com.bearlycattable.bait.advancedCommons.interfaces.DarkModeControl;
+import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
+import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
+import com.bearlycattable.bait.bl.controllers.AdvancedTabAccessProxy;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedConfigAccessProxy;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedInstructionsAccessProxy;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedLogAccessProxy;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedProgressAccessProxy;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedResultsAccessProxy;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedSearchAccessProxy;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedToolsAccessProxy;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabConfigControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabInstructionsControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabLogControllerInitializer;
@@ -24,14 +36,11 @@ import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabProgres
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabResultsControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabSearchControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabToolsControllerInitializer;
-import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.enums.BackgroundColorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
-import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
-import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 
 import javafx.fxml.FXML;
@@ -56,14 +65,14 @@ import lombok.Getter;
  *      For avg results of 60+ - can log every 10K or more (when avg points are ~1500 SF1)
  */
 
-public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTabCommandExecutor {
+public class AdvancedTabMainController implements AdvancedToolsAccessProxy, AdvancedSearchAccessProxy, AdvancedResultsAccessProxy,
+        AdvancedProgressAccessProxy, AdvancedConfigAccessProxy, AdvancedInstructionsAccessProxy, AdvancedLogAccessProxy, AdvancedTaskControlAccessProxy, DarkModeControl {
 
     private static final Logger LOG = Logger.getLogger(AdvancedTabMainController.class.getName());
     @Getter
     private final UnencodedAddressListReaderProvider addressReaderProvider = ServiceLoader.load(UnencodedAddressListReaderProvider.class).findFirst().orElse(null);
 
-    private RootController rootController;
-
+    private AdvancedTabAccessProxy advancedTabAccessProxy;
     @Getter
     private volatile AdvancedTaskControl advancedTaskControl;
 
@@ -86,8 +95,8 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
     @FXML
     private Tab advancedSearchTab;
 
-    public void setRootController(RootController rootController) {
-        this.rootController = rootController;
+    public void setAdvancedTabAccessProxy(AdvancedTabAccessProxy proxy) {
+        this.advancedTabAccessProxy = proxy;
     }
 
     @FXML
@@ -103,7 +112,7 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
         AdvancedSubTabToolsControllerInitializer.initialize(advancedSubTabToolsController, this);
 
         advancedTaskControl = AdvancedTaskControlImpl.getInstance();
-        advancedTaskControl.initialize((AdvancedTabCommandExecutor) this);
+        advancedTaskControl.initialize((AdvancedTaskControlAccessProxy) this);
     }
 
     public void modifyAutomergeAccessInProgressSubTab(boolean enabled) {
@@ -118,6 +127,7 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
         return advancedSubTabProgressController.isAutomergeEnabled();
     }
 
+    @Override
     public boolean isBackgroundThreadWorking(String currentThreadNum) {
         return advancedTaskControl.isBackgroundThreadWorking(currentThreadNum);
     }
@@ -135,8 +145,8 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
         node.getChildren().clear();
         infoLabels.forEach(labelText -> node.getChildren().add(new Label(labelText)));
 
-        if (rootController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(rootController.isDarkMode(), node);
+        if (advancedTabAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(advancedTabAccessProxy.isDarkModeEnabled(), node);
         }
     }
 
@@ -149,33 +159,56 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
         return advancedSubTabProgressController.findChildInfoVBox(parentThreadId, childThreadId);
     }
 
-    public void exportDataToCurrentInputFieldInMainTab(String priv) {
-        rootController.setCurrentInputForced(priv);
+    @Override
+    public void exportDataToCurrentInputFieldInMainTab(String priv, AdvancedSubTabSearchController caller) {
+        if (caller != this.advancedSubTabSearchController) {
+            throw new IllegalCallerException("Wrong caller at AdvancedTabMainController#exportDataToCurrentInputFieldInMainTab");
+        }
+        advancedTabAccessProxy.setCurrentInputForced(priv);
     }
 
-    public String importDataFromCurrentInputFieldInMainTab() {
-        return rootController.getCurrentInput();
+    @Override
+    public String buildMutatedSeed(@NonNull String seed, List<Integer> disabledWords, SeedMutationConfigDataAccessor accessor) {
+        return advancedTaskControl.buildMutatedSeed(seed, disabledWords, accessor);
     }
 
-    public void setScaleFactorInComparisonTab(ScaleFactorEnum scaleFactor) {
-        rootController.setScaleFactorInComparisonTab(scaleFactor);
+    @Override
+    @NonNull
+    public Set<String> readUnencodedPubsListIntoSet(String pathToUnencodedAddressesFile) {
+        return addressReaderProvider.readUnencodedPubsListIntoSet(pathToUnencodedAddressesFile);
     }
 
-    public void calculateOutputsInHeatComparisonTab() {
-        rootController.calculateOutputs();
+    @Override
+    public String importDataFromCurrentInputFieldInMainTab(AdvancedSubTabSearchController caller) {
+        if (caller != this.advancedSubTabSearchController) {
+            throw new IllegalCallerException("Wrong caller at AdvancedTabMainController#importDataFromCurrentInputFieldInMainTab");
+        }
+        return advancedTabAccessProxy.getCurrentInput();
+    }
+
+    // @Override
+    // public void setScaleFactorInComparisonTab(ScaleFactorEnum scaleFactor) {
+    //     advancedTabAccessProxy.setScaleFactorInComparisonTab(scaleFactor);
+    // }
+
+    @Override
+    public void showFullHeatComparison(HeatComparisonContext heatComparisonContext) {
+        advancedTabAccessProxy.showFullHeatComparison(heatComparisonContext);
     }
 
     public void switchToParentTabX(int index) {
-        rootController.getTabPaneMain().getSelectionModel().select(index);
+        advancedTabAccessProxy.switchToParentTabX(index);
     }
 
+    @Override
     public void switchToChildTabX(int index) {
         advancedSearchTab.getTabPane().getSelectionModel().select(index);
     }
 
-    public synchronized void loadAdvancedSearchResultsToUi(String pathToResultFile, Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> advancedSearchResultsAsMap) {
-        advancedSubTabResultsController.loadAdvancedSearchResultsToUi(pathToResultFile, advancedSearchResultsAsMap);
-    }
+    // @Override
+    // public synchronized void loadAdvancedSearchResultsToUi(String pathToResultFile, Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> advancedSearchResultsAsMap) {
+    //     advancedSubTabResultsController.loadAdvancedSearchResultsToUi(pathToResultFile, advancedSearchResultsAsMap);
+    // }
 
     @Override
     public synchronized final Optional<ThreadComponentDataAccessor> addNewThreadProgressContainerToProgressAndResultsTab(@Nullable String parentThreadNum, @Nullable String titleMessage) {
@@ -190,10 +223,6 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
     @Override
     public Optional<String> getAutomergePathFromProgressAndResultsTab() {
         return advancedSubTabProgressController.getAutomergePath();
-    }
-
-    public Map<Integer, BigDecimal> getSimilarityMappings() {
-        return rootController.getSimilarityMappings();
     }
 
     @Override
@@ -234,34 +263,33 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
         advancedSubTabProgressController.setBackgroundColorForProgressHBox(threadNum, childThreadNum, color);
     }
 
-    public void setReferenceKeyInComparisonTab(String input, QuickSearchComparisonType type) {
-        rootController.setReferenceKeyInComparisonTab(input, type);
-    }
+    // @Override
+    // public void setReferenceKeyInComparisonTab(String input, QuickSearchComparisonType type) {
+    //     advancedTabAccessProxy.setReferenceKeyInComparisonTab(input, type);
+    // }
+    //
+    // @Override
+    // public void setCurrentKeyInComparisonTab(String input) {
+    //     advancedTabAccessProxy.setCurrentKeyInComparisonTab(input);
+    // }
 
-    public void setCurrentKeyInComparisonTab(String input) {
-        rootController.setCurrentKeyInComparisonTab(input);
-    }
-
+    @Override
     public void switchToComparisonTab() {
         switchToParentTabX(1);
     }
 
     @Override
     public boolean isDarkModeEnabled() {
-        return rootController != null && rootController.isDarkMode();
+        return advancedTabAccessProxy != null && advancedTabAccessProxy.isDarkModeEnabled();
     }
 
     public boolean isExactMatchCheckOnlyEnabled() {
-        return rootController != null && rootController.isExactMatchOnly();
+        return advancedTabAccessProxy != null && advancedTabAccessProxy.isExactMatchOnly();
     }
 
     @Override
-    public void setDarkMode(boolean enabled) {
-        rootController.setDarkMode(enabled);
-    }
-
-    void setExactMatchCheckOnly(boolean enabled) {
-        rootController.setExactMatchOnly(enabled);
+    public void setDarkModeEnabled(boolean enabled) {
+        advancedTabAccessProxy.setDarkModeEnabled(enabled);
     }
 
     @Override
@@ -275,16 +303,17 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
 
     @Override
     public boolean isVerboseMode() {
-        return rootController.isVerboseMode();
+        return advancedTabAccessProxy.isVerboseMode();
     }
 
     public final boolean isParentValid() {
-        return rootController != null;
+        return advancedTabAccessProxy != null;
     }
 
     @Override
-    public Optional<String> spawnBackgroundSearchThread(ThreadSpawnModel threadSpawnModel, @NonNull AdvancedSubTabSearchController controller) {
-        if (this.advancedSubTabSearchController != controller) {
+    public Optional<String> spawnBackgroundSearchThread(ThreadSpawnModel threadSpawnModel, @NonNull AdvancedSubTabSearchController caller) {
+        if (this.advancedSubTabSearchController == null || this.advancedSubTabSearchController != caller) {
+            //TODO: maybe some error here is needed?
             return Optional.empty();
         }
 
@@ -292,11 +321,40 @@ public class AdvancedTabMainController implements AdvancedTaskProxy, AdvancedTab
     }
 
     @Override
-    public boolean isTaskCreationAllowed(@NonNull AdvancedSubTabSearchController controller) {
-        if (this.advancedSubTabSearchController != controller) {
+    public boolean isTaskCreationAllowed(@NonNull AdvancedSubTabSearchController caller) {
+        if (this.advancedSubTabSearchController == null || this.advancedSubTabSearchController != caller) {
             return false;
         }
-
         return advancedTaskControl.isTaskCreationAllowed();
+    }
+
+    @Override
+    public int readAndTestFile(String pathToUnencodedAddresses, AdvancedSubTabToolsController caller) {
+        if (caller != this.advancedSubTabToolsController) {
+            throw new IllegalCallerException("Wrong caller at AdvancedTabMainController#readAndTestFile");
+        }
+        return addressReaderProvider.readAndTestFile(pathToUnencodedAddresses);
+    }
+
+    @Override
+    @NonNull
+    public P2PKHSingleResultData[] createTemplateFromFile(String pathToUnencodedAddressesFile, int max, AdvancedSubTabToolsController caller) {
+        if (caller != this.advancedSubTabToolsController) {
+            throw new IllegalCallerException("Wrong caller at AdvancedTabMainController#createTemplateFromFile");
+        }
+        return addressReaderProvider.createTemplateFromFile(pathToUnencodedAddressesFile, max);
+    }
+
+    @Override
+    public Optional<P2PKHSingleResultData[]> createTemplateFromStringList(List<String> unencodedAddresses, int max, AdvancedSubTabToolsController caller) {
+        if (caller != this.advancedSubTabToolsController) {
+            throw new IllegalCallerException("Wrong caller at AdvancedTabMainController#createTemplateFromStringList");
+        }
+        return addressReaderProvider.createTemplateFromStringList(unencodedAddresses, max);
+    }
+
+    @Override
+    public void loadAdvancedSearchResultsToUi(String pathToResultFile, Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> advancedSearchResultsAsMap) {
+        advancedSubTabResultsController.loadAdvancedSearchResultsToUi(pathToResultFile, advancedSearchResultsAsMap);
     }
 }

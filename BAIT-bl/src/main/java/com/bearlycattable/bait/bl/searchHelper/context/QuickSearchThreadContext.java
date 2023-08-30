@@ -16,6 +16,7 @@ public class QuickSearchThreadContext {
     private final Task<PubComparisonResultWrapper> searchTask;
     private final QuickSearchTabController controller;
     private final int accuracy;
+    private final boolean verboseMode;
     @Setter
     private volatile boolean prepared;
 }

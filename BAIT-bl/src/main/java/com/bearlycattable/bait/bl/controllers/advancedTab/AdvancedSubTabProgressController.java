@@ -13,10 +13,11 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.advancedCommons.helpers.AdvancedSubTabProgressComponentHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedProgressAccessProxy;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
-import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.commons.enums.BackgroundColorEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
@@ -53,7 +54,8 @@ public class AdvancedSubTabProgressController {
     private static final Logger LOG = Logger.getLogger(AdvancedSubTabProgressController.class.getName());
     private static final RandomAddressGenerator generator = RandomAddressGenerator.getSecureGenerator(8);
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "AdvancedSubTabProgress", LocaleUtils.APP_LANGUAGE);
-    private AdvancedTabMainController parentController;
+
+    private AdvancedProgressAccessProxy advancedProgressAccessProxy;
 
     //thread progress and info
     @FXML
@@ -83,8 +85,8 @@ public class AdvancedSubTabProgressController {
         System.out.println("CREATING (child): AdvancedSubTabProgressController......");
     }
 
-    public void setParentController(AdvancedTabMainController parentController) {
-        this.parentController = Objects.requireNonNull(parentController);
+    public void setAdvancedProgressAccessProxy(AdvancedProgressAccessProxy proxy) {
+        this.advancedProgressAccessProxy = Objects.requireNonNull(proxy);
     }
 
     @FXML
@@ -126,7 +128,7 @@ public class AdvancedSubTabProgressController {
             accessor.getRemoveButton().setOnAction(event -> {
                 String parentThreadNum = parentId;
                 String childThreadNum =  accessor.getThreadNum();
-                if (parentController.isBackgroundThreadWorking(childThreadNum)) {
+                if (advancedProgressAccessProxy.isBackgroundThreadWorking(childThreadNum)) {
                     advancedProgressLabelMessageForShowInfo.setText("Selected background thread is still working. Cannot remove the component for thread: " + childThreadNum);
                     return;
                 }
@@ -147,7 +149,7 @@ public class AdvancedSubTabProgressController {
 
         accessor.getRemoveButton().setOnAction(event -> {
             String parentThreadNum = accessor.getThreadNum();
-            if (parentController.isBackgroundThreadWorking(parentThreadNum)) {
+            if (advancedProgressAccessProxy.isBackgroundThreadWorking(parentThreadNum)) {
                 advancedProgressLabelMessageForShowInfo.setText("Selected background thread is still working. Cannot remove the component for thread: " + parentThreadNum);
                 return;
             }
@@ -174,7 +176,7 @@ public class AdvancedSubTabProgressController {
         ((Accordion)node).getPanes().add(titledPane);
 
         //take care of dark mode styles
-        DarkModeHelper.toggleDarkModeForComponent(parentController.isDarkModeEnabled(), titledPane);
+        DarkModeHelper.toggleDarkModeForComponent(advancedProgressAccessProxy.isDarkModeEnabled(), titledPane);
     }
 
     private void insertChildTitledPaneToANewAccordion(ThreadComponentDataAccessor accessor, String titleMessage) {
@@ -187,7 +189,7 @@ public class AdvancedSubTabProgressController {
         advancedProgressVBoxThreadProgressContainer.getChildren().add(accordion);
 
         //take care of dark mode styles
-        DarkModeHelper.toggleDarkModeForComponent(parentController.isDarkModeEnabled(), accordion);
+        DarkModeHelper.toggleDarkModeForComponent(advancedProgressAccessProxy.isDarkModeEnabled(), accordion);
     }
 
     // private TitledPane insertParentTitledPaneToAnExistingAccordion(String parentId, String description) {
@@ -274,8 +276,8 @@ public class AdvancedSubTabProgressController {
         String currentThreadNum = generator.generateHexString(8).toLowerCase(Locale.ROOT);
         ThreadComponentDataAccessor accessor = AdvancedSubTabProgressComponentHelper.createDefaultThreadProgressContainer(currentThreadNum);
 
-        if (parentController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(parentController.isDarkModeEnabled(), accessor.getChildWrapper());
+        if (advancedProgressAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(advancedProgressAccessProxy.isDarkModeEnabled(), accessor.getChildWrapper());
         }
 
         if (isParentThread) {
@@ -349,10 +351,10 @@ public class AdvancedSubTabProgressController {
             return;
         }
 
-        if (parentController == null || !parentController.isDarkModeEnabled()) {
+        if (advancedProgressAccessProxy == null || !advancedProgressAccessProxy.isDarkModeEnabled()) {
             targetHBox.getStyleClass().clear();
             targetHBox.getStyleClass().add(color.getStyleClass());
-            if (parentController.isVerboseMode()) {
+            if (advancedProgressAccessProxy.isVerboseMode()) {
                 System.out.println("Changed color of progress component to: " + color);
             }
             return;
@@ -367,7 +369,7 @@ public class AdvancedSubTabProgressController {
 
         DarkModeHelper.removeStyleClassesFromProgressContainer(targetHBox, Collections.singletonList("bcgPaneDark"));
         targetHBox.getStyleClass().add(color.getStyleClass());
-        if (parentController.isVerboseMode()) {
+        if (advancedProgressAccessProxy.isVerboseMode()) {
             System.out.println("Changed color of progress component to: " + color);
         }
     }
@@ -459,9 +461,7 @@ public class AdvancedSubTabProgressController {
     private void removeAllOtherTextColors(Control component, TextColorEnum color) {
         Arrays.stream(TextColorEnum.values())
                 .filter(colorEnum -> colorEnum != color)
-                .forEach(otherColor -> {
-                    component.getStyleClass().remove(otherColor.getStyleClass());
-                });
+                .forEach(otherColor -> component.getStyleClass().remove(otherColor.getStyleClass()));
     }
 
     boolean isAutomergeEnabled() {
@@ -469,7 +469,7 @@ public class AdvancedSubTabProgressController {
     }
 
     public final boolean isParentValid() {
-        return parentController != null;
+        return advancedProgressAccessProxy != null;
     }
 
 }

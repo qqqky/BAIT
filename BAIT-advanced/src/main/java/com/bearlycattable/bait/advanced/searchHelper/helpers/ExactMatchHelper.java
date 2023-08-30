@@ -14,7 +14,7 @@ public class ExactMatchHelper {
 
     public static synchronized String appendMatchToFile(String priv, String matchedPKH, String targetPath) {
 
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(targetPath).toAbsolutePath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(targetPath).toAbsolutePath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
             writer.write(priv + " matched the following unknownPKH: " + matchedPKH);
             writer.newLine();
         } catch (IOException e) {

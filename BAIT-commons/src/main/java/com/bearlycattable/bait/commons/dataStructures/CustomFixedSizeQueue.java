@@ -1,11 +1,9 @@
 package com.bearlycattable.bait.commons.dataStructures;
 
 import java.util.AbstractQueue;
-import java.util.ArrayDeque;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
 
 public class CustomFixedSizeQueue<E> extends AbstractQueue<E> {
 

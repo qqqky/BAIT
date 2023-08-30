@@ -1,11 +1,10 @@
 package com.bearlycattable.bait.commons.helpers;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -13,12 +12,12 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.NetworkParameters;
-
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.NumberFormatTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
+import com.bearlycattable.bait.commons.extern.bitcoinjExtern.ECKeyLite;
+import com.bearlycattable.bait.commons.extern.bitcoinjExtern.LazyECPoint;
+import com.bearlycattable.bait.commons.extern.bitcoinjExtern.addresses.legacyEncoding.Base58;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapper;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapperDecimal;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapperHex;
@@ -26,36 +25,146 @@ import com.bearlycattable.bait.commons.wrappers.PubHeatResultWrapper;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
 
 public class HeatVisualizerHelper {
 
     private final Base58 base58 = new Base58();
+    private final byte[] ALL_BYTES_MIN = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2};
+    private final byte[] ALL_BYTES_MAX = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -70, -82, -36, -26, -81, 72, -96, 59, -65, -46, 94, -116, -48, 54, 65, 64};
+
+    // public String getPubKeyHashCompressed(String key, boolean trustInput) {
+    //     if (!trustInput && !isValidKey(key)) {
+    //         return null;
+    //     }
+    //     return bytesToHexString(ECKey.fromPrivate(hexToByteData(key), true).getPubKeyHash());
+    // }
 
     public String getPubKeyHashCompressed(String key, boolean trustInput) {
         if (!trustInput && !isValidKey(key)) {
             return null;
         }
-        return bytesToHexString(ECKey.fromPrivate(hexToByteData(key), true).getPubKeyHash());
+        BigInteger asBigInt = new BigInteger(1, hexToByteData(key));
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), true));
+
+        return bytesToHexString(ecKeyLite.getPubKeyHash());
     }
+
+    public String getPubKeyHashCompressed(byte[] key, boolean trustInput) {
+        if (!trustInput && !isValidKey(key)) {
+            return null;
+        }
+
+        BigInteger asBigInt = new BigInteger(1, key);
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), true));
+
+
+        return bytesToHexString(ecKeyLite.getPubKeyHash());
+    }
+
+    // public String getPubKeyHashUncompressed(String key, boolean trustInput) {
+    //     if (!trustInput && !isValidKey(key)) {
+    //         return null;
+    //     }
+    //     return bytesToHexString(ECKey.fromPrivate(hexToByteData(key), false).getPubKeyHash());
+    // }
 
     public String getPubKeyHashUncompressed(String key, boolean trustInput) {
         if (!trustInput && !isValidKey(key)) {
             return null;
         }
-        return bytesToHexString(ECKey.fromPrivate(hexToByteData(key), false).getPubKeyHash());
+        BigInteger asBigInt = new BigInteger(1, hexToByteData(key));
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), false));
+
+        return bytesToHexString(ecKeyLite.getPubKeyHash());
     }
 
+    public String getPubKeyHashUncompressed(byte[] key, boolean trustInput) {
+        if (!trustInput && !isValidKey(key)) {
+            return null;
+        }
+        BigInteger asBigInt = new BigInteger(1, key);
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), false));
+
+        return bytesToHexString(ecKeyLite.getPubKeyHash());
+    }
+
+    // public String getWIF(String key, boolean forCompressed) {
+    //     if (!isValidKey(key)) {
+    //         return null;
+    //     }
+    //
+    //    return ECKey.fromPrivate(hexToByteData(key), forCompressed).getPrivateKeyAsWiF(NetworkParameters.fromID(NetworkParameters.ID_MAINNET));
+    // }
+
+    /**
+     * Encode private key to WIF (without clutter). Only for Bitcoin MainNet
+     * @param key - private key as String
+     * @param forCompressed - whether WIF will be used for compressed or uncompressed derivation of public key
+     * @return
+     */
     public String getWIF(String key, boolean forCompressed) {
         if (!isValidKey(key)) {
             return null;
         }
+        Base58 myBase58 = new Base58();
 
-       return ECKey.fromPrivate(hexToByteData(key), forCompressed).getPrivateKeyAsWiF(NetworkParameters.fromID(NetworkParameters.ID_MAINNET));
+        byte[] originalBytes = hexToByteData(key);
+
+        if (forCompressed) {
+            byte[] result = new byte[33];
+            System.arraycopy(originalBytes, 0, result, 0, originalBytes.length);
+            result[32] = 1;
+            return myBase58.encodeChecked(128, result);
+        }
+        //"DumpedPrivateKey header" (also called 'version') for mainnet is int 128
+        return myBase58.encodeChecked(128, originalBytes);
+    }
+
+    /**
+     * Decodes WIF (a base58 encoded private key) to get the original private key
+     * @param WIF - WIF key as String
+     * @return
+     */
+    public String getPrivateKeyFromWIF(String WIF) {
+        //If WIF is intended to be used for derivation of compressed public key - the resulting bytes will have a marker
+        // (01 byte at the end) that indicates that their corresponding public key should be compressed
+        byte[] result = new Base58().decodeChecked(WIF);
+
+        return bytesToHexString(Arrays.copyOfRange(result, 0, result.length == 33 ? result.length - 1 : result.length));
     }
 
     private boolean isValidKey(String key) {
         return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches();
+    }
+
+    private boolean isValidKey(byte[] bytes) {
+        if (bytes == null || bytes.length != 32) {
+            return false;
+        }
+
+        final boolean isMinContender = bytes[0] == 0;
+        byte current;
+
+        for (int i = 0; i < bytes.length; i++) {
+            current = bytes[i];
+
+            if (isMinContender) {
+                if (current == ALL_BYTES_MIN[i]) {
+                    continue;
+                }
+                return i != 31 || (current != 0 && current != 1);
+            }
+
+            if (current == ALL_BYTES_MAX[i]) {
+                continue;
+            }
+            //0 is the lowest number (0 -> 127 -> -128 -> -1 -> 0)
+            //-1 is the biggest number, so valid nums must be lower
+            int target = ALL_BYTES_MAX[i];
+            return target < 0 ? (current < target || current > -1) : (current >= 0 && current < target);
+        }
+
+        return true;
     }
 
     public byte[] hexToByteData(@NonNull String hex) {

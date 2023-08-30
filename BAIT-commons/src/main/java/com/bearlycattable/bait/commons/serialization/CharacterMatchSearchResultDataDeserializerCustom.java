@@ -1,6 +1,7 @@
 package com.bearlycattable.bait.commons.serialization;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +18,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class CharacterMatchSearchResultDataDeserializerCustom extends StdDeserializer<CharacterMatchSearchResultData> {
+
+    @Serial
+    private static final long serialVersionUID = 581985248491194373L;
 
     public CharacterMatchSearchResultDataDeserializerCustom() {
         super((JavaType) null); //uses Object.class

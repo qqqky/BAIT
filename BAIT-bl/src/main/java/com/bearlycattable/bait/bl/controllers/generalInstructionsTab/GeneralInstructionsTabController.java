@@ -1,6 +1,6 @@
 package com.bearlycattable.bait.bl.controllers.generalInstructionsTab;
 
-import com.bearlycattable.bait.bl.controllers.RootController;
+import com.bearlycattable.bait.bl.controllers.GeneralInstructionsTabAccessProxy;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,41 +25,25 @@ public class GeneralInstructionsTabController {
     @FXML
     @Getter
     private ScrollPane instructionsScrollPaneParent;
-    // @FXML
-    // private Button instructionsBtnGoToQuickSearchTab;
-    private RootController rootController;
+
+    private GeneralInstructionsTabAccessProxy generalInstructionsTabAccessProxy;
 
     @FXML
     void initialize() {
         System.out.println("CREATING: GeneralInstructionsTabController......");
     }
 
-    public void setRootController(RootController rootController) {
-        this.rootController = rootController;
+    public void setGeneralInstructionsTabAccessProxy(GeneralInstructionsTabAccessProxy proxy) {
+        this.generalInstructionsTabAccessProxy = proxy;
     }
-
-    // public void addGeneralInstructions(Map<Integer, String> itemsForComponents) {
-    //     itemsForComponents.keySet().stream().forEach(key -> {
-    //         String value = key + ". " + itemsForComponents.get(key);
-    //
-    //         HBox hbox = new HBox();
-    //         hbox.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
-    //         Label label = new Label();
-    //         label.setText(value);
-    //         label.setStyle("-fx-font-size:18;");
-    //         label.setWrapText(true);
-    //         hbox.getChildren().add(label);
-    //         instructionsVBoxListParent.getChildren().add(hbox);
-    //     });
-    // }
 
     @FXML
     private void doGoToQuickSearchTab(ActionEvent actionEvent) {
-        rootController.switchToTab(2);
+        generalInstructionsTabAccessProxy.switchToParentTabX(2);
     }
 
     public final boolean isParentValid() {
-        return rootController != null;
+        return generalInstructionsTabAccessProxy != null;
     }
 
 }

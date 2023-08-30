@@ -1,7 +1,6 @@
 package com.bearlycattable.bait.bl.controllers.advancedTab;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,7 @@ import com.bearlycattable.bait.advancedCommons.serialization.SerializedSearchRes
 import com.bearlycattable.bait.advancedCommons.validators.OptionalConfigValidationResponseType;
 import com.bearlycattable.bait.advancedCommons.validators.VRotationInputValidator;
 import com.bearlycattable.bait.advancedCommons.validators.ValidatorResponse;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedSearchAccessProxy;
 import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
 import com.bearlycattable.bait.bl.wrappers.InitialConditionsValidatorWrapper;
 import com.bearlycattable.bait.bl.wrappers.NotificationConfigsWrapper;
@@ -46,6 +46,7 @@ import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
 import com.bearlycattable.bait.commons.interfaces.PrefixedKeyGenerator;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
 import com.bearlycattable.bait.utility.AddressModifier;
+import com.bearlycattable.bait.utility.BaitUtils;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 import com.bearlycattable.bait.utility.PathUtils;
@@ -190,7 +191,7 @@ public class AdvancedSubTabSearchController {
     private TextField advancedSearchTextFieldRandomWordPrefixIncDecBy;
     private TextField advancedSearchTextFieldNotificationPointTolerance;
 
-    private AdvancedTabMainController parentController;
+    private AdvancedSearchAccessProxy advancedSearchAccessProxy;
 
     @FXML
     void initialize() {
@@ -202,8 +203,8 @@ public class AdvancedSubTabSearchController {
         System.out.println("Dev defaults are empty!");
     }
 
-    public void setParentController(AdvancedTabMainController parentController) {
-        this.parentController = Objects.requireNonNull(parentController);
+    public void setAdvancedSearchAccessProxy(AdvancedSearchAccessProxy proxy) {
+        this.advancedSearchAccessProxy = Objects.requireNonNull(proxy);
     }
 
     @FXML
@@ -274,9 +275,9 @@ public class AdvancedSubTabSearchController {
             return;
         }
 
-        parentController.loadAdvancedSearchResultsToUi(loadedSearchTemplateData.getKey(), P2PKHSingleResultDataHelper.toDataMap(loadedSearchTemplateData.getValue()));
+        advancedSearchAccessProxy.loadAdvancedSearchResultsToUi(loadedSearchTemplateData.getKey(), P2PKHSingleResultDataHelper.toDataMap(loadedSearchTemplateData.getValue()));
         showInfoMessage("Search results have been loaded (only first 20 are displayed). Use filter to browse all possible", TextColorEnum.GREEN);
-        parentController.switchToChildTabX(3);
+        advancedSearchAccessProxy.switchToChildTabX(3);
     }
 
     @FXML
@@ -288,7 +289,7 @@ public class AdvancedSubTabSearchController {
 
     @FXML
     private void doImportPriv() {
-        String key = parentController.importDataFromCurrentInputFieldInMainTab();
+        String key = advancedSearchAccessProxy.importDataFromCurrentInputFieldInMainTab(this);
 
         if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
             addRedBorder(advancedSearchTextFieldContinueFromSeed);
@@ -311,7 +312,7 @@ public class AdvancedSubTabSearchController {
         }
 
         removeRedBorder(advancedSearchTextFieldContinueFromSeed);
-        parentController.exportDataToCurrentInputFieldInMainTab(key);
+        advancedSearchAccessProxy.exportDataToCurrentInputFieldInMainTab(key, this);
         showInfoMessage(rb.getString("info.exportSuccess"), TextColorEnum.GREEN);
     }
 
@@ -323,7 +324,7 @@ public class AdvancedSubTabSearchController {
     private void doAdvancedSearch() {
         advancedBtnSearch.setDisable(true);
 
-        if (!isInitialContitionsValid()) {
+        if (!isInitialConditionsValid()) {
             advancedBtnSearch.setDisable(false);
             return;
         }
@@ -423,11 +424,11 @@ public class AdvancedSubTabSearchController {
                 .build();
 
         //confirm user choice
-        if (!confirmUserChoiceForNewSearchThread(threadSpawnModel.makeLabelListForUserNotification((t,u,v) -> parentController.getAdvancedTaskControl().buildMutatedSeed(t, u, v)))) {
-            if (parentController.isVerboseMode()) {
+        if (!confirmUserChoiceForNewSearchThread(threadSpawnModel.makeLabelListForUserNotification((t,u,v) -> advancedSearchAccessProxy.buildMutatedSeed(t, u, v)))) {
+            if (advancedSearchAccessProxy.isVerboseMode()) {
                 String msg = "User did not accept the search parameters. Search will not proceed";
                 System.out.println(msg);
-                parentController.logToUi(msg, Color.DARKORANGE, LogTextTypeEnum.GENERAL);
+                advancedSearchAccessProxy.logToUi(msg, Color.DARKORANGE, LogTextTypeEnum.GENERAL);
             }
             advancedBtnSearch.setDisable(false);
             return;
@@ -441,20 +442,20 @@ public class AdvancedSubTabSearchController {
         //TODO: only for testing
         System.out.println("Will now be spawning background search thread");
 
-        parentController.spawnBackgroundSearchThread(threadSpawnModel, this)
+        advancedSearchAccessProxy.spawnBackgroundSearchThread(threadSpawnModel, this)
                 .ifPresent(threadNum -> {
-                    if (parentController.isVerboseMode()) {
+                    if (advancedSearchAccessProxy.isVerboseMode()) {
                         String message = "New parent search thread " + threadNum + " has been spawned (manually by the user)";
                         LOG.info(message);
-                        parentController.logToUi(message, Color.GREEN, LogTextTypeEnum.GENERAL);
+                        advancedSearchAccessProxy.logToUi(message, Color.GREEN, LogTextTypeEnum.GENERAL);
                     }
-                    parentController.switchToChildTabX(2); //switch to 'Progress' tab
+                    advancedSearchAccessProxy.switchToChildTabX(2); //switch to 'Progress' tab
                 });
 
         advancedBtnSearch.setDisable(false);
     }
 
-    private boolean isInitialContitionsValid() {
+    private boolean isInitialConditionsValid() {
         InitialConditionsValidatorWrapper initialConditionsValidatorWrapper = validateInitialConditions();
         return initialConditionsValidatorWrapper.isValid();
     }
@@ -462,7 +463,7 @@ public class AdvancedSubTabSearchController {
     private InitialConditionsValidatorWrapper validateInitialConditions() {
         InitialConditionsValidatorWrapper.InitialConditionsValidatorWrapperBuilder result = InitialConditionsValidatorWrapper.builder();
         String error;
-        if (!parentController.isTaskCreationAllowed(this)) {
+        if (!advancedSearchAccessProxy.isTaskCreationAllowed(this)) {
             error = "Enough tasks are already running. Cannot spawn more threads";
             showErrorMessage(error);
             //TODO: also check if any of the tasks are finished already - remove them from UI?
@@ -495,18 +496,18 @@ public class AdvancedSubTabSearchController {
     private void initializeTemplateCaches(P2PKHSingleResultData[] deepCopy, ScaleFactorEnum scaleFactor) {
         if (deepCopy.length <= Config.MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE) {
             P2PKHSingleResultDataHelper.initializeCaches(deepCopy, ScaleFactorEnum.toJsonScaleFactorEnum(scaleFactor));
-            if (parentController.isVerboseMode()) {
+            if (advancedSearchAccessProxy.isVerboseMode()) {
                 String cachedSuccessfully = rb.getString("info.allTemplatesCached");
                 LOG.info(cachedSuccessfully);
-                parentController.logToUi(cachedSuccessfully, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
+                advancedSearchAccessProxy.logToUi(cachedSuccessfully, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
             }
             return;
         }
 
-        if (parentController.isVerboseMode()) {
+        if (advancedSearchAccessProxy.isVerboseMode()) {
             String templatesCannotBeCached = rb.getString("info.proceedingWithUncached");
             LOG.info(templatesCannotBeCached);
-            parentController.logToUi(templatesCannotBeCached, Color.DARKORANGE, LogTextTypeEnum.START_OF_SEARCH);
+            advancedSearchAccessProxy.logToUi(templatesCannotBeCached, Color.DARKORANGE, LogTextTypeEnum.START_OF_SEARCH);
         }
     }
 
@@ -564,8 +565,8 @@ public class AdvancedSubTabSearchController {
                     .build();
         }
 
-        if (parentController.isVerboseMode()) {
-            parentController.logToUi("Setting random word prefix to: " + randomWordPrefix, Color.WHEAT, LogTextTypeEnum.START_OF_SEARCH);
+        if (advancedSearchAccessProxy.isVerboseMode()) {
+            advancedSearchAccessProxy.logToUi("Setting random word prefix to: " + randomWordPrefix, Color.WHEAT, LogTextTypeEnum.GENERAL);
         }
 
         RandomWordPrefixMutationTypeEnum prefixMutationType = retrieveIncOrDecForRandomWordPrefix().orElse(null);
@@ -770,7 +771,7 @@ public class AdvancedSubTabSearchController {
 
         //must add our default stylesheet for styles to work on Alert
         alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("com.bearlycattable.bait.ui.css/styles.css")).toExternalForm());
-        if (parentController.isDarkModeEnabled()) {
+        if (advancedSearchAccessProxy.isDarkModeEnabled()) {
             alert.getDialogPane().getStyleClass().add("alertDark");
         }
 
@@ -848,7 +849,7 @@ public class AdvancedSubTabSearchController {
             return;
         }
 
-        advancedSearchHelperProvider.updateTargetForExactMatchCheck(parentController.getAddressReaderProvider().readUnencodedPubsListIntoSet(pathToUnencodedAddressList), advancedSearchHelper);
+        advancedSearchHelperProvider.updateTargetForExactMatchCheck(advancedSearchAccessProxy.readUnencodedPubsListIntoSet(pathToUnencodedAddressList), advancedSearchHelper);
     }
 
     private List<Integer> readDisabledWordsFromUi() {
@@ -934,7 +935,7 @@ public class AdvancedSubTabSearchController {
         int iterations = getAdvancedSearchIterationsFromUi(Config.MAX_ITERATIONS_ADVANCED_SEARCH);
 
         AdvancedSearchHelperCreationContext context = AdvancedSearchHelperCreationContext.builder()
-                .similarityMappings(new HashMap<>(parentController.getSimilarityMappings()))
+                .similarityMappings(BaitUtils.buildSimilarityMappings())
                 .iterations(SearchHelperIterationsValidator.validateAndGet(searchMode, iterations))
                 .accuracy(-1)
                 .scaleFactor(scaleFactor)
@@ -1010,7 +1011,7 @@ public class AdvancedSubTabSearchController {
         hbox.getChildren().add(tf);
 
         //take care of dark mode
-        if (parentController.isDarkModeEnabled()) {
+        if (advancedSearchAccessProxy.isDarkModeEnabled()) {
            DarkModeHelper.toggleDarkModeForComponent(true, hbox);
         }
 
@@ -1033,8 +1034,8 @@ public class AdvancedSubTabSearchController {
                 HBox parent = new HBox();
                 parent.setAlignment(Pos.CENTER);
                 parent.getChildren().add(HeatVisualizerComponentHelper.createLabel(rb.getString("label.additionalOptionsUnavailable"), 16, false));
-                if (parentController != null) {
-                    DarkModeHelper.toggleDarkModeForComponent(parentController.isDarkModeEnabled(), parent);
+                if (advancedSearchAccessProxy != null) {
+                    DarkModeHelper.toggleDarkModeForComponent(advancedSearchAccessProxy.isDarkModeEnabled(), parent);
                 }
                 advancedSearchHBoxModeSpecificOptionsParent.getChildren().add(parent);
         }
@@ -1102,8 +1103,8 @@ public class AdvancedSubTabSearchController {
         incDecPrefixWrapper.getChildren().add(incDecBy);
         parent.getChildren().add(incDecPrefixWrapper);
 
-        if (parentController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(parentController.isDarkModeEnabled(), parent);
+        if (advancedSearchAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(advancedSearchAccessProxy.isDarkModeEnabled(), parent);
         }
 
         advancedSearchHBoxModeSpecificOptionsParent.getChildren().add(parent);
@@ -1134,6 +1135,6 @@ public class AdvancedSubTabSearchController {
     }
 
     public final boolean isParentValid() {
-        return parentController != null;
+        return advancedSearchAccessProxy != null;
     }
 }

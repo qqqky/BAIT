@@ -31,44 +31,45 @@ public final class ConstructionTabControllerInitializer {
     private static final List<String> HEX_ALPHABET = Collections.unmodifiableList(Arrays.stream(HeatVisualizerConstants.HEX_ALPHABET).sequential().collect(Collectors.toList()));
 
     private final ConstructionTabController controller;
-    private RootController rootController;
     private final HeatVisualizerComponentHelper componentHelper = new HeatVisualizerComponentHelper();
 
-    private final EventHandler<ActionEvent> checkBoxWordConstructionEventHandler = event -> {
-        CheckBox chk = (CheckBox) event.getSource();
-        String id = chk.getId();
-        int wordNum = Integer.parseInt(id.substring(id.length() - 1));
-        if (rootController.isValidWordInComboBoxesUi(wordNum)) {
-            rootController.modifyWordComboBoxAndTextFieldAccess(wordNum, chk.isSelected());
-            return;
-        }
-        chk.setSelected(false); //else unselect
-    };
-
-    private final ChangeListener<String> privInputFieldChangeListener = new ChangeListener<>() {
-        @Override
-        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            int wordNumber = parseWordNumberFromObservable(observable);
-            if (newValue.length() > 8) {
-                newValue = newValue.substring(0, 8);
-            }
-            controller.setPrivWordComboBoxesInUi(newValue, wordNumber);
-        }
-
-        private int parseWordNumberFromObservable(ObservableValue<? extends String> observable) {
-            String s = observable.toString(); //no other convenient way
-            int from = s.indexOf(CssConstants.INPUT_FIELD_ID_REFERENCE) + CssConstants.INPUT_FIELD_ID_REFERENCE.length();
-            return Integer.parseInt(s.substring(from, from + 2));
-        }
-    };
+    private final EventHandler<ActionEvent> checkBoxWordConstructionEventHandler;
+    private final ChangeListener<String> privInputFieldChangeListener;
 
     private ConstructionTabControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private ConstructionTabControllerInitializer(ConstructionTabController controller, RootController rootController) {
+    private ConstructionTabControllerInitializer(ConstructionTabController controller) {
         this.controller = controller;
-        this.rootController = rootController;
+
+        this.checkBoxWordConstructionEventHandler = event -> {
+            CheckBox chk = (CheckBox) event.getSource();
+            String id = chk.getId();
+            int wordNum = Integer.parseInt(id.substring(id.length() - 1));
+            if (controller.isValidWordInComboBoxesUi(wordNum)) {
+                controller.modifyWordComboBoxAndTextFieldAccess(wordNum, chk.isSelected());
+                return;
+            }
+            chk.setSelected(false); //else unselect
+        };
+
+        this.privInputFieldChangeListener = new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                int wordNumber = parseWordNumberFromObservable(observable);
+                if (newValue.length() > 8) {
+                    newValue = newValue.substring(0, 8);
+                }
+                controller.setPrivWordComboBoxesInUi(newValue, wordNumber);
+            }
+
+            private int parseWordNumberFromObservable(ObservableValue<? extends String> observable) {
+                String s = observable.toString(); //no other convenient way
+                int from = s.indexOf(CssConstants.INPUT_FIELD_ID_REFERENCE) + CssConstants.INPUT_FIELD_ID_REFERENCE.length();
+                return Integer.parseInt(s.substring(from, from + 2));
+            }
+        };
     }
 
     public static void initialize(ConstructionTabController controller, RootController rootController) {
@@ -81,8 +82,9 @@ public final class ConstructionTabControllerInitializer {
         }
 
         //root controller must be set before initialization
-        controller.setRootController(rootController);
-        new ConstructionTabControllerInitializer(controller, rootController).init();
+        controller.setConstructionTabAccessProxy(rootController);
+
+        new ConstructionTabControllerInitializer(controller).init();
     }
 
     private void init() {
@@ -95,6 +97,7 @@ public final class ConstructionTabControllerInitializer {
         addPrivInputTextFieldListeners();
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void initializePrivComboBoxMappings() {
         //initialize mappings for priv combobox groups (as hex word containers, index range 1-8)
         List<VBox> mainChildren = componentHelper.extractDirectChildContainersOfType(controller.getConstructionHBoxParentForComboAndCheckBoxes(), VBox.class);
@@ -141,7 +144,7 @@ public final class ConstructionTabControllerInitializer {
         List<ComboBox> comboBoxes = componentHelper.extractDirectChildContainersOfTypeFromList(privWordComboBoxParents, ComboBox.class);
             comboBoxes.sort((cmb1, cmb2) -> compareNumericIds(cmb1, cmb2, "comboIndex"));
         componentHelper.putControlObjectListResultsToMap(comboBoxes, controller.getPrivCompleteComboBoxMappings(), 0);
-        comboBoxes.forEach(comboBox -> comboBox.getItems().addAll(HEX_ALPHABET));
+        comboBoxes.forEach(comboBox -> ((List<String>) comboBox.getItems()).addAll(HEX_ALPHABET));
     }
 
     private int compareNumericIds(Node node1, Node node2, String idPrefix) {

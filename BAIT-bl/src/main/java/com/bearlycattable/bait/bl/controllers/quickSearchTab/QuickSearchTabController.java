@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
-import com.bearlycattable.bait.bl.controllers.RootController;
+import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
+import com.bearlycattable.bait.bl.controllers.QuickSearchTabAccessProxy;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
 import com.bearlycattable.bait.bl.helpers.QuickSearchTaskHelper;
@@ -31,9 +32,10 @@ import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
 import com.bearlycattable.bait.commons.contexts.QuickSearchContext;
-import com.bearlycattable.bait.commons.interfaces.SimpleSearchHelper;
+import com.bearlycattable.bait.commons.interfaces.QuickSearchHelper;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 import com.bearlycattable.bait.commons.wrappers.QuickSearchTaskWrapper;
+import com.bearlycattable.bait.utility.BaitUtils;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 import com.bearlycattable.bait.utility.RandomAddressGenerator;
@@ -111,13 +113,13 @@ public class QuickSearchTabController {
     private final QuickSearchTaskHelper quickSearchTaskHelper = new QuickSearchTaskHelper();
     @Getter
     private final Map<String, Task<PubComparisonResultWrapper>> taskMap = new HashMap<>(); //current tasks
-    private RootController rootController;
+    private QuickSearchTabAccessProxy quickSearchTabAccessProxy;
     // private volatile String currentSearchResultPK;
     @FXML
     private HBox quickSearchHBoxDisabledWordsParent;
 
-    public void setRootController(RootController rootController) {
-        this.rootController = rootController;
+    public void setQuickSearchTabAccessProxy(QuickSearchTabAccessProxy proxy) {
+        this.quickSearchTabAccessProxy = proxy;
     }
 
     @FXML
@@ -200,8 +202,8 @@ public class QuickSearchTabController {
         exportPriv.setTooltip(new Tooltip(rb.getString("tooltip.exportToConverterExplanation")));
         children.add(exportPriv);
 
-        if (rootController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(rootController.isDarkMode(), parent);
+        if (quickSearchTabAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(quickSearchTabAccessProxy.isDarkModeEnabled(), parent);
         }
 
         quickSearchHBoxTargetKeySelection.getChildren().add(parent);
@@ -221,11 +223,11 @@ public class QuickSearchTabController {
         }
 
         removeErrorMessage();
-        rootController.setUnencodedPubInConverterTab(key);
+        quickSearchTabAccessProxy.setUnencodedPubInConverterTab(key);
     }
 
     private void importPubUnencodedFromConverterTab() {
-        String unencodedPub = rootController.getUnencodedPubFromConverterTab();
+        String unencodedPub = quickSearchTabAccessProxy.getUnencodedPubFromConverterTab();
 
         if (unencodedPub.trim().isEmpty()) {
             insertErrorMessage("Nothing to import");
@@ -274,8 +276,8 @@ public class QuickSearchTabController {
         children.add(importPriv);
         children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
 
-        if (rootController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(rootController.isDarkMode(), parent);
+        if (quickSearchTabAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(quickSearchTabAccessProxy.isDarkModeEnabled(), parent);
         }
 
         quickSearchHBoxTargetKeySelection.getChildren().add(parent);
@@ -306,7 +308,7 @@ public class QuickSearchTabController {
     }
 
     private String importPrivFromMainTab() {
-        return rootController.getCurrentInput();
+        return quickSearchTabAccessProxy.getCurrentInput();
     }
 
     @FXML
@@ -345,33 +347,37 @@ public class QuickSearchTabController {
         LOG.info(runMsg);
 
         SimpleSearchHelperCreationContext context = SimpleSearchHelperCreationContext.builder()
-                .similarityMappings(rootController.getSimilarityMappings())
+                .similarityMappings(BaitUtils.buildSimilarityMappings())
                 .iterations(SearchHelperIterationsValidator.validateAndGet(searchMode, iterations))
                 .accuracy(accuracy)
                 .scaleFactor(getPubAccuracyScaleFactorFromUi())
                 .build();
 
-        SimpleSearchHelper simpleSearchHelper = SimpleSearchHelperFactory.findRequestedSearchHelper(searchMode, context, HeatVisualizerConstants.MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM);
+        QuickSearchHelper quickSearchHelper = SimpleSearchHelperFactory.findRequestedSearchHelper(searchMode, context, HeatVisualizerConstants.MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM);
 
-        performSearchParallel(simpleSearchHelper, accuracy);
+        performSearchParallel(quickSearchHelper, accuracy);
     }
 
     public void showQuickSearchResults(@NonNull PubComparisonResultWrapper highest, int forAccuracy) {
-        if (!highest.equalsEmpty()) {
-            insertInfoMessage(rb.getString("info.searchCompletedForAccuracy") + forAccuracy
-                    + System.lineSeparator()
-                    + rb.getString("info.bestResultAndAccuracyFound") + highest.getCommonPriv() + " (" + rootController
-                    .getSimilarityMappings().get(helper.recalculateIndexForSimilarityMappings(highest.getHighestPoints(), getPubAccuracyScaleFactorFromUi()))  + ")"
-                    + System.lineSeparator()
-                    + rb.getString("info.resultsInHeatComparisonTab"), TextColorEnum.GREEN);
-            displaySearchResults(highest);
-            if (quickSearchCbxMoveToHeatComparisonWhenSearchDone.isSelected()) {
-                rootController.switchToComparisonTab();
-            }
+        if (highest.equalsEmpty()) {
+            insertErrorMessage(rb.getString("error.noSearchResults"));
             return;
         }
 
-        insertErrorMessage(rb.getString("error.noSearchResults"));
+        insertInfoMessage(rb.getString("info.searchCompletedForAccuracy") + forAccuracy
+                + System.lineSeparator()
+                + rb.getString("info.bestResultAndAccuracyFound") + highest.getCommonPriv()
+                    + " ("
+                    + BaitUtils.buildSimilarityMappings().get(helper.recalculateIndexForSimilarityMappings(highest.getHighestPoints(), getPubAccuracyScaleFactorFromUi()))
+                    + ")"
+                + System.lineSeparator()
+                + rb.getString("info.resultsInHeatComparisonTab"), TextColorEnum.GREEN);
+
+        displaySearchResults(highest);
+
+        if (quickSearchCbxMoveToHeatComparisonWhenSearchDone.isSelected()) {
+            quickSearchTabAccessProxy.switchToComparisonTab();
+        }
     }
 
     private boolean isSeedValidForSearchMode(SearchModeEnum searchMode) {
@@ -438,10 +444,11 @@ public class QuickSearchTabController {
             case BLIND:
                 return HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches();
             default:
-                throw new IllegalArgumentException("Search type is not supported");
+                throw new IllegalArgumentException("This search type is not supported [searchType=" + searchType + "]");
         }
     }
 
+    //TODO: refactor duplicate?
     private List<Integer> readDisabledWordsFromUi() {
         return quickSearchHBoxDisabledWordsParent.getChildren().stream()
                 .filter(child -> CheckBox.class.isAssignableFrom(child.getClass()))
@@ -487,8 +494,8 @@ public class QuickSearchTabController {
         }
     }
 
-    private void performSearchParallel(SimpleSearchHelper simpleSearchHelper, int accuracy) {
-        String seed = determineInitialSeed(simpleSearchHelper.getSearchMode());
+    private void performSearchParallel(QuickSearchHelper quickSearchHelper, int accuracy) {
+        String seed = determineInitialSeed(quickSearchHelper.getSearchMode());
         String targetKey = quickSearchTextFieldTargetKey.getText();
         ArrayList<Integer> disabledWords = quickSearchHBoxDisabledWordsParent.isDisabled() ? new ArrayList<>() : new ArrayList<>(readDisabledWordsFromUi());
 
@@ -513,17 +520,18 @@ public class QuickSearchTabController {
                 .targetPub(QuickSearchComparisonType.COLLISION == type ? null : targetKey)
                 .seed(seed)
                 .disabledWords(disabledWords)
-                .searchMode(simpleSearchHelper.getSearchMode())
-                .iterations(simpleSearchHelper.getIterations())
+                .searchMode(quickSearchHelper.getSearchMode())
+                .iterations(quickSearchHelper.getIterations())
                 .accuracy(accuracy)
-                .verbose(rootController.isVerboseMode())
-                .printSpacing(rootController.isVerboseMode() ? 1 : 0)
+                .verbose(quickSearchTabAccessProxy.isVerboseMode())
+                .printSpacing(quickSearchTabAccessProxy.isVerboseMode() ? 1 : 0)
                 .currentHighestResult(PubComparisonResultWrapper.empty())
                 .build();
 
-        QuickSearchTaskWrapper wrapper = simpleSearchHelper.createNewQuickSearchTask(quickSearchContext);
+        QuickSearchTaskWrapper wrapper = quickSearchHelper.createNewQuickSearchTask(quickSearchContext);
         if (!wrapper.hasTask()) {
             insertErrorMessage(wrapper.getError());
+            quickSearchBtnSearch.setDisable(false);
             return;
         }
 
@@ -532,6 +540,7 @@ public class QuickSearchTabController {
                 .controller(this)
                 .threadId(generator.generateHexString(8).toLowerCase(Locale.ROOT))
                 .accuracy(accuracy)
+                .verboseMode(quickSearchTabAccessProxy.isVerboseMode())
                 .build();
 
         spawnBackgroundQuickSearchThread(taskContext).ifPresent(threadId -> {
@@ -590,13 +599,22 @@ public class QuickSearchTabController {
             throw new IllegalStateException("Search results are not valid. This should not happen");
         }
 
-        highest.getResultAsOptionalForUncompressed().ifPresent(result -> rootController.insertSearchResultsToUiForUncompressed(result));
-        highest.getResultAsOptionalForCompressed().ifPresent(result -> rootController.insertSearchResultsToUiForCompressed(result));
+        HeatComparisonContext heatComparisonContext = HeatComparisonContext.builder()
+                .targetPK(highest.getCommonPriv())
+                .referenceKey(quickSearchTextFieldTargetKey.getText())
+                .comparisonType(getQuickSearchTypeFromUi())
+                .scaleFactor(highest.getCommonScaleFactor())
+                .build();
 
-        rootController.setCurrentKeyInComparisonTab(highest.getCommonPriv());
-        rootController.setReferenceKeyInComparisonTab(quickSearchTextFieldTargetKey.getText(), getQuickSearchTypeFromUi());
-        rootController.setScaleFactorInComparisonTab(highest.getCommonScaleFactor());
-        rootController.calculateOutputs();
+        quickSearchTabAccessProxy.showFullHeatComparison(heatComparisonContext);
+
+        // highest.getResultAsOptionalForUncompressed().ifPresent(result -> quickSearchTabAccessProxy.insertSearchResultsToUiForUncompressed(result));
+        // highest.getResultAsOptionalForCompressed().ifPresent(result -> quickSearchTabAccessProxy.insertSearchResultsToUiForCompressed(result));
+
+        // quickSearchTabAccessProxy.setCurrentKeyInComparisonTab(highest.getCommonPriv());
+        // quickSearchTabAccessProxy.setReferenceKeyInComparisonTab(quickSearchTextFieldTargetKey.getText(), getQuickSearchTypeFromUi());
+        // quickSearchTabAccessProxy.setScaleFactorInComparisonTab(highest.getCommonScaleFactor());
+        // quickSearchTabAccessProxy.calculateOutputs();
     }
 
     public int getNormalizedMapIndexFromComparisonResult(int resultPoints, ScaleFactorEnum scaleFactor) {
@@ -674,6 +692,6 @@ public class QuickSearchTabController {
     }
 
     public final boolean isParentValid() {
-        return rootController != null;
+        return quickSearchTabAccessProxy != null;
     }
 }

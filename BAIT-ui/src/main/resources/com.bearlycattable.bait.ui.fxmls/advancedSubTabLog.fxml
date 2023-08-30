@@ -101,7 +101,7 @@
         <HBox minHeight="5.0" prefHeight="5.0" />
         <HBox alignment="CENTER">
           <children>
-            <Button fx:id="advancedLogBtnScrollToBottom" mnemonicParsing="false" onAction="#doScrollToBottom" text="%button.scrollToEnd" />
+            <Button mnemonicParsing="false" onAction="#doScrollToBottom" text="%button.scrollToEnd" />
             <HBox prefWidth="5.0" />
             <Button fx:id="advancedLogBtnClearAll" mnemonicParsing="false" onAction="#doClearAll" text="%button.clearConsole" />
           </children>

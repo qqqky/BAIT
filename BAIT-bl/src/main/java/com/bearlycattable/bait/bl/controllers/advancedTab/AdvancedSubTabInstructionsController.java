@@ -2,6 +2,8 @@ package com.bearlycattable.bait.bl.controllers.advancedTab;
 
 import java.util.Objects;
 
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedInstructionsAccessProxy;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import lombok.Getter;
@@ -12,24 +14,24 @@ public class AdvancedSubTabInstructionsController {
     @Getter
     private ScrollPane advancedInstructionsScrollPaneParent;
 
-    private AdvancedTabMainController parentController;
+    private AdvancedInstructionsAccessProxy advancedInstructionsAccessProxy;
 
     @FXML
     void initialize() {
         System.out.println("CREATING (child): AdvancedSubTabInstructionsController......");
     }
 
-    public void setParentController(AdvancedTabMainController parentController) {
-        this.parentController = Objects.requireNonNull(parentController);
+    public void setAdvancedInstructionsAccessProxy(AdvancedInstructionsAccessProxy proxy) {
+        this.advancedInstructionsAccessProxy = Objects.requireNonNull(proxy);
     }
 
     public final boolean isParentValid() {
-        return parentController != null;
+        return advancedInstructionsAccessProxy != null;
     }
 
     @FXML
     private void doGoToAdvancedSearchTab() {
-        parentController.switchToChildTabX(0);
+        advancedInstructionsAccessProxy.switchToChildTabX(0);
     }
 
 }

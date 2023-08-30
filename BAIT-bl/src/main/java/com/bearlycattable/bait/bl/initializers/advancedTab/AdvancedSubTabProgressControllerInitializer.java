@@ -6,15 +6,13 @@ import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainControl
 public final class AdvancedSubTabProgressControllerInitializer {
 
     private final AdvancedSubTabProgressController controller;
-    private AdvancedTabMainController parentController;
 
     private AdvancedSubTabProgressControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AdvancedSubTabProgressControllerInitializer(AdvancedSubTabProgressController controller, AdvancedTabMainController parentController) {
+    private AdvancedSubTabProgressControllerInitializer(AdvancedSubTabProgressController controller) {
         this.controller = controller;
-        this.parentController = parentController;
     }
 
     public static void initialize(AdvancedSubTabProgressController controller, AdvancedTabMainController parentController) {
@@ -27,8 +25,9 @@ public final class AdvancedSubTabProgressControllerInitializer {
         }
 
         //parent controller must be set before initialization
-        controller.setParentController(parentController);
-        new AdvancedSubTabProgressControllerInitializer(controller, parentController).init();
+        controller.setAdvancedProgressAccessProxy(parentController);
+
+        new AdvancedSubTabProgressControllerInitializer(controller).init();
     }
 
     private void init() {

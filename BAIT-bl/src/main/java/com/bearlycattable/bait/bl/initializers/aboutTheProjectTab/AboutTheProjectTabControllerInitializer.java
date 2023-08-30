@@ -7,15 +7,13 @@ import com.bearlycattable.bait.bl.helpers.HeatVisualizerNumberedListHelper;
 public final class AboutTheProjectTabControllerInitializer {
 
     private final AboutTheProjectTabController controller;
-    private RootController rootController;
 
     private AboutTheProjectTabControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AboutTheProjectTabControllerInitializer(AboutTheProjectTabController controller, RootController rootController) {
+    private AboutTheProjectTabControllerInitializer(AboutTheProjectTabController controller) {
         this.controller = controller;
-        this.rootController = rootController;
     }
 
     public static void initialize(AboutTheProjectTabController controller, RootController rootController) {
@@ -28,8 +26,9 @@ public final class AboutTheProjectTabControllerInitializer {
         }
 
         //root controller must be set before initialization
-        controller.setRootController(rootController);
-        new AboutTheProjectTabControllerInitializer(controller, rootController).init();
+        controller.setAboutTheProjectTabAccessProxy(rootController);
+
+        new AboutTheProjectTabControllerInitializer(controller).init();
     }
 
     private void init() {

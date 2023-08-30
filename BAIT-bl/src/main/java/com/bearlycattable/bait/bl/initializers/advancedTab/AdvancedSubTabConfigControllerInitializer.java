@@ -7,15 +7,13 @@ import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainControl
 public final class AdvancedSubTabConfigControllerInitializer {
 
     private final AdvancedSubTabConfigController controller;
-    private AdvancedTabMainController parentController;
 
     private AdvancedSubTabConfigControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AdvancedSubTabConfigControllerInitializer(AdvancedSubTabConfigController controller, AdvancedTabMainController parentController) {
+    private AdvancedSubTabConfigControllerInitializer(AdvancedSubTabConfigController controller) {
         this.controller = controller;
-        this.parentController = parentController;
     }
 
     public static void initialize(AdvancedSubTabConfigController controller, AdvancedTabMainController parentController) {
@@ -28,8 +26,9 @@ public final class AdvancedSubTabConfigControllerInitializer {
         }
 
         //parent controller must be set before initialization
-        controller.setParentController(parentController);
-        new AdvancedSubTabConfigControllerInitializer(controller, parentController).init();
+        controller.setAdvancedConfigAccessProxy(parentController);
+
+        new AdvancedSubTabConfigControllerInitializer(controller).init();
     }
 
     private void init() {
@@ -47,7 +46,7 @@ public final class AdvancedSubTabConfigControllerInitializer {
 
     private void initializeCbxDarkMode() {
         controller.getAdvancedConfigCbxDarkMode().setOnAction(event -> {
-            DarkModeHelper.toggleDarkModeGlobal(controller.getAdvancedConfigCbxDarkMode().isSelected(), controller.getAdvancedConfigCbxDarkMode(), parentController);
+            DarkModeHelper.toggleDarkModeGlobal(controller.getAdvancedConfigCbxDarkMode().isSelected(), controller.getAdvancedConfigCbxDarkMode(), controller);
         });
     }
 }

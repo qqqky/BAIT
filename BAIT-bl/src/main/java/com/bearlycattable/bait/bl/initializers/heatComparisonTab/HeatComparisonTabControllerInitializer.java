@@ -24,15 +24,13 @@ public final class HeatComparisonTabControllerInitializer {
             Arrays.asList(ScaleFactorEnum.DISABLED, ScaleFactorEnum.MEDIUM, ScaleFactorEnum.HIGH, ScaleFactorEnum.HIGHEST));
     private final HeatVisualizerComponentHelper componentHelper = new HeatVisualizerComponentHelper();
     private final HeatComparisonTabController controller;
-    private final RootController rootController;
 
     private HeatComparisonTabControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private HeatComparisonTabControllerInitializer(HeatComparisonTabController controller, RootController rootController) {
+    private HeatComparisonTabControllerInitializer(HeatComparisonTabController controller) {
         this.controller = controller;
-        this.rootController = rootController;
     }
 
     public static void initialize(HeatComparisonTabController controller, RootController rootController) {
@@ -45,8 +43,9 @@ public final class HeatComparisonTabControllerInitializer {
         }
 
         //root controller must be set before initialization
-        controller.setRootController(rootController);
-        new HeatComparisonTabControllerInitializer(controller, rootController).init();
+        controller.setHeatComparisonTabAccessProxy(rootController);
+
+        new HeatComparisonTabControllerInitializer(controller).init();
     }
 
     private void init() {
@@ -110,7 +109,7 @@ public final class HeatComparisonTabControllerInitializer {
             return;
         }
 
-        controller.changePrivHeatResolution();
+        controller.changePrivHeatColorFocus();
     });
     }
 

@@ -1,6 +1,7 @@
 package com.bearlycattable.bait.commons.interfaces;
 
-import java.util.List;;import com.bearlycattable.bait.commons.enums.SearchModeEnum;
+import java.util.List;
+import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 
 public interface SubSearchSupport {

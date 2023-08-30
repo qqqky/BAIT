@@ -3,7 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
@@ -243,7 +242,7 @@
         <HBox alignment="CENTER">
           <children>
             <HBox prefWidth="5.0" />
-            <Button fx:id="advancedToolsBtnMultiUnencode" mnemonicParsing="false" onAction="#doUnencodeFile" text="%button.multiUnencode" />
+            <Button mnemonicParsing="false" onAction="#doUnencodeFile" text="%button.multiUnencode" />
           </children>
         </HBox>
         <VBox prefHeight="5.0" prefWidth="1226.0" />

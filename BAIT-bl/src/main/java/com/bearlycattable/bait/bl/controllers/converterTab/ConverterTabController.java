@@ -4,7 +4,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import com.bearlycattable.bait.bl.controllers.RootController;
+import com.bearlycattable.bait.bl.controllers.ConverterTabAccessProxy;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
@@ -24,7 +24,7 @@ public class ConverterTabController {
 
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "ConverterTab", LocaleUtils.APP_LANGUAGE);
-    private RootController rootController;
+    private ConverterTabAccessProxy converterTabAccessProxy;
 
     @FXML
     @Getter
@@ -44,8 +44,8 @@ public class ConverterTabController {
     @FXML
     private Label converterLabelSuccessErrorResultForWIF;
 
-    public void setRootController(RootController rootController) {
-        this.rootController = rootController;
+    public void setConverterTabAccessProxy(ConverterTabAccessProxy proxy) {
+        this.converterTabAccessProxy = proxy;
     }
 
     @FXML
@@ -173,7 +173,7 @@ public class ConverterTabController {
     }
 
     public final boolean isParentValid() {
-        return rootController != null;
+        return converterTabAccessProxy != null;
     }
 
     private static class Validator {

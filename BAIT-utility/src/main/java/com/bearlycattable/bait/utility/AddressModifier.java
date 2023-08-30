@@ -407,10 +407,8 @@ public class AddressModifier {
 
         if (HeatVisualizerConstants.ZERO_LONG > finalNum) {
             item = HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX - finalNum;
-        } else if (HeatVisualizerConstants.ZERO_LONG < finalNum) {
-            item = finalNum;
         } else {
-            item = HeatVisualizerConstants.ZERO_LONG;
+            item = finalNum;
         }
 
         return helper.padTo8(Long.toHexString(item), uppercase);

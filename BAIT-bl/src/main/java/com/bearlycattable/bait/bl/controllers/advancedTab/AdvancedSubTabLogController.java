@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedLogAccessProxy;
 import com.bearlycattable.bait.commons.dataStructures.CustomFixedSizeQueue;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.utility.BundleUtils;
@@ -62,15 +63,16 @@ public class AdvancedSubTabLogController {
     @FXML
     private Button advancedLogBtnClearAll;
 
-    private AdvancedTabMainController parentController;
+    // private AdvancedTabMainController parentController;
+    private AdvancedLogAccessProxy advancedLogAccessProxy;
 
     @FXML
     void initialize() {
         System.out.println("CREATING (child): AdvancedSubTabLogController......");
     }
 
-    public void setParentController(AdvancedTabMainController parentController) {
-        this.parentController = Objects.requireNonNull(parentController);
+    public void setAdvancedLogAccessProxy(AdvancedLogAccessProxy proxy) {
+        this.advancedLogAccessProxy = Objects.requireNonNull(proxy);
     }
 
     synchronized void log(String textPiece, Color color, int size, FontWeight weight, LogTextTypeEnum type) {
@@ -143,7 +145,7 @@ public class AdvancedSubTabLogController {
         //add our default stylesheet for Alert
         alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("com.bearlycattable.bait.ui.css/styles.css")).toExternalForm());
 
-        if (parentController.isDarkModeEnabled()) {
+        if (advancedLogAccessProxy.isDarkModeEnabled()) {
             alert.getDialogPane().getStyleClass().add("textRed");
             alert.getDialogPane().getStyleClass().add("alertDark");
         }
@@ -170,6 +172,10 @@ public class AdvancedSubTabLogController {
     }
 
     public final boolean isParentValid() {
-        return parentController != null;
+        return advancedLogAccessProxy != null;
+    }
+
+    public boolean isDarkModeEnabled() {
+        return advancedLogAccessProxy != null && advancedLogAccessProxy.isDarkModeEnabled();
     }
 }

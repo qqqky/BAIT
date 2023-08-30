@@ -15,15 +15,13 @@ import javafx.scene.control.CheckBox;
 public final class QuickSearchTabControllerInitializer {
 
     private final QuickSearchTabController controller;
-    private final RootController rootController;
 
     private QuickSearchTabControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private QuickSearchTabControllerInitializer(QuickSearchTabController controller, RootController rootController) {
+    private QuickSearchTabControllerInitializer(QuickSearchTabController controller) {
         this.controller = controller;
-        this.rootController = rootController;
     }
 
     public static void initialize(QuickSearchTabController controller, RootController rootController) {
@@ -36,8 +34,9 @@ public final class QuickSearchTabControllerInitializer {
         }
 
         //root controller must be set before initialization
-        controller.setRootController(rootController);
-        new QuickSearchTabControllerInitializer(controller, rootController).init();
+        controller.setQuickSearchTabAccessProxy(rootController);
+
+        new QuickSearchTabControllerInitializer(controller).init();
     }
 
     private void init() {

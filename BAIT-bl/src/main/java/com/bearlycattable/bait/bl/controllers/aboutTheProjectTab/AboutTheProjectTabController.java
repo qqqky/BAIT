@@ -1,6 +1,6 @@
 package com.bearlycattable.bait.bl.controllers.aboutTheProjectTab;
 
-import com.bearlycattable.bait.bl.controllers.RootController;
+import com.bearlycattable.bait.bl.controllers.AboutTheProjectTabAccessProxy;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
@@ -11,18 +11,18 @@ public class AboutTheProjectTabController {
     @FXML
     @Getter
     private VBox aboutTheProjectVBoxListParent;
-    private RootController rootController;
+    private AboutTheProjectTabAccessProxy aboutTheProjectTabAccessProxy;
 
     @FXML
     void initialize() {
         System.out.println("CREATING: AboutTheProjectTabController......");
     }
 
-    public void setRootController(RootController rootController) {
-        this.rootController = rootController;
+    public void setAboutTheProjectTabAccessProxy(AboutTheProjectTabAccessProxy proxy) {
+        this.aboutTheProjectTabAccessProxy = proxy;
     }
 
     public final boolean isParentValid() {
-        return rootController != null;
+        return aboutTheProjectTabAccessProxy != null;
     }
 }

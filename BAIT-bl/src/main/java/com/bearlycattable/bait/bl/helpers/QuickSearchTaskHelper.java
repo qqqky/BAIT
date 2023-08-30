@@ -32,13 +32,13 @@ public class QuickSearchTaskHelper {
     }
 
     private void doOnRunning(QuickSearchThreadContext context) {
-        if (context.getController().getRootController().isVerboseMode()) {
+        if (context.isVerboseMode()) {
             System.out.println("QuickSearch task is now RUNNING");
         }
     }
 
     private void doOnSucceeded(QuickSearchThreadContext context, WorkerStateEvent event) {
-        boolean verboseMode = context.getController().getRootController().isVerboseMode();
+        boolean verboseMode = context.isVerboseMode();
         if (verboseMode) {
             System.out.println("QuickSearch task has FINISHED.");
         }
@@ -52,15 +52,15 @@ public class QuickSearchTaskHelper {
         if (verboseMode) {
             System.out.println("Result has been obtained from thread: " + threadNum);
         }
+
         context.getController().getTaskMap().remove(threadNum);
-        // context.getController().setCurrentSearchResultPK(result.getCommonPriv());
         context.getController().showQuickSearchResults(result, context.getAccuracy());
         context.getController().getQuickSearchBtnSearch().setDisable(false);
     }
 
     private void doOnCancelled(QuickSearchThreadContext context) {
         context.getController().getQuickSearchBtnSearch().setDisable(false);
-        if (context.getController().getRootController().isVerboseMode()) {
+        if (context.isVerboseMode()) {
             System.out.println("QuickSearch task is now CANCELLED");
         }
         context.getController().getTaskMap().remove(context.getThreadId());
@@ -68,7 +68,7 @@ public class QuickSearchTaskHelper {
 
     private void doOnFailed(QuickSearchThreadContext context) {
         context.getController().getQuickSearchBtnSearch().setDisable(false);
-        if (context.getController().getRootController().isVerboseMode()) {
+        if (context.isVerboseMode()) {
             System.out.println("QuickSearch task has FAILED");
         }
         context.getController().getTaskMap().remove(context.getThreadId());

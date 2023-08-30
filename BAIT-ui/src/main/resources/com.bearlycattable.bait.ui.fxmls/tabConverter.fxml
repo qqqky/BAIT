@@ -123,7 +123,7 @@
           <children>
             <VBox alignment="CENTER" >
               <children>
-                <Button fx:id="converterBtnConvertToWIF" mnemonicParsing="false" onAction="#doConvertToWIF" prefHeight="32.0" prefWidth="201.0" text="%button.convertToWif" />
+                <Button mnemonicParsing="false" onAction="#doConvertToWIF" prefHeight="32.0" prefWidth="201.0" text="%button.convertToWif" />
               </children>
             </VBox>
           </children>

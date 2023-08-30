@@ -9,15 +9,13 @@ import javafx.scene.layout.VBox;
 public final class AdvancedSubTabInstructionsControllerInitializer {
 
     private final AdvancedSubTabInstructionsController controller;
-    private AdvancedTabMainController mainController;
 
     private AdvancedSubTabInstructionsControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AdvancedSubTabInstructionsControllerInitializer(AdvancedSubTabInstructionsController controller, AdvancedTabMainController mainController) {
+    private AdvancedSubTabInstructionsControllerInitializer(AdvancedSubTabInstructionsController controller) {
         this.controller = controller;
-        this.mainController = mainController;
     }
 
     public static void initialize(AdvancedSubTabInstructionsController controller, AdvancedTabMainController parentController) {
@@ -30,8 +28,9 @@ public final class AdvancedSubTabInstructionsControllerInitializer {
         }
 
         //parent controller must be set before initialization
-        controller.setParentController(parentController);
-        new AdvancedSubTabInstructionsControllerInitializer(controller, parentController).init();
+        controller.setAdvancedInstructionsAccessProxy(parentController);
+
+        new AdvancedSubTabInstructionsControllerInitializer(controller).init();
     }
 
     private void init() {

@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 
 import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.functions.TriConsumer;
-import com.bearlycattable.bait.commons.validators.SearchContextValidator;
 
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.paint.Color;
@@ -43,8 +41,8 @@ public class AdvancedSearchContext {
     String wordPrefix; //only used by random modes which use word prefix (this field is always optional)
 
     //functions that are used to generate next key:
-    @Setter
-    Function<String, String> nextPrivFunction; //used by inc/dec modes, full random mode and most horizontal rotation modes
+    // @Setter
+    // Function<String, String> nextPrivFunction; //used by inc/dec modes, full random mode and most horizontal rotation modes
     @Setter
     BiPredicate<String, Integer> validityCheckFunctionForVertical; //used by vertical rotation mode
     @Setter
@@ -67,10 +65,10 @@ public class AdvancedSearchContext {
             return Optional.of("Selected search mode requires a 64-hex digit seed");
         }
 
-        Optional<String> functionsValid = SearchContextValidator.validateNextPrivFunctionsForMode(searchMode, nextPrivFunction, validityCheckFunctionForVertical, nextPrivFunctionVertical, nextPrivFunctionFullPrefixed);
-        if (functionsValid.isPresent()) {
-            return functionsValid;
-        }
+        // Optional<String> validationResult = SearchContextValidator.validateNextPrivFunctionsForMode(searchMode, nextPrivFunction, validityCheckFunctionForVertical, nextPrivFunctionVertical, nextPrivFunctionFullPrefixed);
+        // if (validationResult.isPresent()) {
+        //     return validationResult;
+        // }
 
         if (parentThreadId == null || parentThreadId.length() != 8) {
             return Optional.of("Parent thread id was not found");

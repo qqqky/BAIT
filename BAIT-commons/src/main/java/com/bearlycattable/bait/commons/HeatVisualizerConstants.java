@@ -14,7 +14,7 @@ public final class HeatVisualizerConstants {
 
     private HeatVisualizerConstants() {}
 
-    public static final String CURRENT_VERSION = "v1.0.2";
+    public static final String CURRENT_VERSION = "v1.0.3";
     public static final Locale EN_US = new Locale("en", "US");
 
     public static final String ZERO_STRING = "0";
@@ -44,6 +44,11 @@ public final class HeatVisualizerConstants {
     public static final Pattern DIGITS_ONLY_MAX9 = Pattern.compile("^[\\d]{1,9}$");
     public static final long OVERFLOW_REFERENCE_8_HEX = 0x100000000L;
     public static final int OVERFLOW_REFERENCE_1_HEX = 0x10;
+
+    //bytes from bitcoin min and max keys (inclusive)
+    private final byte[] ALL_BYTES_MIN = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2};
+    private final byte[] ALL_BYTES_MAX = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -70, -82, -36, -26, -81, 72, -96, 59, -65, -46, 94, -116, -48, 54, 65, 64};
+
     public static final List<Integer> ALL_WORD_NUMBERS = Collections.unmodifiableList(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
     public static final PubComparisonResultWrapper EMPTY_RESULT_WRAPPER = PubComparisonResultWrapper.empty();
 

@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -36,8 +35,9 @@ import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.functions.TriConsumer;
-import com.bearlycattable.bait.commons.helpers.GeneralSearchHelper;
+import com.bearlycattable.bait.commons.helpers.AbstractGeneralSearchHelper;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
 import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 import com.bearlycattable.bait.utility.DurationUtils;
@@ -50,7 +50,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import lombok.Getter;
 
-public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper implements AdvancedSearchHelper {
+public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearchHelper implements AdvancedSearchHelper, CustomKeyGenerator {
 
     private static final Logger LOG = Logger.getLogger(AbstractAdvancedSearchHelper.class.getName());
 
@@ -115,11 +115,12 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
 
     private Task<P2PKHSingleResultData[]> createNewGeneralAdvancedSearchTask(AdvancedSearchContext context) {
 
-        return new Task<P2PKHSingleResultData[]>() {
+        return new Task<>() {
             private static final int FORTY = 40;
             private final TaskDiagnosticsModel diagnostics = context.getTaskDiagnosticsModel();
 
             private final String seed = context.getSeed();
+            private final List<Integer> disabledWords = context.getDisabledWords();
             private final String parentThreadId = context.getParentThreadId();
             private final String childThreadId = diagnostics.getChildThreadId();
 
@@ -130,8 +131,10 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
             private final int notifyThreshold = context.getPointThresholdForNotify();
             private final TriConsumer<String, Color, LogTextTypeEnum> logConsumer = Objects.requireNonNull(context.getLogConsumer());
             private final SearchModeEnum searchMode = Objects.requireNonNull(context.getSearchMode());
+            // private final String prefix = context.getWordPrefix();
+            // private final boolean prefixed = prefix != null && HeatVisualizerConstants.PATTERN_SIMPLE_08_OR_LESS.matcher(prefix).matches();
             private final int iterations = SearchHelperIterationsValidator.validateAndGet(searchMode, getIterations());
-            private final Function<String, String> buildNextPrivFunction = Objects.requireNonNull(context.getNextPrivFunction());
+            // private final Function<String, String> buildNextPrivFunction = Objects.requireNonNull(context.getNextPrivFunction());
             private final boolean exactMatchCheckOnly = false; //TODO: cbx 'exact match check only'
             private final boolean exactMatchCheckEnabled = AbstractAdvancedSearchHelper.this.exactMatchCheckEnabled;
             private final boolean verbose = context.isVerbose();
@@ -154,12 +157,8 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                 String[] UPKHArray = new String[40];
                 String[] CPKHArray = new String[40];
 
-                final AdvancedSearchSingleItemComparisonModel dataModel = AdvancedSearchSingleItemComparisonModel.builder()
-                        .logConsumer(logConsumer)
-                        .verbose(verbose)
-                        .scaleFactor(currentScaleFactor)
-                        .pointThresholdForNotify(notifyThreshold)
-                        .build();
+                final AdvancedSearchSingleItemComparisonModel dataModel = AdvancedSearchSingleItemComparisonModel.builder().logConsumer(logConsumer).verbose(verbose).scaleFactor(currentScaleFactor)
+                        .pointThresholdForNotify(notifyThreshold).build();
 
                 int count = 0; //counting num of better results in the ongoing run
                 long start = System.nanoTime();
@@ -174,7 +173,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                         return dataArray;
                     }
 
-                    currentPriv = buildNextPrivFunction.apply(currentPriv); //disabled words are taken into account
+                    currentPriv = buildNextPriv(currentPriv, disabledWords);
 
                     if ((i + 1) % printSpacing == 0) {
                         printCurrentKey((i + 1), searchMode, currentPriv, logConsumer);
@@ -215,7 +214,8 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
                         dataModel.setResultContainer(item);
 
                         unknownP2PKH = item.getHash();
-                        newResult = allPointMappingsCached ? calculateCurrentResultCached(currentPriv, UPKHArray, CPKHArray, item) : calculateCurrentResult(currentPriv, unknownP2PKH, unknownP2PKH, getScaleFactor());
+                        newResult = allPointMappingsCached ? calculateCurrentResultCached(currentPriv, UPKHArray, CPKHArray, item) : calculateCurrentResult(currentPriv, unknownP2PKH, unknownP2PKH,
+                                getScaleFactor());
 
                         int oldMinPoints;
                         int pointsGained;
@@ -287,7 +287,8 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
             }
 
             private void printCurrentKey(int i, SearchModeEnum searchMode, String currentPriv, TriConsumer<String, Color, LogTextTypeEnum> logConsumer) {
-                String progressMessage = "Progress: " + calculateProgressPercent(i) + "% [parentTID=" + parentThreadId + ", childTID=" + childThreadId + ", i=" + i + ", key=" + currentPriv + ", mode=" + searchMode.getAbbr() + "] (" + DurationUtils.getCurrentDateTime() + ")";
+                String progressMessage = "Progress: " + calculateProgressPercent(i) + "% [parentTID=" + parentThreadId + ", childTID=" + childThreadId + ", i=" + i + ", key=" + currentPriv + ", mode="
+                        + searchMode.getAbbr() + "] (" + DurationUtils.getCurrentDateTime() + ")";
                 System.out.println(progressMessage);
                 Platform.runLater(() -> logConsumer.accept(progressMessage, Color.GREEN, LogTextTypeEnum.SEARCH_PROGRESS));
             }
@@ -299,18 +300,12 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
 
             private String buildEndOfSearchMessage(long seconds, int totalNewResults, String firstKey, String lastKey) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("First priv (this one is not checked): ").append(firstKey)
-                        .append(System.lineSeparator())
-                        .append("Last priv (this one is checked): ").append(lastKey)
-                        .append(System.lineSeparator())
-                        .append("Total number of iterations processed: ").append(iterations)
-                        .append(System.lineSeparator())
-                        .append("Total duration in seconds: ").append(seconds)
-                        .append(System.lineSeparator())
-                        .append("Total duration in a more convenient format: ").append(DurationUtils.getDurationDHMS(seconds))
-                        .append(System.lineSeparator())
-                        .append("Total number of better results found during this loop: ").append(totalNewResults)
-                        .append(System.lineSeparator())
+                sb.append("First priv (this one is not checked): ").append(firstKey).append(System.lineSeparator())
+                        .append("Last priv (this one is checked): ").append(lastKey).append(System.lineSeparator())
+                        .append("Total number of iterations processed: ").append(iterations).append(System.lineSeparator())
+                        .append("Total duration in seconds: ").append(seconds).append(System.lineSeparator())
+                        .append("Total duration in a more convenient format: ").append(DurationUtils.getDurationDHMS(seconds)).append(System.lineSeparator())
+                        .append("Total number of better results found during this loop: ").append(totalNewResults).append(System.lineSeparator())
                         .append("Highest points acquired on a single result (during this loop): ").append(diagnostics.getHighestAcquiredPoints());
 
                 return sb.toString();
@@ -365,7 +360,7 @@ public abstract class AbstractAdvancedSearchHelper extends GeneralSearchHelper i
         Platform.runLater(() -> buildContext.getLogConsumer().accept(betterResultFoundMessage, Color.GREEN, LogTextTypeEnum.POINTS_GAINED));
 
         if (buildContext.isVerbose()) {
-            String keySwapMessage = "Swapped key to: " + buildContext.getCurrentPrivKey() + "[targetPHK=" + buildContext.getResultContainer().getHash() + ", type " + buildContext.getType() + ", oldKey=" + oldPriv + "]";
+            String keySwapMessage = "Swapped key to: " + buildContext.getCurrentPrivKey() + " [targetPHK=" + buildContext.getResultContainer().getHash() + ", type " + buildContext.getType() + ", oldKey=" + oldPriv + "]";
             LOG.info(keySwapMessage);
             Platform.runLater(() -> buildContext.getLogConsumer().accept(keySwapMessage, Color.GREEN, LogTextTypeEnum.KEY_SWAP));
         }

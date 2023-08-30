@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.ChoiceBox?>
 <VBox prefWidth="1226.0" style="-fx-border-style: solid none none none;" xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.bearlycattable.bait.bl.controllers.heatComparisonTab.HeatComparisonTabController">
@@ -54,7 +62,7 @@
                   </children>
                 </HBox>
                 <HBox prefWidth="5.0" />
-                <Button fx:id="comparisonBtnImportPrivFromConstruction" mnemonicParsing="false" onAction="#doImportPriv" text="%button.importFromConstruction">
+                <Button mnemonicParsing="false" onAction="#doImportPriv" text="%button.importFromConstruction">
                   <tooltip>
                     <Tooltip text="%tooltip.heatComparison.importSeed" />
                   </tooltip>
@@ -81,7 +89,7 @@
             <HBox prefHeight="5.0" />
             <HBox alignment="CENTER">
               <children>
-                <Label fx:id="labelPubComparisonScaleFactorMessage" text="%label.scaleFactor">
+                <Label text="%label.scaleFactor">
                   <font>
                     <Font name="System Bold" size="16.0" />
                   </font>
@@ -97,7 +105,7 @@
             </HBox>
             <HBox prefHeight="5.0" />
 
-            <Button mnemonicParsing="false" onAction="#doCompare" prefHeight="32.0" prefWidth="140.0" text="%button.compare" />
+            <Button mnemonicParsing="false" onAction="#doShowFullHeatComparison" prefHeight="32.0" prefWidth="140.0" text="%button.compare" />
             <HBox prefHeight="5.0" />
             <HBox alignment="CENTER">
               <children>
@@ -166,7 +174,7 @@
                   <children>
                     <HBox prefWidth="5.0" />
 
-                    <Label fx:id="labelPubHeatPositive" prefWidth="110.0" text="%label.heatPositive" />
+                    <Label id="labelPubHeatPositive" prefWidth="110.0" text="%label.heatPositive" />
                     <HBox fx:id="containerPubHeatPositiveUncompressed" prefHeight="32.0" prefWidth="440.0" style="-fx-border-color: black;">
                       <children>
                         <HBox>
@@ -605,7 +613,7 @@
         <HBox prefHeight="5.0" />
         <HBox alignment="CENTER">
           <children>
-            <Button fx:id="comparisonBtnShowPrivStats" alignment="CENTER" mnemonicParsing="false" onAction="#doShowPrivStats" prefHeight="32.0" prefWidth="140.0" text="%button.comparePrivKeys" />
+            <Button fx:id="comparisonBtnShowPrivStats" alignment="CENTER" mnemonicParsing="false" onAction="#doShowPrivHeatComparison" prefHeight="32.0" prefWidth="140.0" text="%button.comparePrivKeys" />
           </children>
         </HBox>
         <HBox prefHeight="5.0" />
@@ -623,101 +631,100 @@
                     </HBox>
                     <HBox fx:id="containerPrivHeatPositive" styleClass="heatContainerPrivWords" prefHeight="32.0" prefWidth="704.0">
                       <children>
-                        <!--                        TODO: do we really need all these fxids here??-->
-                        <HBox fx:id="resultPrivHeatPositiveWord01">
+                        <HBox id="resultPrivHeatPositiveWord01">
                           <children>
-                            <Label fx:id="word01PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatPositiveWord02">
+                        <HBox id="resultPrivHeatPositiveWord02">
                           <children>
-                            <Label fx:id="word02PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
                         <HBox id="resultPrivHeatPositiveWord03">
                           <children>
-                            <Label fx:id="word03PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatPositiveWord04">
+                        <HBox id="resultPrivHeatPositiveWord04">
                           <children>
-                            <Label fx:id="word04PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatPositiveWord05">
+                        <HBox id="resultPrivHeatPositiveWord05">
                           <children>
-                            <Label fx:id="word05PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatPositiveWord06">
+                        <HBox id="resultPrivHeatPositiveWord06">
                           <children>
-                            <Label fx:id="word06PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatPositiveWord07">
+                        <HBox id="resultPrivHeatPositiveWord07">
                           <children>
-                            <Label fx:id="word07PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatPositiveWord08">
+                        <HBox id="resultPrivHeatPositiveWord08">
                           <children>
-                            <Label fx:id="word08PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex00" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex01" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex02" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex03" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex04" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex05" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex06" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08PositiveIndex07" alignment="CENTER" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
                       </children>
@@ -751,100 +758,100 @@
                     </HBox>
                     <HBox fx:id="containerPrivHeatNegative" styleClass="heatContainerPrivWords" prefHeight="32.0" prefWidth="704.0">
                       <children>
-                        <HBox fx:id="resultPrivHeatNegativeWord01">
+                        <HBox id="resultPrivHeatNegativeWord01">
                           <children>
-                            <Label fx:id="word01NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word01NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word01NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatNegativeWord02">
+                        <HBox id="resultPrivHeatNegativeWord02">
                           <children>
-                            <Label fx:id="word02NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word02NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word02NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatNegativeWord03">
+                        <HBox id="resultPrivHeatNegativeWord03">
                           <children>
-                            <Label fx:id="word03NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word03NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word03NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatNegativeWord04">
+                        <HBox id="resultPrivHeatNegativeWord04">
                           <children>
-                            <Label fx:id="word04NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word04NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word04NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatNegativeWord05">
+                        <HBox id="resultPrivHeatNegativeWord05">
                           <children>
-                            <Label fx:id="word05NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word05NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word05NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatNegativeWord06">
+                        <HBox id="resultPrivHeatNegativeWord06">
                           <children>
-                            <Label fx:id="word06NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word06NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word06NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatNegativeWord07">
+                        <HBox id="resultPrivHeatNegativeWord07">
                           <children>
-                            <Label fx:id="word07NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word07NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word07NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
-                        <HBox fx:id="resultPrivHeatNegativeWord08">
+                        <HBox id="resultPrivHeatNegativeWord08">
                           <children>
-                            <Label fx:id="word08NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
-                            <Label fx:id="word08NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex00" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex01" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex02" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex03" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex04" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex05" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex06" prefHeight="32.0" prefWidth="11.0" />
+                            <Label id="word08NegativeIndex07" prefHeight="32.0" prefWidth="11.0" />
                           </children>
                         </HBox>
                       </children>

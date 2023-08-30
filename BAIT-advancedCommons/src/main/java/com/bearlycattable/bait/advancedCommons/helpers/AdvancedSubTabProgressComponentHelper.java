@@ -48,7 +48,7 @@ public class AdvancedSubTabProgressComponentHelper {
         threadProgressHBox.setPrefWidth(1226.0);
         handles.get(currentThreadNum).put(CHILD_PROGRESS_HBOX_PREFIX, threadProgressHBox);
 
-        //create a child progressBarHbox and its children
+        //create a child 'progressBarHbox' and its children
         HBox progressBarHbox = new HBox();
         progressBarHbox.setAlignment(Pos.CENTER);
         progressBarHbox.setPrefHeight(71.0);

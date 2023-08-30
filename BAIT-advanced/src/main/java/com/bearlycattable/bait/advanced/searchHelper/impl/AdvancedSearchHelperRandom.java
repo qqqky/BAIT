@@ -26,8 +26,8 @@ public class AdvancedSearchHelperRandom extends AbstractAdvancedSearchHelper imp
 
     @Override
     public AdvancedSearchTaskWrapper createNewAdvancedSearchTask(AdvancedSearchContext advancedSearchContext) {
-        List<Integer> disabledWords = advancedSearchContext.getDisabledWords();
-        advancedSearchContext.setNextPrivFunction(seed -> buildNextPriv(seed, disabledWords));
+        // List<Integer> disabledWords = advancedSearchContext.getDisabledWords();
+        // advancedSearchContext.setNextPrivFunction(seed -> buildNextPriv(seed, disabledWords));
 
         return advancedSearchTaskGuiCreationHelper(advancedSearchContext);
     }

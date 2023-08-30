@@ -3,7 +3,7 @@ package com.bearlycattable.bait.advancedCommons.helpers;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTabCommandExecutor;
+import com.bearlycattable.bait.advancedCommons.interfaces.DarkModeControl;
 
 import javafx.css.Styleable;
 import javafx.scene.Node;
@@ -83,7 +83,7 @@ public class DarkModeHelper {
     private static final String privHeatNumericValue = "privHeatNumericValue";
     private static final String privHeatNumericValueDark = "privHeatNumericValueDark";
 
-    public static synchronized void toggleDarkModeGlobal(boolean enable, Control component, AdvancedTabCommandExecutor commandExecutor) {
+    public static synchronized void toggleDarkModeGlobal(boolean enabled, Control component, DarkModeControl darkModeControl) {
         if (component == null) {
             return;
         }
@@ -98,18 +98,15 @@ public class DarkModeHelper {
         }
 
         VBox rootVBox = (VBox) root;
-        addOrRemoveStyle(rootVBox, bcgPaneDark, enable);
-        rootVBox.getChildren().stream().forEach(child -> darkModeHelper(child, enable));
+        addOrRemoveStyle(rootVBox, bcgPaneDark, enabled);
+        rootVBox.getChildren().forEach(child -> darkModeHelper(child, enabled));
 
-        // System.out.println(root);
-        commandExecutor.setDarkMode(enable);
-        commandExecutor.refreshLogView();
-        // System.out.println("Dark mode has been " + (enable ? "ENABLED" : "DISABLED"));
+        darkModeControl.setDarkModeEnabled(enabled);
+        darkModeControl.refreshLogView();
     }
 
     public static void toggleDarkModeForComponent(boolean enable, Node component) {
         darkModeHelper(component, enable);
-        // System.out.println("Dark mode has been " + (enable ? "ENABLED" : "DISABLED") + " on this component: " + component);
     }
 
     public static void removeStyleClassesFromProgressContainer(HBox component, List<String> styleClasses) {
@@ -117,8 +114,8 @@ public class DarkModeHelper {
             return;
         }
 
-        styleClasses.stream().forEach(styleClass -> removeStyleClassIfExists(component, styleClass));
-        component.getChildren().stream().forEach(child -> removeStyleClassesFromProgressContainerHelper(child, styleClasses));
+        styleClasses.forEach(styleClass -> removeStyleClassIfExists(component, styleClass));
+        component.getChildren().forEach(child -> removeStyleClassesFromProgressContainerHelper(child, styleClasses));
     }
 
     private static void removeStyleClassesFromProgressContainerHelper(Node component, List<String> styleClasses) {
@@ -127,13 +124,13 @@ public class DarkModeHelper {
         }
 
         if (component instanceof Label) {
-            styleClasses.stream().forEach(styleClass -> removeStyleClassIfExists(component, styleClass));
+            styleClasses.forEach(styleClass -> removeStyleClassIfExists(component, styleClass));
             return;
         }
 
         if (component instanceof Pane) {
-            styleClasses.stream().forEach(styleClass -> removeStyleClassIfExists(component, styleClass));
-            ((Pane) component).getChildren().stream().forEach(child -> removeStyleClassesFromProgressContainerHelper(child, styleClasses));
+            styleClasses.forEach(styleClass -> removeStyleClassIfExists(component, styleClass));
+            ((Pane) component).getChildren().forEach(child -> removeStyleClassesFromProgressContainerHelper(child, styleClasses));
         }
     }
 
@@ -195,7 +192,7 @@ public class DarkModeHelper {
         //process any other Pane component
         Pane item = cast(currentPane);
         addOrRemoveStyle(item, bcgPaneDark, enable);
-        item.getChildren().stream().forEach(child -> darkModeHelper(child, enable));
+        item.getChildren().forEach(child -> darkModeHelper(child, enable));
     }
 
     private static void processControlComponent(Control currentControl, boolean enable) {
@@ -211,7 +208,7 @@ public class DarkModeHelper {
                 removeStyleClassIfExists(tp, enable ? tabAdvancedMainPane : tabAdvancedMainPaneDark);
                 addStyleClassIfNotExists(tp, enable ? tabAdvancedMainPaneDark : tabAdvancedMainPane);
             }
-            tp.getTabs().stream().forEach(tab -> darkModeHelper(tab, enable));
+            tp.getTabs().forEach(tab -> darkModeHelper(tab, enable));
             return;
         }
 
@@ -296,7 +293,7 @@ public class DarkModeHelper {
         if (currentControl instanceof Accordion) {
             Accordion ac = cast(currentControl);
             addOrRemoveStyle(ac, accordionDark, enable);
-            ac.getPanes().stream().forEach(pane -> darkModeHelper(pane, enable));
+            ac.getPanes().forEach(pane -> darkModeHelper(pane, enable));
             return;
         }
 
@@ -310,7 +307,7 @@ public class DarkModeHelper {
         //children components of Alert class (children of DialogPane)
         if (currentControl instanceof ButtonBar) {
             ButtonBar bb = cast(currentControl);
-            bb.getButtons().stream().forEach(btn -> darkModeHelper(btn, enable));
+            bb.getButtons().forEach(btn -> darkModeHelper(btn, enable));
             return;
         }
 
@@ -371,43 +368,43 @@ public class DarkModeHelper {
         if (hb.getStyleClass().contains(enable ? topicMarkerMain : topicMarkerMainDark)) {
             removeStyleClassIfExists(hb, enable ? topicMarkerMain : topicMarkerMainDark);
             addStyleClassIfNotExists(hb, enable ? topicMarkerMainDark : topicMarkerMain);
-            hb.getChildren().stream().forEach(child -> darkModeHelperSpecialLabelOnly(child, topicMarkerMainLabelTextDark, enable));
+            hb.getChildren().forEach(child -> darkModeHelperSpecialLabelOnly(child, topicMarkerMainLabelTextDark, enable));
             return;
         }
 
         if (hb.getStyleClass().contains(enable ? topicMarkerAdditional : topicMarkerAdditionalDark)) {
             removeStyleClassIfExists(hb, enable ? topicMarkerAdditional : topicMarkerAdditionalDark);
             addStyleClassIfNotExists(hb, enable ? topicMarkerAdditionalDark : topicMarkerAdditional);
-            hb.getChildren().stream().forEach(child -> darkModeHelperSpecialLabelOnly(child, topicMarkerAdditionalLabelTextDark, enable));
+            hb.getChildren().forEach(child -> darkModeHelperSpecialLabelOnly(child, topicMarkerAdditionalLabelTextDark, enable));
             return;
         }
 
         addOrRemoveStyle(hb, bcgPaneDark, enable);
-        hb.getChildren().stream().forEach(child -> darkModeHelper(child, enable));
+        hb.getChildren().forEach(child -> darkModeHelper(child, enable));
     }
 
     private static void processVBoxComponent(VBox vb, boolean enable) {
         if (vb.getStyleClass().contains(enable ? tabTopSpacer : tabTopSpacerDark)) {
             removeStyleClassIfExists(vb, enable ? tabTopSpacer : tabTopSpacerDark);
             addStyleClassIfNotExists(vb, enable ? tabTopSpacerDark : tabTopSpacer);
-            vb.getChildren().stream().forEach(child -> darkModeHelper(child, enable));
+            vb.getChildren().forEach(child -> darkModeHelper(child, enable));
             return;
         }
 
         addOrRemoveStyle(vb, bcgPaneDark, enable);
-        vb.getChildren().stream().forEach(child -> darkModeHelper(child, enable));
+        vb.getChildren().forEach(child -> darkModeHelper(child, enable));
     }
 
     private static void processDialogPaneComponent(DialogPane cp, boolean enable) {
         addOrRemoveStyle(cp, alertDark, enable);
-        cp.getChildren().stream().forEach(child -> darkModeHelper(child, enable));
+        cp.getChildren().forEach(child -> darkModeHelper(child, enable));
     }
 
 
     //only used for topic and subtopic components. Here we only process labels (including special label-tooltips)
     private static void darkModeHelperSpecialLabelOnly(Object current, String styleClass, boolean enable) {
         if (current instanceof Pane) {
-            ((Pane) current).getChildren().stream().forEach(child -> darkModeHelperSpecialLabelOnly(child, styleClass, enable));
+            ((Pane) current).getChildren().forEach(child -> darkModeHelperSpecialLabelOnly(child, styleClass, enable));
             return;
         }
         if (!(current instanceof Label)) {

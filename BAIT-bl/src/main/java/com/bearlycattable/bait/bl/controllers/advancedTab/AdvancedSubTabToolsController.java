@@ -9,19 +9,20 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
-import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
-import com.bearlycattable.bait.utility.UserInputUtils;
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
-import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
-import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.serialization.SerializedSearchResultsReader;
+import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedToolsAccessProxy;
+import com.bearlycattable.bait.commons.CssConstants;
+import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
+import com.bearlycattable.bait.commons.enums.TextColorEnum;
+import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
+import com.bearlycattable.bait.utility.UserInputUtils;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -75,25 +76,21 @@ public class AdvancedSubTabToolsController {
     private TextField advancedToolsTextFieldMultiTarget;
     @FXML
     private Label searchToolsLabelMultiUnencodeResultMessage; //multi-unencode error/success message label
-    private AdvancedTabMainController parentController;
     @FXML
     private HBox advancedToolsTemplateCreationSourceParentContainer;
 
-    public void setParentController(AdvancedTabMainController parentController) {
-        this.parentController = Objects.requireNonNull(parentController);
+    private AdvancedToolsAccessProxy advancedToolsAccessProxy;
+
+    public void setAdvancedToolsAccessProxy(AdvancedToolsAccessProxy proxy) {
+        this.advancedToolsAccessProxy = Objects.requireNonNull(proxy);
     }
 
     @FXML
     void initialize() {
         System.out.println("CREATING (child): AdvancedSubTabToolsController......");
 
-        advancedToolsRadioCreateTemplateFromManualInput.setOnAction(event -> {
-            insertComponentForManualAddressInput();
-        });
-
-        advancedToolsRadioCreateTemplateFromFile.setOnAction(event -> {
-            insertComponentForFileSelection();
-        });
+        advancedToolsRadioCreateTemplateFromManualInput.setOnAction(event -> insertComponentForManualAddressInput());
+        advancedToolsRadioCreateTemplateFromFile.setOnAction(event -> insertComponentForFileSelection());
 
         advancedToolsRadioCreateTemplateFromManualInput.fire();
     }
@@ -120,8 +117,8 @@ public class AdvancedSubTabToolsController {
         advancedToolsTextAreaManualPubInput = textArea;
         parent.getChildren().add(textArea);
 
-        if (parentController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(parentController.isDarkModeEnabled(), parent);
+        if (advancedToolsAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(advancedToolsAccessProxy.isDarkModeEnabled(), parent);
         }
 
         advancedToolsTemplateCreationSourceParentContainer.getChildren().add(parent);
@@ -156,8 +153,8 @@ public class AdvancedSubTabToolsController {
 
         parent.getChildren().add(parentContentWrapper);
 
-        if (parentController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(parentController.isDarkModeEnabled(), parent);
+        if (advancedToolsAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(advancedToolsAccessProxy.isDarkModeEnabled(), parent);
         }
 
         advancedToolsTemplateCreationSourceParentContainer.getChildren().add(parent);
@@ -230,11 +227,11 @@ public class AdvancedSubTabToolsController {
         boolean saved = P2PKHSingleResultDataHelper.serializeAndSave(savePath, template.get());
         if (saved) {
             String messageForUser = "[Saved after creating a new result template]";
-            parentController.logToUi(messageForUser, Color.GREEN, LogTextTypeEnum.GENERAL);
+            advancedToolsAccessProxy.logToUi(messageForUser, Color.GREEN, LogTextTypeEnum.GENERAL);
             insertInfoLabel(searchToolsLabelTemplateCreationResult, rb.getString("info.successTemplateSaved"), TextColorEnum.GREEN);
             return;
         }
-        parentController.logToUi("[Failed to save a newly-created result template]", Color.RED, LogTextTypeEnum.GENERAL);
+        advancedToolsAccessProxy.logToUi("[Failed to save a newly-created result template]", Color.RED, LogTextTypeEnum.GENERAL);
         insertErrorLabel(searchToolsLabelTemplateCreationResult, rb.getString("error.templateNotSaved"));
     }
 
@@ -321,12 +318,12 @@ public class AdvancedSubTabToolsController {
 
         if (saved) {
             String messageForUser = "[Successfully saved template merge results]";
-            parentController.logToUi(messageForUser, Color.GREEN, LogTextTypeEnum.GENERAL);
+            advancedToolsAccessProxy.logToUi(messageForUser, Color.GREEN, LogTextTypeEnum.GENERAL);
             insertInfoLabel(searchToolsLabelMergeResult, rb.getString("info.successMergeResultsSavedTo") + advancedToolsTextFieldMergeOutputFilePath.getText(), TextColorEnum.GREEN);
             return;
         }
 
-        parentController.logToUi("[Failed to save template merge results]", Color.RED, LogTextTypeEnum.GENERAL);
+        advancedToolsAccessProxy.logToUi("[Failed to save template merge results]", Color.RED, LogTextTypeEnum.GENERAL);
         insertErrorLabelAndRedBorder(searchToolsLabelMergeResult, advancedToolsTextFieldMergeOutputFilePath, rb.getString("error.mergeResultsNotSaved") + advancedToolsTextFieldMergeOutputFilePath.getText());
     }
 
@@ -378,7 +375,7 @@ public class AdvancedSubTabToolsController {
             return Optional.empty();
         }
 
-        if (parentController.isVerboseMode()) {
+        if (advancedToolsAccessProxy.isVerboseMode()) {
             System.out.println("The following keys have been identified in user input: " + inputKeyList);
         }
 
@@ -394,7 +391,7 @@ public class AdvancedSubTabToolsController {
             System.out.println("More than 3 items found. Only first 3 addresses will be used in template");
         }
 
-        return parentController.getAddressReaderProvider().createTemplateFromStringList(inputKeyList, max);
+        return advancedToolsAccessProxy.createTemplateFromStringList(inputKeyList, max, this);
     }
 
     private Optional<P2PKHSingleResultData[]> createPubTemplateFromFile() {
@@ -404,11 +401,11 @@ public class AdvancedSubTabToolsController {
         if ("unlimited".equals(advancedToolsTextFieldMaxEntriesInFile.getText())) {
             max = -1;
         }
-        int validPubs = parentController.getAddressReaderProvider().readAndTestFile(path);
+        int validPubs = advancedToolsAccessProxy.readAndTestFile(path, this);
 
         if (validPubs > 0) {
-            P2PKHSingleResultData[] template = parentController.getAddressReaderProvider().createTemplateFromFile(path, max);
-            if (parentController.isVerboseMode()) {
+            P2PKHSingleResultData[] template = advancedToolsAccessProxy.createTemplateFromFile(path, max, this);
+            if (advancedToolsAccessProxy.isVerboseMode()) {
                 System.out.println("Valid pubs found: " + template.length);
             }
             return Optional.of(template);
@@ -480,6 +477,6 @@ public class AdvancedSubTabToolsController {
     }
 
     public final boolean isParentValid() {
-        return parentController != null;
+        return advancedToolsAccessProxy != null;
     }
 }

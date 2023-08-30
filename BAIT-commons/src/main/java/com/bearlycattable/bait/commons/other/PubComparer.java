@@ -74,7 +74,6 @@ public class PubComparer {
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
 
-        //will need to ensure both have 4 nums (later)
         boolean oldIsHighest = true;
         for (int i = 0; i < rankingsOld.size(); i++) {
             if (rankingsOld.get(i) > rankingsCurrent.get(i)) {
@@ -90,8 +89,8 @@ public class PubComparer {
         return oldIsHighest ? old : current;
     }
 
-    public Optional<PubComparisonResult> comparePubKeyHashes(PubTypeEnum type, String lockedPKH, String currentPKH, ScaleFactorEnum scaleFactor) {
-        if (lockedPKH == null || lockedPKH.isEmpty()) {
+    public Optional<PubComparisonResult> comparePubKeyHashes(PubTypeEnum type, String referencePKH, String currentPKH, ScaleFactorEnum scaleFactor) {
+        if (referencePKH == null || referencePKH.isEmpty()) {
             return Optional.empty();
         }
 
@@ -106,12 +105,12 @@ public class PubComparer {
 
         String currentItem;
         String referenceItem;
-        int difference = 0;
+        int difference;
         int overflow_reference = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
 
-        for (int i = 0; i < lockedPKH.length(); i++) {
+        for (int i = 0; i < referencePKH.length(); i++) {
             currentItem = String.valueOf(currentPKH.charAt(i));
-            referenceItem = String.valueOf(lockedPKH.charAt(i));
+            referenceItem = String.valueOf(referencePKH.charAt(i));
             difference = calculateDifferenceForHexChars(currentItem, referenceItem);
 
             int pointsPositive = calculateWithMultiplier(countPointsPositive(difference, overflow_reference), pointsMultiplier);
@@ -128,35 +127,6 @@ public class PubComparer {
                                    .type(type)
                                    .build());
     }
-
-    // private Optional<PubComparisonResult> comparePubKeyHashesCached(PubTypeEnum type, String[] currentPKHArray, P2PKHSingleResultData data) {
-    //     if (currentPKHArray == null || currentPKHArray.length == 0) {
-    //         return Optional.empty();
-    //     }
-    //
-    //     if (currentPKHArray.length != 40) {
-    //         throw new IllegalStateException("Passed array must be of length 40 at PubComparer#comparePubKeyHashesCached");
-    //     }
-    //
-    //     int pointCountPositive = 0;
-    //     int pointCountNegative = 0;
-    //     String currentChar;
-    //
-    //     for (int i = 0; i < 40; i++) {
-    //         currentChar = currentPKHArray[i];
-    //         int pointsPositive = data.getCachedHeatComparisonPointsForPositive(currentChar, i);
-    //         int pointsNegative = data.getCachedHeatComparisonPointsForNegative(currentChar, i);
-    //
-    //         pointCountPositive = pointCountPositive + pointsPositive;
-    //         pointCountNegative = pointCountNegative + pointsNegative;
-    //     }
-    //
-    //     return Optional.of(PubComparisonResult.builder()
-    //             .positive(pointCountPositive)
-    //             .negative(pointCountNegative)
-    //             .type(type)
-    //             .build());
-    // }
 
     private int calculateDifferenceForHexChars(String currentCharacter, String lockedCharacter) {
         return Integer.parseInt(currentCharacter, 16) - Integer.parseInt(lockedCharacter, 16);
@@ -211,47 +181,15 @@ public class PubComparer {
                 .build();
     }
 
-    // public PubComparisonResultWrapper getCurrentResultCached(String currentPrivKey, String[] UPKHArray, String[] CPKHArray, P2PKHSingleResultData data, ScaleFactorEnum scaleFactor) {
-    //     JsonResultScaleFactorEnum requestedScaleFactor = ScaleFactorEnum.toJsonScaleFactorEnum(scaleFactor);
-    //
-    //     if (!data.isGeneralPointsCachedForScaleFactor(requestedScaleFactor)) {
-    //         throw new IllegalStateException("Data collection is not cached for the requested scale factor [requested:" + requestedScaleFactor + ", actual: " + data.getCachedForScaleFactor() + "]");
-    //     }
-    //
-    //     PubComparisonResult resultUncompressed = getCurrentResultForUncompressedCached(currentPrivKey, UPKHArray, data).orElse(null);
-    //     PubComparisonResult resultCompressed = getCurrentResultForCompressedCached(currentPrivKey, CPKHArray, data).orElse(null);
-    //
-    //     if (resultUncompressed == null || resultCompressed == null) {
-    //         return HeatVisualizerConstants.EMPTY_RESULT_WRAPPER;
-    //     }
-    //
-    //     return PubComparisonResultWrapper.builder()
-    //             .resultForUncompressed(resultUncompressed)
-    //             .resultForCompressed(resultCompressed)
-    //             .build();
-    // }
-
     private Optional<PubComparisonResult> getCurrentResultForUncompressed(String currentPrivKey, String lockedPKHUncompressed, ScaleFactorEnum scaleFactor) {
         Optional<PubComparisonResult> result = comparePubKeyHashes(PubTypeEnum.UNCOMPRESSED, lockedPKHUncompressed, helper.getPubKeyHashUncompressed(currentPrivKey, true), scaleFactor);
         result.ifPresent(res -> res.setForPriv(currentPrivKey));
         return result;
     }
 
-    // private Optional<PubComparisonResult> getCurrentResultForUncompressedCached(String currentPrivKey, String[] UPKHArray, P2PKHSingleResultData data) {
-    //     Optional<PubComparisonResult> result = comparePubKeyHashesCached(PubTypeEnum.UNCOMPRESSED, UPKHArray, data);
-    //     result.ifPresent(res -> res.setForPriv(currentPrivKey));
-    //     return result;
-    // }
-
     private Optional<PubComparisonResult> getCurrentResultForCompressed(String currentPrivKey, String lockedPKHCompressed, ScaleFactorEnum scaleFactor) {
         Optional<PubComparisonResult> result = comparePubKeyHashes(PubTypeEnum.COMPRESSED, lockedPKHCompressed, helper.getPubKeyHashCompressed(currentPrivKey, true), scaleFactor);
         result.ifPresent(res -> res.setForPriv(currentPrivKey));
         return result;
     }
-
-    // private Optional<PubComparisonResult> getCurrentResultForCompressedCached(String currentPrivKey, String[] CPKHArray, P2PKHSingleResultData data) {
-    //     Optional<PubComparisonResult> result = comparePubKeyHashesCached(PubTypeEnum.COMPRESSED, CPKHArray, data);
-    //     result.ifPresent(res -> res.setForPriv(currentPrivKey));
-    //     return result;
-    // }
 }

@@ -6,45 +6,45 @@ import java.util.function.Function;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperDecrementalAbsolute;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperDecrementalWords;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperIncrementalAbsolute;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperIncrementalWords;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperRandom;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperRandomSameWord;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperRotationPrivFullNormal;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperRotationPrivFullPrefixed;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperRotationPrivIndexVertical;
-import com.bearlycattable.bait.bl.searchHelper.impl.SimpleSearchHelperRotationPrivWords;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperDecrementalAbsolute;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperDecrementalWords;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperIncrementalAbsolute;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperIncrementalWords;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperRandom;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperRandomSameWord;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperRotationPrivFullNormal;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperRotationPrivFullPrefixed;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperRotationPrivIndexVertical;
+import com.bearlycattable.bait.bl.searchHelper.impl.QuickSearchHelperRotationPrivWords;
 import com.bearlycattable.bait.commons.contexts.SimpleSearchHelperCreationContext;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
-import com.bearlycattable.bait.commons.interfaces.SimpleSearchHelper;
+import com.bearlycattable.bait.commons.interfaces.QuickSearchHelper;
 
 public class SimpleSearchHelperFactory {
 
-    private static SimpleSearchHelper getSearchHelper(SearchModeEnum searchMode, @NonNull SimpleSearchHelperCreationContext creationContext) {
+    private static QuickSearchHelper getSearchHelper(SearchModeEnum searchMode, @NonNull SimpleSearchHelperCreationContext creationContext) {
         switch (searchMode) {
             case DECREMENTAL_ABSOLUTE:
-                return new SimpleSearchHelperDecrementalAbsolute(creationContext);
+                return new QuickSearchHelperDecrementalAbsolute(creationContext);
             case DECREMENTAL_WORDS:
-                return new SimpleSearchHelperDecrementalWords(creationContext);
+                return new QuickSearchHelperDecrementalWords(creationContext);
             case INCREMENTAL_ABSOLUTE:
-                return new SimpleSearchHelperIncrementalAbsolute(creationContext);
+                return new QuickSearchHelperIncrementalAbsolute(creationContext);
             case INCREMENTAL_WORDS:
-                return new SimpleSearchHelperIncrementalWords(creationContext);
+                return new QuickSearchHelperIncrementalWords(creationContext);
             case RANDOM:
-                return new SimpleSearchHelperRandom(creationContext);
+                return new QuickSearchHelperRandom(creationContext);
             case RANDOM_SAME_WORD:
-                return new SimpleSearchHelperRandomSameWord(creationContext);
+                return new QuickSearchHelperRandomSameWord(creationContext);
             case ROTATION_PRIV_FULL_NORMAL:
-                return new SimpleSearchHelperRotationPrivFullNormal(creationContext);
+                return new QuickSearchHelperRotationPrivFullNormal(creationContext);
             case ROTATION_PRIV_FULL_PREFIXED:
-                return new SimpleSearchHelperRotationPrivFullPrefixed(creationContext);
+                return new QuickSearchHelperRotationPrivFullPrefixed(creationContext);
             case ROTATION_PRIV_INDEX_VERTICAL:
-                return new SimpleSearchHelperRotationPrivIndexVertical(creationContext);
+                return new QuickSearchHelperRotationPrivIndexVertical(creationContext);
             case ROTATION_PRIV_WORDS:
-                return new SimpleSearchHelperRotationPrivWords(creationContext);
+                return new QuickSearchHelperRotationPrivWords(creationContext);
             // case FUZZING:
             //     return new SimpleSearchHelperFuzzing(creationContext);
             // case MIXED:
@@ -58,7 +58,7 @@ public class SimpleSearchHelperFactory {
     //     return new SimpleSearchHelperMixed(creationContext);
     // }
 
-    public static synchronized SimpleSearchHelper findRequestedSearchHelper(SearchModeEnum searchMode, SimpleSearchHelperCreationContext context, List<SearchModeEnum> mixedSearchSequence) {
+    public static synchronized QuickSearchHelper findRequestedSearchHelper(SearchModeEnum searchMode, SimpleSearchHelperCreationContext context, List<SearchModeEnum> mixedSearchSequence) {
         return getSearchHelper(searchMode, context);
 
         // if (SearchModeEnum.MIXED != searchMode) {
@@ -76,7 +76,7 @@ public class SimpleSearchHelperFactory {
            throw new IllegalArgumentException("Cannot create 'next priv function' for type: " + searchMode);
         }
 
-        SimpleSearchHelper sh = getSearchHelper(searchMode, SimpleSearchHelperCreationContext.builder().build());
+        QuickSearchHelper sh = getSearchHelper(searchMode, SimpleSearchHelperCreationContext.builder().build());
         if (SearchModeEnum.isRandomRelatedMode(sh.getSearchMode()) || SearchModeEnum.isIncDecRelatedMode(sh.getSearchMode())) {
             CustomKeyGenerator generator = (CustomKeyGenerator)sh;
             List<Integer> disabledWordsCopy = new ArrayList<>(disabledWords);

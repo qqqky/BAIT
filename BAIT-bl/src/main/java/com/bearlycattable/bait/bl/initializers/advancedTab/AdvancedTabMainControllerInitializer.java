@@ -1,24 +1,22 @@
 package com.bearlycattable.bait.bl.initializers.advancedTab;
 
+import com.bearlycattable.bait.bl.controllers.AdvancedTabAccessProxy;
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
-import com.bearlycattable.bait.bl.controllers.RootController;
 
 public final class AdvancedTabMainControllerInitializer {
 
     private final AdvancedTabMainController controller;
-    private RootController rootController;
 
     private AdvancedTabMainControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AdvancedTabMainControllerInitializer(AdvancedTabMainController controller, RootController rootController) {
+    private AdvancedTabMainControllerInitializer(AdvancedTabMainController controller) {
         this.controller = controller;
-        this.rootController = rootController;
     }
 
-    public static void initialize(AdvancedTabMainController controller, RootController rootController) {
-        if (controller == null || rootController == null) {
+    public static void initialize(AdvancedTabMainController controller, AdvancedTabAccessProxy accessProxy) {
+        if (controller == null || accessProxy == null) {
             throw new IllegalStateException("No suitable controller found at AdvancedTabPageControllerInitializer#initialize");
         }
 
@@ -27,12 +25,12 @@ public final class AdvancedTabMainControllerInitializer {
         }
 
         //root controller must be set before initialization
-        controller.setRootController(rootController);
+        controller.setAdvancedTabAccessProxy(accessProxy);
 
-        new AdvancedTabMainControllerInitializer(controller, rootController).init();
+        new AdvancedTabMainControllerInitializer(controller).init();
     }
 
     private void init() {
-        // empty
+        //empty
     }
 }

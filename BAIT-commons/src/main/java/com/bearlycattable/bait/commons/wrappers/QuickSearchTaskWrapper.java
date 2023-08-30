@@ -1,7 +1,5 @@
 package com.bearlycattable.bait.commons.wrappers;
 
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
-
 import javafx.concurrent.Task;
 import lombok.Builder;
 import lombok.Getter;

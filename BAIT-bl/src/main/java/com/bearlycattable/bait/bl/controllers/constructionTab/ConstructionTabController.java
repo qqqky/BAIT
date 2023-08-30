@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.bearlycattable.bait.bl.controllers.RootController;
+import com.bearlycattable.bait.bl.controllers.ConstructionTabAccessProxy;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
@@ -53,7 +53,7 @@ public class ConstructionTabController {
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
     private final RandomAddressGenerator generator = RandomAddressGenerator.getSecureGenerator(64);
 
-    private RootController rootController;
+    private ConstructionTabAccessProxy constructionTabAccessProxy;
     private boolean programmaticChange;
 
     @FXML
@@ -96,8 +96,8 @@ public class ConstructionTabController {
     @FXML
     private Label constructionLabelCEPubLength;
     
-    public void setRootController(RootController rootController) {
-        this.rootController = rootController;
+    public void setConstructionTabAccessProxy(ConstructionTabAccessProxy proxy) {
+        this.constructionTabAccessProxy = proxy;
     }
 
     @FXML
@@ -175,7 +175,7 @@ public class ConstructionTabController {
 
     @FXML
     private void doCalculatePKH() {
-        String currentPriv = rootController.getCurrentInput();
+        String currentPriv = constructionTabAccessProxy.getCurrentInput();
 
         if (!PrivKeyValidator.isValidPK(currentPriv)) {
             insertErrorMessageAndRedBorder(rb.getString("error.invalidCurrentInput"), constructionHBoxCurrentInputParent);
@@ -243,13 +243,13 @@ public class ConstructionTabController {
     }
 
     private void setCurrentInputWordForced(String hexWord, int wordNumber) {
-        if (rootController.isValidWordNumber(wordNumber)) {
+        if (constructionTabAccessProxy.isValidWordNumber(wordNumber)) {
             inputFieldWordMappings.get(wordNumber).setText(hexWord);
         }
     }
 
     private void setCurrentInputWord(String hexWord, int wordNumber) {
-        if (rootController.isValidWordNumber(wordNumber) && !disabledWords.contains(wordNumber)) {
+        if (constructionTabAccessProxy.isValidWordNumber(wordNumber) && !disabledWords.contains(wordNumber)) {
             inputFieldWordMappings.get(wordNumber).setText(hexWord);
         }
     }
@@ -326,7 +326,7 @@ public class ConstructionTabController {
     private void doCopyKeyFromCurrentInput() {
         Map<DataFormat, Object> content = new HashMap<>();
         String currentKey = getCurrentInputForced();
-        if (!rootController.isValidPrivPattern(currentKey)) {
+        if (!isValidPrivPattern(currentKey)) {
             insertErrorMessageAndRedBorder(rb.getString("error.invalidKeyForCopy"), constructionHBoxCurrentInputParent);
             return;
         }
@@ -359,7 +359,7 @@ public class ConstructionTabController {
 
     //ui methods
     public boolean isValidWordInComboBoxesUi(int wordNumber) {
-        if (!rootController.isValidWordNumber(wordNumber)) {
+        if (!constructionTabAccessProxy.isValidWordNumber(wordNumber)) {
             return false;
         }
 
@@ -392,9 +392,25 @@ public class ConstructionTabController {
         currentInputTextField.getStyleClass().remove(CssConstants.BORDER_RED);
         disabledWords.remove((Integer) wordNum);
     }
+
+    private boolean isValidPrivPattern(String priv) {
+        return priv != null && is64HexPatternMatch(priv);
+    }
+
+    private boolean isValidPubPattern(String pub) {
+        return pub != null && HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(pub).matches();
+    }
+
+    private boolean is64HexPatternMatch(String input) {
+        return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(input).matches();
+    }
+
+    private boolean is08HexPatternMatch(String input) {
+        return HeatVisualizerConstants.PATTERN_SIMPLE_08.matcher(input).matches();
+    }
     
     public final boolean isParentValid() {
-        return rootController != null;
+        return constructionTabAccessProxy != null;
     }
 
 }

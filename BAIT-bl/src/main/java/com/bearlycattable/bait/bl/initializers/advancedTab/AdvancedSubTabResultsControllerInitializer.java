@@ -13,15 +13,14 @@ import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 public final class AdvancedSubTabResultsControllerInitializer {
 
     private final AdvancedSubTabResultsController controller;
-    private AdvancedTabMainController parentController;
+    // private AdvancedTabMainController parentController;
 
     private AdvancedSubTabResultsControllerInitializer() {
         throw new UnsupportedOperationException("Creation of " + this.getClass().getName() + " directly is not allowed");
     }
 
-    private AdvancedSubTabResultsControllerInitializer(AdvancedSubTabResultsController controller, AdvancedTabMainController parentController) {
+    private AdvancedSubTabResultsControllerInitializer(AdvancedSubTabResultsController controller) {
         this.controller = controller;
-        this.parentController = parentController;
     }
 
     public static void initialize(AdvancedSubTabResultsController controller, AdvancedTabMainController parentController) {
@@ -34,8 +33,9 @@ public final class AdvancedSubTabResultsControllerInitializer {
         }
 
         //parent controller must be set before initialization
-        controller.setParentController(parentController);
-        new AdvancedSubTabResultsControllerInitializer(controller, parentController).init();
+        controller.setAdvancedResultsAccessProxy(parentController);
+
+        new AdvancedSubTabResultsControllerInitializer(controller).init();
     }
 
     private void init() {

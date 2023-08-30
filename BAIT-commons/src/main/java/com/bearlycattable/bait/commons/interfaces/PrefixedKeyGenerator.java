@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface PrefixedKeyGenerator {
 
-    String buildNextPriv(String current, List<Integer> disabledWords, String prefix);
+    String buildNextPrivPrefixed(String current, List<Integer> disabledWords, String prefix);
 }

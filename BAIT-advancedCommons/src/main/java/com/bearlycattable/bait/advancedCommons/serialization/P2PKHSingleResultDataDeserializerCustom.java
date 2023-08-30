@@ -28,8 +28,6 @@ public class P2PKHSingleResultDataDeserializerCustom extends StdDeserializer<P2P
     public P2PKHSingleResultData deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
-        // create parent object
-        P2PKHSingleResultData myObject = null;
         String hash = node.get("hash").textValue();
         JsonNode parentResultNode = node.get("results");
         Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>> results = new LinkedHashMap<>();
@@ -53,7 +51,7 @@ public class P2PKHSingleResultDataDeserializerCustom extends StdDeserializer<P2P
             }
             results.put(resultType, singleResultDataMap);
         }
-        myObject = new P2PKHSingleResultData(hash, results);
+        P2PKHSingleResultData myObject = new P2PKHSingleResultData(hash, results);
         return myObject;
     }
 

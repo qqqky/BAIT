@@ -28,7 +28,7 @@ public final class AdvancedSearchHelperIncrementalWords extends AbstractAdvanced
 
     @Override
     public AdvancedSearchTaskWrapper createNewAdvancedSearchTask(AdvancedSearchContext advancedSearchContext) {
-        advancedSearchContext.setNextPrivFunction((input) -> buildNextPriv(input, advancedSearchContext.getDisabledWords()));
+        // advancedSearchContext.setNextPrivFunction((input) -> buildNextPriv(input, advancedSearchContext.getDisabledWords()));
         return advancedSearchTaskGuiCreationHelper(advancedSearchContext);
     }
 

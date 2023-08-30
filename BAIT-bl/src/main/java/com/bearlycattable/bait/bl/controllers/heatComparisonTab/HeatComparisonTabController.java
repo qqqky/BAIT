@@ -1,6 +1,8 @@
 package com.bearlycattable.bait.bl.controllers.heatComparisonTab;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -11,10 +13,12 @@ import java.util.stream.Stream;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
-import com.bearlycattable.bait.bl.controllers.RootController;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
+import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
+import com.bearlycattable.bait.bl.controllers.HeatComparisonTabAccessProxy;
 import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
@@ -25,15 +29,16 @@ import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.other.PubComparer;
+import com.bearlycattable.bait.commons.other.PubComparisonResult;
+import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapper;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapperDecimal;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapperHex;
-import com.bearlycattable.bait.commons.other.PubComparer;
-import com.bearlycattable.bait.commons.other.PubComparisonResult;
 import com.bearlycattable.bait.commons.wrappers.PubHeatResultWrapper;
+import com.bearlycattable.bait.utility.BaitUtils;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
-import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -57,6 +62,8 @@ public class HeatComparisonTabController {
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "HeatComparisonTab", LocaleUtils.APP_LANGUAGE);
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
     private final PubComparer pubComparer = new PubComparer();
+    private final Map<Integer, BigDecimal> similarityMappings = Collections.unmodifiableMap(BaitUtils.buildSimilarityMappings());
+    private final Map<Integer, String> colorMappings = Collections.unmodifiableMap(BaitUtils.buildColorMappings());
 
     @Getter
     private final Map<Integer, Label> pubCompressedHeatPositiveAbsoluteIndexes = new HashMap<>();
@@ -90,7 +97,7 @@ public class HeatComparisonTabController {
     private int currentPrivAccuracyResolution = 1;
     private volatile NumberFormatTypeEnum currentNumberFormatType;
 
-    private RootController rootController;
+    private HeatComparisonTabAccessProxy heatComparisonTabAccessProxy;
     //current key and main reference key
     @FXML
     @Getter
@@ -173,8 +180,8 @@ public class HeatComparisonTabController {
     @Getter
     private HBox containerReferenceCompressed;
 
-    public void setRootController(RootController rootController) {
-        this.rootController = rootController;
+    public void setHeatComparisonTabAccessProxy(HeatComparisonTabAccessProxy proxy) {
+        this.heatComparisonTabAccessProxy = proxy;
     }
 
     @FXML
@@ -236,7 +243,7 @@ public class HeatComparisonTabController {
         Button btn = new Button(rb.getString("label.importFromConstruction"));
         btn.setTooltip(new Tooltip(rb.getString("tooltip.importFromConstruction")));
         btn.setOnAction(event -> {
-            String key = rootController.getCurrentInput();
+            String key = heatComparisonTabAccessProxy.getCurrentInput();
             if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
                 showErrorMessage(rb.getString("error.keyNotValidInConstructionTab"));
                 return;
@@ -247,8 +254,8 @@ public class HeatComparisonTabController {
         parent.getChildren().add(btn);
         parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(56, false));
 
-        if (rootController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(rootController.isDarkMode(), parent);
+        if (heatComparisonTabAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(heatComparisonTabAccessProxy.isDarkModeEnabled(), parent);
         }
 
         comparisonVBoxReferenceKeyParent.getChildren().add(parent);
@@ -286,7 +293,7 @@ public class HeatComparisonTabController {
             showErrorMessage(rb.getString("error.invalidCurrentKey64"));
             return;
         }
-        removeMessage();
+        removeErrorOrInfoMessage();
         comparisonTextFieldCurrentKey.setText(input);
     }
 
@@ -327,12 +334,12 @@ public class HeatComparisonTabController {
         Button btn = new Button(rb.getString("label.importFromConverter"));
         btn.setTooltip(new Tooltip(rb.getString("tooltip.importFromConverter")));
         btn.setOnAction(event -> {
-            String PKH = rootController.getUnencodedPubFromConverterTab();
+            String PKH = heatComparisonTabAccessProxy.getUnencodedPubFromConverterTab();
             if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(PKH).matches()) {
                 showErrorMessage(rb.getString("error.pkhNotValidInConverterTab"));
                 return;
             }
-            removeMessage();
+            removeErrorOrInfoMessage();
             textField.setText(PKH);
         });
         parent.getChildren().add(btn);
@@ -347,64 +354,188 @@ public class HeatComparisonTabController {
                 showErrorMessage(rb.getString("error.invalidPkhCannotExport"));
                 return;
             }
-            removeMessage();
-            rootController.setUnencodedPubInConverterTab(PKH);
+            removeErrorOrInfoMessage();
+            heatComparisonTabAccessProxy.setUnencodedPubInConverterTab(PKH);
         });
         parent.getChildren().add(btn2);
         parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(80, false));
 
-        if (rootController != null) {
-            DarkModeHelper.toggleDarkModeForComponent(rootController.isDarkMode(), parent);
+        if (heatComparisonTabAccessProxy != null) {
+            DarkModeHelper.toggleDarkModeForComponent(heatComparisonTabAccessProxy.isDarkModeEnabled(), parent);
         }
 
         comparisonVBoxReferenceKeyParent.getChildren().add(parent);
     }
 
     @FXML
-    private void doCompare() {
-        calculateOutputs();
+    private void doShowFullHeatComparison() {
+        HeatComparisonContext heatComparisonContext = buildHeatComparisonContextFromUi();
+        showFullHeatComparison(heatComparisonContext);
     }
 
-    public void calculateOutputs() {
-        String currentPriv = comparisonTextFieldCurrentKey.getText();
+    private HeatComparisonContext buildHeatComparisonContextFromUi() {
+       return HeatComparisonContext.builder()
+                .targetPK(comparisonTextFieldCurrentKey.getText())
+                .referenceKey(comparisonTextFieldReferenceKey.getText())
+                .scaleFactor(getSelectedScaleFactorFromUi())
+                .comparisonType(getSelectedReferenceKeyTypeFromUi())
+                .build();
+    }
 
-        if (!isCurrentKeyValid()) {
+    public void showFullHeatComparison(HeatComparisonContext heatComparisonContext) {
+        //validate context for HeatComparison
+        Optional<String> error = validateContextForPubHeatDisplay(heatComparisonContext);
+
+        if (error.isPresent()) {
             removeAllStats();
+            showErrorMessage(error.get());
             return;
         }
-        removeErrorMessageAndRedBorder(comparisonTextFieldCurrentKey);
+        removeErrorOrInfoMessage();
 
-        if (!isReferenceKeyValid()) {
-            removeAllStats();
-            return;
-        }
-        removeErrorMessageAndRedBorder(comparisonTextFieldReferenceKey);
+        showPubHeatComparison(heatComparisonContext);
 
-        QuickSearchComparisonType type = getSelectedReferenceKeyTypeFromUi();
-        insertReferencePKHsToUi(); //by design, this must be done before any heat comparison
-
-        String pubKeyHashUncompressed = helper.getPubKeyHashUncompressed(currentPriv, false);
-        String pubKeyHashCompressed = helper.getPubKeyHashCompressed(currentPriv, false);
-
-        insertCalculatedHashesToPubHeatMaps(pubKeyHashUncompressed, pubKeyHashCompressed);
-        insertColorsToPubHeatMaps(pubKeyHashUncompressed, pubKeyHashCompressed);
-
-        ScaleFactorEnum scaleFactor = getSelectedScaleFactorFromUi();
-        showCurrentScaleFactorMessage(rb.getString("info.currentResultsScaleFactor") + scaleFactor.getScaleFactorAsString(), TextColorEnum.GREEN);
-
-        //compare and set pub accuracy labels
-        compareWithReferenceKey(pubKeyHashUncompressed, PubTypeEnum.UNCOMPRESSED, scaleFactor)
-                .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.UNCOMPRESSED));
-        compareWithReferenceKey(pubKeyHashCompressed, PubTypeEnum.COMPRESSED, scaleFactor)
-                .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.COMPRESSED));
-
-        if (QuickSearchComparisonType.BLIND == type) {
+        if (QuickSearchComparisonType.BLIND == heatComparisonContext.getComparisonType()) {
             removePrivStats();
+            comparisonTextFieldCurrentKey.setText(heatComparisonContext.getTargetPK());
+            comparisonTextFieldReferenceKey.setText(heatComparisonContext.getReferenceKey());
+            setScaleFactor(heatComparisonContext.getScaleFactor());
             return;
         }
 
         modifyAccessForShowPrivStatsButton(false);
-        showPrivStats();
+        showPrivHeatComparison(heatComparisonContext);
+    }
+
+    private void showPubHeatComparison(HeatComparisonContext heatComparisonContext) {
+        String targetPK = heatComparisonContext.getTargetPK();
+        String referenceKey = heatComparisonContext.getReferenceKey();
+        QuickSearchComparisonType comparisonType = heatComparisonContext.getComparisonType();
+        ScaleFactorEnum scaleFactor = heatComparisonContext.getScaleFactor();
+
+        String targetUPKH = helper.getPubKeyHashUncompressed(targetPK, false);
+        String targetCPKH = helper.getPubKeyHashCompressed(targetPK, false);
+
+        String referenceUPKH = QuickSearchComparisonType.BLIND == comparisonType ? referenceKey : helper.getPubKeyHashUncompressed(referenceKey, false);
+        String referenceCPKH = QuickSearchComparisonType.BLIND == comparisonType ? referenceKey : helper.getPubKeyHashCompressed(referenceKey, false);
+
+        setReferencePKHForUncompressed(referenceUPKH);
+        setReferencePKHForCompressed(referenceCPKH);
+
+        showCurrentScaleFactorMessage(rb.getString("info.currentResultsScaleFactor") + heatComparisonContext.getScaleFactor().getScaleFactorAsString(), TextColorEnum.GREEN);
+
+        setTargetPKHAndCompareHeatWithReference(targetUPKH, referenceUPKH, pubUncompressedHeatPositiveAbsoluteIndexes, pubUncompressedHeatNegativeAbsoluteIndexes);
+        setTargetPKHAndCompareHeatWithReference(targetCPKH, referenceCPKH, pubCompressedHeatPositiveAbsoluteIndexes, pubCompressedHeatNegativeAbsoluteIndexes);
+
+        //TODO: percent labels will be needed...
+                //compare and set pub accuracy labels
+        // compareWithReferenceKey(targetUPKH, referenceUPKH, PubTypeEnum.UNCOMPRESSED, scaleFactor)
+        //         .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.UNCOMPRESSED));
+        // compareWithReferenceKey(targetCPKH, referenceCPKH, PubTypeEnum.COMPRESSED, scaleFactor)
+        //         .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.COMPRESSED));
+    }
+
+    private void setTargetPKHAndCompareHeatWithReference(String targetUPKH, String referenceUPKH, Map<Integer, Label> pubPositiveHeatMappings, Map<Integer, Label> pubNegativeHeatMappings) {
+        int length = referenceUPKH.length();
+
+        for (int i = 0; i < length; i++) {
+            String currentValue = String.valueOf(targetUPKH.charAt(i));
+            pubPositiveHeatMappings.get(i).setText(currentValue);
+            pubNegativeHeatMappings.get(i).setText(currentValue);
+
+            int reference = Integer.parseInt(String.valueOf(referenceUPKH.charAt(i)), 16);
+            int target = Integer.parseInt(currentValue, 16);
+            int overflow_reference = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
+
+            PubHeatResultWrapper resultWrapper = helper.calculatePubHeatResults(reference, target, overflow_reference);
+            insertPubColorStylesToUi(i, pubPositiveHeatMappings, pubNegativeHeatMappings, resultWrapper);
+        }
+    }
+
+    private Optional<String> validateContextForPubHeatDisplay(HeatComparisonContext heatComparisonContext) {
+        Optional<String> error = validateTargetPK(heatComparisonContext.getTargetPK());
+
+        if (error.isPresent()) {
+            addRedBorder(comparisonTextFieldCurrentKey);
+            return error;
+        }
+        removeErrorMessageAndRedBorder(comparisonTextFieldCurrentKey);
+
+        error = validateReferenceKey(heatComparisonContext.getReferenceKey(), heatComparisonContext.getComparisonType());
+        if (error.isPresent()) {
+            addRedBorder(comparisonTextFieldReferenceKey);
+            return error;
+        }
+        removeErrorMessageAndRedBorder(comparisonTextFieldReferenceKey);
+
+        if (heatComparisonContext.getScaleFactor() == null) {
+            return Optional.of("Scale factor must be provided!");
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<String> validateContextForPrivHeatDisplay(HeatComparisonContext heatComparisonContext) {
+        Optional<String> error = validateTargetPK(heatComparisonContext.getTargetPK());
+
+        if (error.isPresent()) {
+            addRedBorder(comparisonTextFieldCurrentKey);
+            return error;
+        }
+        removeErrorMessageAndRedBorder(comparisonTextFieldCurrentKey);
+
+        if (QuickSearchComparisonType.COLLISION != heatComparisonContext.getComparisonType()) {
+            return Optional.of(rb.getString("error.noPrivComparisonForBlindType"));
+        }
+        removeErrorOrInfoMessage();
+
+        error = validateReferenceKey(heatComparisonContext.getReferenceKey(), heatComparisonContext.getComparisonType());
+        if (error.isPresent()) {
+            addRedBorder(comparisonTextFieldReferenceKey);
+            return error;
+        }
+        removeErrorMessageAndRedBorder(comparisonTextFieldReferenceKey);
+
+        return Optional.empty();
+    }
+
+    private Optional<String> validateTargetPK(@NonNull String targetPK) {
+        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(targetPK).matches()) {
+            return Optional.of(rb.getString("error.invalidCurrentKey64"));
+        }
+
+        if (!PrivKeyValidator.isValidPK(targetPK)) {
+            return Optional.of(rb.getString("error.invalidCurrentKeyWithReason") + buildReasonForInvalidKey(targetPK));
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<String> validateReferenceKey(@NonNull String referenceKey, QuickSearchComparisonType comparisonType) {
+        if (comparisonType == null) {
+            return Optional.of("Comparison type must be provided!");
+        }
+
+        switch (comparisonType) {
+            case COLLISION:
+                if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(referenceKey).matches()) {
+                    return Optional.of(rb.getString("error.invalidReferenceKey64"));
+                }
+
+                if (!PrivKeyValidator.isValidPK(referenceKey)) {
+                    return Optional.of(rb.getString("error.invalidReferenceKeyWithReason") + buildReasonForInvalidKey(referenceKey));
+                }
+                break;
+            case BLIND:
+                if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(referenceKey).matches()) {
+                    return Optional.of(rb.getString("error.invalidReferenceKey40"));
+                }
+                break;
+            default:
+                throw new IllegalStateException("Received wrong QuickSearchComparisonType at #isReferenceKeyValid [type=" + comparisonType + "]");
+        }
+
+        return Optional.empty();
     }
 
     private void removeAllStats() {
@@ -422,32 +553,22 @@ public class HeatComparisonTabController {
     }
 
     private void removePubStats() {
-        pubUncompressedHeatPositiveAbsoluteIndexes.keySet().forEach(key -> {
-            pubUncompressedHeatPositiveAbsoluteIndexes.get(key).getStyleClass().clear();
-            pubUncompressedHeatPositiveAbsoluteIndexes.get(key).setText("");
-        });
+        removeTextFromMappedComponents(pubUncompressedHeatPositiveAbsoluteIndexes, true);
+        removeTextFromMappedComponents(pubUncompressedHeatNegativeAbsoluteIndexes, true);
 
-        pubUncompressedHeatNegativeAbsoluteIndexes.keySet().forEach(key -> {
-            pubUncompressedHeatNegativeAbsoluteIndexes.get(key).getStyleClass().clear();
-            pubUncompressedHeatNegativeAbsoluteIndexes.get(key).setText("");
-        });
+        removeTextFromMappedComponents(pubCompressedHeatPositiveAbsoluteIndexes, true);
+        removeTextFromMappedComponents(pubCompressedHeatNegativeAbsoluteIndexes, true);
 
-        pubCompressedHeatPositiveAbsoluteIndexes.keySet().forEach(key -> {
-            pubCompressedHeatPositiveAbsoluteIndexes.get(key).getStyleClass().clear();
-            pubCompressedHeatPositiveAbsoluteIndexes.get(key).setText("");
-        });
-
-        pubCompressedHeatNegativeAbsoluteIndexes.keySet().forEach(key -> {
-            pubCompressedHeatNegativeAbsoluteIndexes.get(key).getStyleClass().clear();
-            pubCompressedHeatNegativeAbsoluteIndexes.get(key).setText("");
-        });
-
-        referenceForUncompressedAbsoluteIndexes.keySet().forEach(key -> {
-            referenceForUncompressedAbsoluteIndexes.get(key).setText("");
-        });
-
-        referenceForCompressedAbsoluteIndexes.keySet().forEach(key -> {
-            referenceForCompressedAbsoluteIndexes.get(key).setText("");
+        removeTextFromMappedComponents(referenceForUncompressedAbsoluteIndexes, false);
+        removeTextFromMappedComponents(referenceForCompressedAbsoluteIndexes, false);
+    }
+    
+    private void removeTextFromMappedComponents(@NonNull Map<Integer, Label> componentMap, boolean clearStyleClass) {
+        componentMap.keySet().forEach(key -> {
+            if (clearStyleClass) {
+                componentMap.get(key).getStyleClass().clear();
+            }
+            componentMap.get(key).setText("");
         });
     }
 
@@ -465,65 +586,12 @@ public class HeatComparisonTabController {
         }
     }
 
-    private boolean isCurrentKeyValid() {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(comparisonTextFieldCurrentKey.getText()).matches()) {
-            addErrorMessageAndRedBorder(rb.getString("error.invalidCurrentKey64"), comparisonTextFieldCurrentKey);
-            return false;
-        }
-
-        if (!PrivKeyValidator.isValidPK(comparisonTextFieldCurrentKey.getText())) {
-            addErrorMessageAndRedBorder(rb.getString("error.invalidCurrentKeyWithReason") + buildReasonForInvalidKey(comparisonTextFieldCurrentKey.getText()), comparisonTextFieldCurrentKey);
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean isReferenceKeyValid() {
-        QuickSearchComparisonType type = getSelectedReferenceKeyTypeFromUi();
-
-        if (type == null) {
-            return false;
-        }
-
-        switch (type) {
-            case COLLISION:
-                return isReferenceKeyValidAsPriv();
-            case BLIND:
-                if (!isReferenceKeyValidAsPKH()) {
-                    addErrorMessageAndRedBorder(rb.getString("error.invalidReferenceKey40"), comparisonTextFieldReferenceKey);
-                    return false;
-                }
-                return true;
-            default:
-                throw new IllegalStateException("Received wrong type at #isReferenceKeyValid [type=" + getSelectedReferenceKeyTypeFromUi() + "]");
-        }
-    }
-
-    private boolean isReferenceKeyValidAsPriv() {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(comparisonTextFieldReferenceKey.getText()).matches()) {
-            addErrorMessageAndRedBorder(rb.getString("error.invalidReferenceKey64"), comparisonTextFieldReferenceKey);
-            return false;
-        }
-
-        if (!PrivKeyValidator.isValidPK(comparisonTextFieldReferenceKey.getText())) {
-            addErrorMessageAndRedBorder(rb.getString("error.invalidReferenceKeyWithReason") + buildReasonForInvalidKey(comparisonTextFieldReferenceKey.getText()), comparisonTextFieldReferenceKey);
-            return false;
-        }
-
-        return true;
-    }
-
     private String buildReasonForInvalidKey(@NonNull String invalidKey) {
         if (invalidKey.startsWith("0000")) {
             return rb.getString("error.privLowerThanMin");
         }
 
         return invalidKey.startsWith("FFFF") ? rb.getString("error.privHigherThanMax") : rb.getString("error.unknown");
-    }
-
-    private boolean isReferenceKeyValidAsPKH() {
-        return HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(comparisonTextFieldReferenceKey.getText()).matches();
     }
 
     private QuickSearchComparisonType getSelectedReferenceKeyTypeFromUi() {
@@ -543,11 +611,11 @@ public class HeatComparisonTabController {
     }
 
     private void removeErrorMessageAndRedBorder(Control component) {
-        removeMessage();
+        removeErrorOrInfoMessage();
         removeRedBorder(component);
     }
 
-    private void removeMessage() {
+    private void removeErrorOrInfoMessage() {
         comparisonLabelPubErrorSuccessResult.setText(HeatVisualizerConstants.EMPTY_STRING);
     }
 
@@ -586,24 +654,16 @@ public class HeatComparisonTabController {
         component.getStyleClass().remove(CssConstants.BORDER_RED);
     }
 
-    private void insertReferencePKHsToUi() {
-        if (!isReferenceKeyValid()) {
-            return;
-        }
-
-        String referenceKey = comparisonTextFieldReferenceKey.getText();
-        QuickSearchComparisonType type = getSelectedReferenceKeyTypeFromUi();
-
-        setReferencePKHForUncompressed(QuickSearchComparisonType.BLIND == type ? referenceKey : helper.getPubKeyHashUncompressed(referenceKey, false));
-        setReferencePKHForCompressed(QuickSearchComparisonType.BLIND == type ? referenceKey : helper.getPubKeyHashCompressed(referenceKey, false));
-    }
-
     private void setReferencePKHForCompressed(String CPKH) {
         if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(CPKH).matches()) {
             showErrorMessage(rb.getString("error.invalidReferenceCPKH"));
             return;
         }
-        insertCalculatedHashesToReferencePKHForComp(CPKH);
+
+        for (int i = 0; i < CPKH.length(); i++) {
+            String current = String.valueOf(CPKH.charAt(i));
+            referenceForCompressedAbsoluteIndexes.get(i).setText(current);
+        }
     }
 
     private void setReferencePKHForUncompressed(String UPKH) {
@@ -611,11 +671,20 @@ public class HeatComparisonTabController {
             showErrorMessage(rb.getString("error.invalidReferenceUPKH"));
             return;
         }
-        insertCalculatedHashesToReferencePKHForUncomp(UPKH);
+
+        for (int i = 0; i < UPKH.length(); i++) {
+            String current = String.valueOf(UPKH.charAt(i));
+            referenceForUncompressedAbsoluteIndexes.get(i).setText(current);
+        }
     }
 
+    @NonNull
     private ScaleFactorEnum getSelectedScaleFactorFromUi() {
-        return comparisonComboBoxScaleFactor.getSelectionModel().getSelectedItem();
+        ScaleFactorEnum selectedScaleFactor = comparisonComboBoxScaleFactor.getSelectionModel().getSelectedItem();
+        if (selectedScaleFactor == null) {
+            selectedScaleFactor = Config.DEFAULT_SCALE_FACTOR;
+        }
+        return selectedScaleFactor;
     }
 
     void insertPubSimilarityPercentLabels(PubComparisonResult heatResult, PubTypeEnum pubType) {
@@ -628,12 +697,12 @@ public class HeatComparisonTabController {
 
         switch (pubType) {
             case UNCOMPRESSED:
-                labelPercentUncompressedPositive.setText(rootController.getSimilarityMappings().get(mapIndexForPositive).setScale(0, RoundingMode.HALF_UP).toString());
-                labelPercentUncompressedNegative.setText(rootController.getSimilarityMappings().get(mapIndexForNegative).setScale(0, RoundingMode.HALF_UP).toString());
+                labelPercentUncompressedPositive.setText(similarityMappings.get(mapIndexForPositive).setScale(0, RoundingMode.HALF_UP).toString());
+                labelPercentUncompressedNegative.setText(similarityMappings.get(mapIndexForNegative).setScale(0, RoundingMode.HALF_UP).toString());
                 break;
             case COMPRESSED:
-                labelPercentCompressedPositive.setText(rootController.getSimilarityMappings().get(mapIndexForPositive).setScale(0, RoundingMode.HALF_UP).toString());
-                labelPercentCompressedNegative.setText(rootController.getSimilarityMappings().get(mapIndexForNegative).setScale(0, RoundingMode.HALF_UP).toString());
+                labelPercentCompressedPositive.setText(similarityMappings.get(mapIndexForPositive).setScale(0, RoundingMode.HALF_UP).toString());
+                labelPercentCompressedNegative.setText(similarityMappings.get(mapIndexForNegative).setScale(0, RoundingMode.HALF_UP).toString());
                 break;
             default:
                 throw new IllegalArgumentException("This pub key type is not supported [type=" + pubType + "]");
@@ -641,110 +710,58 @@ public class HeatComparisonTabController {
     }
 
     private int getResultForHeatType(PubComparisonResult currentResult, HeatOverflowTypeEnum heatType) {
-        return rootController.getNormalizedMapIndexFromComparisonResult(HeatOverflowTypeEnum.HEAT_POSITIVE == heatType ? currentResult.getPositive() : currentResult.getNegative(), currentResult.getForScaleFactor());
+        return heatComparisonTabAccessProxy.getNormalizedMapIndexFromComparisonResult(HeatOverflowTypeEnum.HEAT_POSITIVE == heatType ? currentResult.getPositive() : currentResult.getNegative(), currentResult.getForScaleFactor());
     }
 
-    private void insertColorsToPubHeatMaps(String pubUncompressed, String pubCompressed) {
-        insertColorsToPubHeatMapsForUncomp(pubUncompressed);
-        insertColorsToPubHeatMapsForComp(pubCompressed);
-    }
+    // private void insertColorsToPubHeatMaps(String pubUncompressed, String pubCompressed) {
+    //     insertColorsToPubHeatMapsForUncomp(pubUncompressed);
+    //     insertColorsToPubHeatMapsForComp(pubCompressed);
+    // }
+    //
+    // private void insertCalculatedHashesToPubHeatMaps(String pubUncompressed, String pubCompressed) {
+    //     insertCalculatedHashesToPubHeatMapsForUncomp(pubUncompressed);
+    //     insertCalculatedHashesToPubHeatMapsForComp(pubCompressed);
+    // }
 
-    private void insertCalculatedHashesToPubHeatMaps(String pubUncompressed, String pubCompressed) {
-        insertCalculatedHashesToPubHeatMapsForUncomp(pubUncompressed);
-        insertCalculatedHashesToPubHeatMapsForComp(pubCompressed);
-    }
+    // void insertCalculatedHashesToPubHeatMapsForUncomp(String pubUncompressed) {
+    //     for (int i = 0; i < pubUncompressed.length(); i++) {
+    //         String current = String.valueOf(pubUncompressed.charAt(i));
+    //         pubUncompressedHeatPositiveAbsoluteIndexes.get(i).setText(current);
+    //         pubUncompressedHeatNegativeAbsoluteIndexes.get(i).setText(current);
+    //     }
+    // }
 
-    void insertCalculatedHashesToPubHeatMapsForUncomp(String pubUncompressed) {
-        for (int i = 0; i < pubUncompressed.length(); i++) {
-            String current = String.valueOf(pubUncompressed.charAt(i));
-            pubUncompressedHeatPositiveAbsoluteIndexes.get(i).setText(current);
-            pubUncompressedHeatNegativeAbsoluteIndexes.get(i).setText(current);
-        }
-    }
+    // void insertCalculatedHashesToPubHeatMapsForComp(String pubCompressed) {
+    //     for (int i = 0; i < pubCompressed.length(); i++) {
+    //         String current = String.valueOf(pubCompressed.charAt(i));
+    //         pubCompressedHeatPositiveAbsoluteIndexes.get(i).setText(current);
+    //         pubCompressedHeatNegativeAbsoluteIndexes.get(i).setText(current);
+    //     }
+    // }
 
-    void insertCalculatedHashesToReferencePKHForUncomp(String pubUncompressed) {
-        for (int i = 0; i < pubUncompressed.length(); i++) {
-            String current = String.valueOf(pubUncompressed.charAt(i));
-            referenceForUncompressedAbsoluteIndexes.get(i).setText(current);
-        }
-    }
+    // public void insertSearchResultsToUiForUncompressed(PubComparisonResult result) {
+    //     String pubKeyHashUncompressed = helper.getPubKeyHashUncompressed(result.getForPriv(), false);
+    //
+    //     //add highest items to pub heat map (and translate accuracy)
+    //     insertCalculatedHashesToPubHeatMapsForUncomp(pubKeyHashUncompressed);
+    //     insertColorsToPubHeatMapsForUncomp(pubKeyHashUncompressed);
+    //
+    //     //set pub accuracy labels
+    //     insertPubSimilarityPercentLabels(result, PubTypeEnum.UNCOMPRESSED);
+    // }
+    //
+    // public void insertSearchResultsToUiForCompressed(PubComparisonResult result) {
+    //     String pubKeyHashCompressed = helper.getPubKeyHashCompressed(result.getForPriv(), false);
+    //
+    //     //add highest items to pub heat map (and translate accuracy)
+    //     insertCalculatedHashesToPubHeatMapsForComp(pubKeyHashCompressed);
+    //     insertColorsToPubHeatMapsForComp(pubKeyHashCompressed);
+    //
+    //     //set pub accuracy labels
+    //     insertPubSimilarityPercentLabels(result, PubTypeEnum.COMPRESSED);
+    // }
 
-    void insertCalculatedHashesToReferencePKHForComp(String pubCompressed) {
-        for (int i = 0; i < pubCompressed.length(); i++) {
-            String current = String.valueOf(pubCompressed.charAt(i));
-            referenceForCompressedAbsoluteIndexes.get(i).setText(current);
-        }
-    }
-
-    void insertCalculatedHashesToPubHeatMapsForComp(String pubCompressed) {
-        for (int i = 0; i < pubCompressed.length(); i++) {
-            String current = String.valueOf(pubCompressed.charAt(i));
-            pubCompressedHeatPositiveAbsoluteIndexes.get(i).setText(current);
-            pubCompressedHeatNegativeAbsoluteIndexes.get(i).setText(current);
-        }
-    }
-
-    public void insertSearchResultsToUiForUncompressed(PubComparisonResult result) {
-        String pubKeyHashUncompressed = helper.getPubKeyHashUncompressed(result.getForPriv(), false);
-
-        //add highest items to pub heat map (and translate accuracy)
-        insertCalculatedHashesToPubHeatMapsForUncomp(pubKeyHashUncompressed);
-        insertColorsToPubHeatMapsForUncomp(pubKeyHashUncompressed);
-
-        //set pub accuracy labels
-        insertPubSimilarityPercentLabels(result, PubTypeEnum.UNCOMPRESSED);
-    }
-
-    public void insertSearchResultsToUiForCompressed(PubComparisonResult result) {
-        String pubKeyHashCompressed = helper.getPubKeyHashCompressed(result.getForPriv(), false);
-
-        //add highest items to pub heat map (and translate accuracy)
-        insertCalculatedHashesToPubHeatMapsForComp(pubKeyHashCompressed);
-        insertColorsToPubHeatMapsForComp(pubKeyHashCompressed);
-
-        //set pub accuracy labels
-        insertPubSimilarityPercentLabels(result, PubTypeEnum.COMPRESSED);
-    }
-
-    void insertColorsToPubHeatMapsForUncomp(String pubUncompressed) {
-        calculateAndInsertPubColors(pubUncompressed, pubUncompressedHeatPositiveAbsoluteIndexes, pubUncompressedHeatNegativeAbsoluteIndexes, PubTypeEnum.UNCOMPRESSED);
-    }
-
-    void insertColorsToPubHeatMapsForComp(String pubCompressed) {
-        calculateAndInsertPubColors(pubCompressed, pubCompressedHeatPositiveAbsoluteIndexes, pubCompressedHeatNegativeAbsoluteIndexes, PubTypeEnum.COMPRESSED);
-    }
-
-    private void calculateAndInsertPubColors(String currentPKH, Map<Integer, Label> pubPositiveHeatMappings, Map<Integer, Label> pubNegativeHeatMappings, PubTypeEnum pubType) {
-        String referencePKH;
-
-        if (pubType == null) {
-            return;
-        }
-
-        switch (pubType) {
-            case UNCOMPRESSED:
-                referencePKH = getReferencePKHForUncompressed();
-                break;
-            case COMPRESSED:
-                referencePKH = getReferencePKHForCompressed();
-                break;
-            default:
-                throw new IllegalArgumentException("Type is not supported [type=" + pubType + "]");
-        }
-
-        int length = referencePKH.length();
-
-        for (int i = 0; i < length; i++) {
-            int locked = Integer.parseInt(String.valueOf(referencePKH.charAt(i)), 16);
-            int current = Integer.parseInt(String.valueOf(currentPKH.charAt(i)), 16);
-            int overflow_reference = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
-
-            PubHeatResultWrapper wrapper = helper.calculatePubHeatResults(locked, current, overflow_reference);
-            insertPubColorStylesToUi(i, pubPositiveHeatMappings, pubNegativeHeatMappings, wrapper);
-        }
-    }
-
-    private String getReferencePKHForUncompressed() {
+    private String getReferencePKHForUncompressedFromUi() {
         StringBuilder sb = new StringBuilder(40);
         for (int i = 0; i < 40; i++) {
             sb.append(referenceForUncompressedAbsoluteIndexes.get(i).getText());
@@ -753,7 +770,7 @@ public class HeatComparisonTabController {
         return sb.toString();
     }
 
-    private String getReferencePKHForCompressed() {
+    private String getReferencePKHForCompressedFromUi() {
         StringBuilder sb = new StringBuilder(40);
         for (int i = 0; i < 40; i++) {
             sb.append(referenceForCompressedAbsoluteIndexes.get(i).getText());
@@ -762,55 +779,55 @@ public class HeatComparisonTabController {
         return sb.toString();
     }
 
-    void insertPubColorStylesToUi(int wordNumber, Map<Integer, Label> pubPositiveHeatMappings, Map<Integer, Label> pubNegativeHeatMappings, PubHeatResultWrapper resultWrapper) {
+    private void insertPubColorStylesToUi(int wordNumber, Map<Integer, Label> pubPositiveHeatMappings, Map<Integer, Label> pubNegativeHeatMappings, PubHeatResultWrapper resultWrapper) {
         pubPositiveHeatMappings.get(wordNumber).getStyleClass().clear();
-        pubPositiveHeatMappings.get(wordNumber).getStyleClass().add(rootController.getColorMappings().get(resultWrapper.getHeatPositive()));
+        pubPositiveHeatMappings.get(wordNumber).getStyleClass().add(colorMappings.get(resultWrapper.getHeatPositive()));
 
         pubNegativeHeatMappings.get(wordNumber).getStyleClass().clear();
-        pubNegativeHeatMappings.get(wordNumber).getStyleClass().add(rootController.getColorMappings().get(resultWrapper.getHeatNegative()));
+        pubNegativeHeatMappings.get(wordNumber).getStyleClass().add(colorMappings.get(resultWrapper.getHeatNegative()));
     }
 
-    Optional<PubComparisonResult> compareWithReferenceKey(String currentPHK, PubTypeEnum type, ScaleFactorEnum scaleFactor) {
+    private Optional<PubComparisonResult> compareWithReferenceKey(String currentPHK, String referencePKH, PubTypeEnum type, ScaleFactorEnum scaleFactor) {
         if (type == null) {
             return Optional.empty();
         }
 
-        switch (type) {
-            case UNCOMPRESSED:
-                return pubComparer.comparePubKeyHashes(type, getReferencePKHForUncompressed(), currentPHK, scaleFactor);
-            case COMPRESSED:
-                return pubComparer.comparePubKeyHashes(type, getReferencePKHForCompressed(), currentPHK, scaleFactor);
-            default:
-                throw new IllegalArgumentException("Requested type is not supported at #compareWithLocked [type=" + type + "]");
-        }
+        return pubComparer.comparePubKeyHashes(type, referencePKH, currentPHK, scaleFactor);
     }
 
     @FXML
-    private void doShowPrivStats(ActionEvent actionEvent) {
-        showPrivStats();
+    private void doShowPrivHeatComparison(ActionEvent actionEvent) {
+        HeatComparisonContext heatComparisonContext = buildHeatComparisonContextFromUi();
+        showPrivHeatComparison(heatComparisonContext);
     }
 
-    void showPrivStats() {
-        if (!isCurrentKeyValid()) {
+    private void showPrivHeatComparison(HeatComparisonContext heatComparisonContext) {
+        Optional<String> error = validateContextForPrivHeatDisplay(heatComparisonContext);
+        if (error.isPresent()) {
+            showErrorMessage(error.get());
             return;
         }
-        removeErrorMessageAndRedBorder(comparisonTextFieldCurrentKey);
+        removeErrorOrInfoMessage();
 
-        if (!isReferenceKeyValid()) {
-            return;
-        }
-        removeErrorMessageAndRedBorder(comparisonTextFieldReferenceKey);
+        String targetPK = heatComparisonContext.getTargetPK();
+        String referenceKey = heatComparisonContext.getReferenceKey();
+        String currentPrivWord;
 
-        for (int i = 1; i <= 8; i++) {
-            String wordInCurrentKeyField = readHexWordFromUi(i, PrivKeyTargetTypeEnum.CURRENT_KEY);
-            insertPrivWordToPrivHeatMaps(i, wordInCurrentKeyField);
+        for (int wordNumber = 1; wordNumber <= 8; wordNumber++) {
+            currentPrivWord = targetPK.substring((wordNumber - 1) * 8, ((wordNumber - 1) * 8) + 8);
+            insertPrivWordToPrivHeatMaps(wordNumber, currentPrivWord);
 
-            int justI = i; //lambda needs final
-            getPrivHeat(i, wordInCurrentKeyField, currentNumberFormatType).ifPresent(result -> {
-                insertColorsToPrivHeatMaps(result, justI);
-                insertPrivNumericDifferenceLabel(justI, result, currentNumberFormatType);
+            String currentReferenceWord = referenceKey.substring((wordNumber - 1) * 8, ((wordNumber - 1) * 8) + 8);
+            int finalWordNumber = wordNumber;
+            getPrivHeat(currentReferenceWord, currentPrivWord, currentNumberFormatType).ifPresent(result -> {
+                insertColorsToPrivHeatMaps(result, finalWordNumber);
+                insertPrivNumericDifferenceLabel(finalWordNumber, result, currentNumberFormatType);
             });
         }
+
+        comparisonTextFieldCurrentKey.setText(targetPK);
+        comparisonTextFieldReferenceKey.setText(referenceKey);
+        setScaleFactor(heatComparisonContext.getScaleFactor());
 
         // buildLastPrivFromUserDataFields();
     }
@@ -824,6 +841,7 @@ public class HeatComparisonTabController {
     // }
 
     @FXML
+    //TODO: HEX numbers should be prefixed with 0x
     private void doChangeHeatResultFormat(ActionEvent actionEvent) {
         String currentPriv = comparisonTextFieldCurrentKey.getText();
         if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(currentPriv).matches()) {
@@ -844,38 +862,46 @@ public class HeatComparisonTabController {
         currentNumberFormatType = selectedNumberFormat;
     }
 
-    public final void changePrivHeatResolution() {
+    public final void changePrivHeatColorFocus() {
         if (comparisonRadioReferenceKeyTypePKH.isSelected()) {
+            //TODO: i18n
            showErrorMessage("No reference priv. Cannot calculate priv heat");
            return;
         }
+        removeErrorOrInfoMessage();
 
-        if (!isCurrentKeyValid()) {
+        Optional<String> error = validateTargetPK(comparisonTextFieldCurrentKey.getText());
+        if (error.isPresent()) {
+            showErrorMessage(error.get());
             return;
         }
+        removeErrorOrInfoMessage();
 
-        if (QuickSearchComparisonType.BLIND == getSelectedReferenceKeyTypeFromUi()) {
+        QuickSearchComparisonType comparisonType = getSelectedReferenceKeyTypeFromUi();
+        if (QuickSearchComparisonType.BLIND == comparisonType) {
             addErrorMessageAndRedBorder(rb.getString("error.cannotCompareWithoutReference"), comparisonRadioReferenceKeyTypePKH);
             return;
         }
 
-        if (!isReferenceKeyValid()) {
+        error = validateReferenceKey(comparisonTextFieldReferenceKey.getText(), comparisonType);
+        if (error.isPresent()) {
+            showErrorMessage(error.get());
             return;
         }
+        removeErrorOrInfoMessage();
 
         for (int i = 1; i <= 8; i++) {
             String wordInCurrentKeyField = readHexWordFromUi(i, PrivKeyTargetTypeEnum.CURRENT_KEY);
-
+            String wordInReferenceKeyField = readHexWordFromUi(i, PrivKeyTargetTypeEnum.REFERENCE_KEY);
             int justI = i; //lambda needs final
-            getPrivHeat(i, wordInCurrentKeyField, currentNumberFormatType)
+            getPrivHeat(wordInReferenceKeyField, wordInCurrentKeyField, currentNumberFormatType)
                     .ifPresent(result -> insertColorsToPrivHeatMaps(result, justI));
         }
     }
 
-    private Optional<PrivHeatResultWrapper> getPrivHeat(int wordNumber, String word, @NonNull NumberFormatTypeEnum type) {
-        String wordInReferenceKeyField = readHexWordFromUi(wordNumber, PrivKeyTargetTypeEnum.REFERENCE_KEY);
-        Long reference = Long.parseLong(wordInReferenceKeyField, 16);
-        Long current = Long.parseLong(word, 16);
+    private Optional<PrivHeatResultWrapper> getPrivHeat(String referencePKWord, String targetPKWord, @NonNull NumberFormatTypeEnum type) {
+        Long reference = Long.parseLong(referencePKWord, 16);
+        Long current = Long.parseLong(targetPKWord, 16);
         Long overflow_reference = HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
 
         return helper.calculatePrivHeatResults(reference, current, overflow_reference, type);
@@ -939,7 +965,7 @@ public class HeatComparisonTabController {
 
     @FXML
     private void doImportPriv() {
-        String currentInput = rootController.getCurrentInput();
+        String currentInput = heatComparisonTabAccessProxy.getCurrentInput();
         if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(currentInput).matches()) {
             showErrorMessage(rb.getString("error.keyNotValidInConstructionTab"));
             return;
@@ -960,10 +986,10 @@ public class HeatComparisonTabController {
 
     private void insertPrivColorStylesWithResolutionToUi(int wordNumber, int colorIndexPositive, int colorIndexNegative) {
         privHeatPositiveContainerMappings.get(wordNumber).getStyleClass().clear();
-        privHeatPositiveContainerMappings.get(wordNumber).getStyleClass().add(rootController.getColorMappings().get(colorIndexPositive));
+        privHeatPositiveContainerMappings.get(wordNumber).getStyleClass().add(colorMappings.get(colorIndexPositive));
 
         privHeatNegativeContainerMappings.get(wordNumber).getStyleClass().clear();
-        privHeatNegativeContainerMappings.get(wordNumber).getStyleClass().add(rootController.getColorMappings().get(colorIndexNegative));
+        privHeatNegativeContainerMappings.get(wordNumber).getStyleClass().add(colorMappings.get(colorIndexNegative));
     }
 
     private void clearColorsFromPrivHeatMaps() {
@@ -1029,6 +1055,6 @@ public class HeatComparisonTabController {
     }
 
     public final boolean isParentValid() {
-        return rootController != null;
+        return heatComparisonTabAccessProxy != null;
     }
 }
