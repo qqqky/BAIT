@@ -7,15 +7,15 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.commons.contexts.AbstractSearchHelperCreationContext;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
-import com.bearlycattable.bait.commons.other.PubComparer;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparerS;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
 
 import lombok.Getter;
 
 public abstract class AbstractGeneralSearchHelper {
 
-    private final PubComparer pubComparer = new PubComparer();
+    private final PubComparerS pubComparer = new PubComparerS();
     private final PrivKeyValidator privKeyValidator = PrivKeyValidator.newInstance();
 
     @Getter
@@ -39,9 +39,11 @@ public abstract class AbstractGeneralSearchHelper {
         return privKeyValidator.isValidPrivateKey(key);
     }
 
-    protected PubComparisonResultWrapper calculateCurrentResult(String currentPrivKey, String targetPKHUncompressed, String targetPKHCompressed, @NonNull ScaleFactorEnum scaleFactor) {
-        return pubComparer.getCurrentResult(currentPrivKey, targetPKHUncompressed, targetPKHCompressed, scaleFactor);
+    protected boolean isValidKey(byte[] key) {
+        return privKeyValidator.isValidPrivateKey(key);
     }
 
-
+    protected PubComparisonResultSWrapper calculateCurrentResult(String currentPrivKey, String targetPKHUncompressed, String targetPKHCompressed, @NonNull ScaleFactorEnum scaleFactor) {
+        return pubComparer.getCurrentResult(currentPrivKey, targetPKHUncompressed, targetPKHCompressed, scaleFactor);
+    }
 }

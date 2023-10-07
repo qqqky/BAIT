@@ -17,5 +17,5 @@ public interface CustomKeyGenerator {
     @NonNull
     String buildNextPriv(String current, List<Integer> disabledWords);
 
-    SearchModeEnum getSearchMode();
+    byte[] buildNextPrivBytes(byte[] current, List<Integer> disabledWords);
 }

@@ -1,4 +1,4 @@
-package com.bearlycattable.bait.commons.wrappers;
+package com.bearlycattable.bait.commons.pubKeyComparison;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -8,27 +8,26 @@ import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
 import com.bearlycattable.bait.commons.enums.PubTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
-import com.bearlycattable.bait.commons.other.PubComparisonResult;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
-public class PubComparisonResultWrapper {
-    private PubComparisonResult resultForUncompressed;
-    private PubComparisonResult resultForCompressed;
+public class PubComparisonResultSWrapper {
+    private PubComparisonResultS resultForUncompressed;
+    private PubComparisonResultS resultForCompressed;
     //TODO: we can add some message here with run stats for QuickSearch (eg: 'result found in X iterations')
 
 
-    public static PubComparisonResultWrapper empty() {
-        return PubComparisonResultWrapper.builder()
-                .resultForUncompressed(PubComparisonResult.empty(PubTypeEnum.UNCOMPRESSED))
-                .resultForCompressed(PubComparisonResult.empty(PubTypeEnum.COMPRESSED))
+    public static PubComparisonResultSWrapper empty() {
+        return PubComparisonResultSWrapper.builder()
+                .resultForUncompressed(PubComparisonResultS.empty(PubTypeEnum.UNCOMPRESSED))
+                .resultForCompressed(PubComparisonResultS.empty(PubTypeEnum.COMPRESSED))
                 .build();
     }
 
-    public Stream<PubComparisonResult> resultStream() {
+    public Stream<PubComparisonResultS> resultStream() {
         return Stream.of(resultForUncompressed, resultForCompressed);
     }
 
@@ -109,7 +108,7 @@ public class PubComparisonResultWrapper {
         return Math.max(getHighestPointsUncomp(), getHighestPointsComp());
     }
 
-    public boolean isHigherResultThan(PubComparisonResultWrapper another) {
+    public boolean isHigherResultThan(PubComparisonResultSWrapper another) {
         return another != null && this.getHighestPoints() > another.getHighestPoints();
     }
 
@@ -120,11 +119,11 @@ public class PubComparisonResultWrapper {
         throw new IllegalStateException("Matching privs do not exist or are not valid at PubComparisonResultWrapper#getPrivIfValidData");
     }
 
-    public Optional<PubComparisonResult> getResultAsOptionalForUncompressed() {
+    public Optional<PubComparisonResultS> getResultAsOptionalForUncompressed() {
         return Optional.ofNullable(resultForUncompressed);
     }
 
-    public Optional<PubComparisonResult> getResultAsOptionalForCompressed() {
+    public Optional<PubComparisonResultS> getResultAsOptionalForCompressed() {
         return Optional.ofNullable(resultForCompressed);
     }
 

@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import com.bearlycattable.bait.advancedCommons.serialization.P2PKHSingleResultDataDeserializerCustom;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
+import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -23,15 +26,21 @@ import javafx.util.Pair;
 public class P2PKHSingleResultData {
 
     @JsonIgnore
-    private transient Map<Integer, Map<String, Integer>> pointMapForPositive = new HashMap<>(); //index, value, result(int)
+    private transient Map<Integer, Map<String, Integer>> pointMapForPositiveS = new HashMap<>(); //index, value, result(int)
     @JsonIgnore
-    private transient Map<Integer, Map<String, Integer>> pointMapForNegative = new HashMap<>(); //index, value, result(int)
+    private transient Map<Integer, Map<String, Integer>> pointMapForNegativeS = new HashMap<>(); //index, value, result(int)
     @JsonIgnore
     private transient Map<JsonResultTypeEnum, Integer> existingPoints = new HashMap<>();
     @JsonIgnore
     private transient JsonResultScaleFactorEnum cachedGeneralPointsForScaleFactor;
     @JsonIgnore
     private transient JsonResultScaleFactorEnum cachedExistingPointsForScaleFactor;
+    @JsonIgnore
+    private transient AddressGenerationAndComparisonType cacheTypeGeneralPoints;
+    @JsonIgnore
+    private transient Map<Integer, Map<Integer, Integer>> pointMapForPositiveB = new HashMap<>();
+    @JsonIgnore
+    private transient Map<Integer, Map<Integer, Integer>> pointMapForNegativeB = new HashMap<>();
 
     private String hash; //unencoded public key
     private Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>> results; //4 types of results
@@ -70,24 +79,36 @@ public class P2PKHSingleResultData {
 
     @JsonIgnore
     public int getCachedHeatComparisonPointsForPositive(String hexCharToCompare, int index) {
-        return pointMapForPositive.get(index).get(hexCharToCompare);
+        return pointMapForPositiveS.get(index).get(hexCharToCompare);
     }
 
     @JsonIgnore
     public int getCachedHeatComparisonPointsForNegative(String hexCharToCompare, int index) {
-        return pointMapForNegative.get(index).get(hexCharToCompare);
+        return pointMapForNegativeS.get(index).get(hexCharToCompare);
     }
 
     @JsonIgnore
-    public void clearPointMaps() {
-        List<Integer> keysForPositive = new ArrayList<>(pointMapForPositive.keySet());
-        List<Integer> keysForNegative = new ArrayList<>(pointMapForNegative.keySet());
+    public void clearPointMapsS() {
+        List<Integer> keysForPositive = new ArrayList<>(pointMapForPositiveS.keySet());
+        List<Integer> keysForNegative = new ArrayList<>(pointMapForNegativeS.keySet());
 
-        keysForPositive.forEach(key -> pointMapForPositive.get(key).clear());
-        keysForNegative.forEach(key -> pointMapForNegative.get(key).clear());
+        keysForPositive.forEach(key -> pointMapForPositiveS.get(key).clear());
+        keysForNegative.forEach(key -> pointMapForNegativeS.get(key).clear());
 
-        pointMapForPositive.clear();
-        pointMapForNegative.clear();
+        pointMapForPositiveS.clear();
+        pointMapForNegativeS.clear();
+    }
+
+    @JsonIgnore
+    public void clearPointMapsB() {
+        List<Integer> keysForPositive = new ArrayList<>(pointMapForPositiveB.keySet());
+        List<Integer> keysForNegative = new ArrayList<>(pointMapForNegativeB.keySet());
+
+        keysForPositive.forEach(key -> pointMapForPositiveB.get(key).clear());
+        keysForNegative.forEach(key -> pointMapForNegativeB.get(key).clear());
+
+        pointMapForPositiveB.clear();
+        pointMapForNegativeB.clear();
     }
 
     public String getHash() {
@@ -99,13 +120,23 @@ public class P2PKHSingleResultData {
     }
 
     @JsonIgnore
-    public Map<Integer, Map<String, Integer>> getPointMapForPositive() {
-        return pointMapForPositive;
+    public Map<Integer, Map<String, Integer>> getPointMapForPositiveS() {
+        return pointMapForPositiveS;
     }
 
     @JsonIgnore
-    public Map<Integer, Map<String, Integer>> getPointMapForNegative() {
-        return pointMapForNegative;
+    public Map<Integer, Map<String, Integer>> getPointMapForNegativeS() {
+        return pointMapForNegativeS;
+    }
+
+    @JsonIgnore
+    public Map<Integer, Map<Integer, Integer>> getPointMapForPositiveB() {
+        return pointMapForPositiveB;
+    }
+
+    @JsonIgnore
+    public Map<Integer, Map<Integer, Integer>> getPointMapForNegativeB() {
+        return pointMapForNegativeB;
     }
 
     @JsonIgnore
@@ -130,6 +161,11 @@ public class P2PKHSingleResultData {
     }
 
     @JsonIgnore
+    public void setCachedGeneralPointsForVersion(@NonNull AddressGenerationAndComparisonType cacheType) {
+        this.cacheTypeGeneralPoints = cacheType;
+    }
+
+    @JsonIgnore
     public void setCachedExistingPointsForScaleFactor(JsonResultScaleFactorEnum scaleFactor) {
         this.cachedExistingPointsForScaleFactor = scaleFactor;
     }
@@ -141,13 +177,18 @@ public class P2PKHSingleResultData {
      * @return
      */
     @JsonIgnore
-    public boolean isGeneralPointsCachedForScaleFactor(JsonResultScaleFactorEnum scaleFactor) {
-        return cachedGeneralPointsForScaleFactor == scaleFactor;
+    public boolean isGeneralPointsCachedForScaleFactor(JsonResultScaleFactorEnum scaleFactor, AddressGenerationAndComparisonType addressGenerationAndComparisonType) {
+        return cachedGeneralPointsForScaleFactor == scaleFactor && cacheTypeGeneralPoints == addressGenerationAndComparisonType;
     }
 
     @JsonIgnore
     public JsonResultScaleFactorEnum getCachedForScaleFactor() {
         return cachedGeneralPointsForScaleFactor;
+    }
+
+    @JsonIgnore
+    public AddressGenerationAndComparisonType getCachedGeneralPointsForVersion() {
+        return cacheTypeGeneralPoints;
     }
 
     /**

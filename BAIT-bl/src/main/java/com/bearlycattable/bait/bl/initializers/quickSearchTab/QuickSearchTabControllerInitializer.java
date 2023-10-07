@@ -110,15 +110,15 @@ public final class QuickSearchTabControllerInitializer {
             case INCREMENTAL_WORDS:
             case DECREMENTAL_ABSOLUTE:
             case DECREMENTAL_WORDS:
-            case ROTATION_PRIV_FULL_NORMAL:
-            case ROTATION_PRIV_FULL_PREFIXED:
-            case ROTATION_PRIV_INDEX_VERTICAL:
-            case ROTATION_PRIV_WORDS:
+            case ROTATION_FULL:
+            case ROTATION_FULL_WITH_HEADER:
+            case ROTATION_INDEX_VERTICAL:
+            case ROTATION_WORDS:
                 //seed enabled, as long as search type allows it (Collision type)
                 boolean blindTypeSelected = controller.getQuickSearchRadioBlindType().isSelected();
                 controller.getQuickSearchCbxSelfSeed().setDisable(blindTypeSelected);
                 controller.getQuickSearchSelectSeedParentComponent().setDisable((!blindTypeSelected && controller.getQuickSearchCbxSelfSeed().isSelected()) || (!controller.getQuickSearchCbxSelfSeed().isDisabled() && controller.getQuickSearchCbxSelfSeed().isSelected()));
-                controller.getQuickSearchHBoxDisabledWordsParent().setDisable(SearchModeEnum.ROTATION_PRIV_FULL_NORMAL == searchMode || SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED == searchMode);
+                controller.getQuickSearchHBoxDisabledWordsParent().setDisable(SearchModeEnum.ROTATION_FULL == searchMode || SearchModeEnum.ROTATION_FULL_WITH_HEADER == searchMode);
                 break;
             case FUZZING:
             case MIXED:

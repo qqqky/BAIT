@@ -13,6 +13,7 @@ import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.PredictableEnd;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
+import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.enums.RandomWordPrefixMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
@@ -28,6 +29,7 @@ import lombok.experimental.SuperBuilder;
 public class ThreadSpawnModel {
 
     private final AdvancedSearchHelper advancedSearchHelper;
+    private final boolean byteComparisonEnabled;
     private P2PKHSingleResultData[] deepDataCopy;
     private final String saveLocation;
     private String seed;
@@ -73,6 +75,7 @@ public class ThreadSpawnModel {
         if (finiteMode) {
             labelList.add("NOTE: the selected search mode is FINITE, so number of iterations might have been adjusted (unless they were already below max value for this search mode)");
         }
+        labelList.add("Address generation and comparison mode: " + (advancedSearchHelper.isByteComparisonSupported() && byteComparisonEnabled ? AddressGenerationAndComparisonType.BYTE : AddressGenerationAndComparisonType.STRING));
         if (isRandomRelatedMode() && prefix != null && !prefix.isEmpty()) {
             labelList.add("");
             labelList.add("Selected prefix for every word: " + prefix);

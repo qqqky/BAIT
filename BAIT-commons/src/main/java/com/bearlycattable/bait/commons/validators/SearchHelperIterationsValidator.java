@@ -10,12 +10,12 @@ public class SearchHelperIterationsValidator {
         }
 
         switch (searchMode) {
-            case ROTATION_PRIV_FULL_NORMAL: //intentional fall-through
-            case ROTATION_PRIV_INDEX_VERTICAL:
+            case ROTATION_FULL: //intentional fall-through
+            case ROTATION_INDEX_VERTICAL:
                 return Math.min(requestedIterations, 64);
-            case ROTATION_PRIV_FULL_PREFIXED:
+            case ROTATION_FULL_WITH_HEADER:
                 return Math.min(requestedIterations, 128);
-            case ROTATION_PRIV_WORDS:
+            case ROTATION_WORDS:
                 return Math.min(requestedIterations, 8);
             case DECREMENTAL_ABSOLUTE: //intentional fall-through
             case DECREMENTAL_WORDS:

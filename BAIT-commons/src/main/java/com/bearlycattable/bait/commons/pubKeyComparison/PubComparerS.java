@@ -1,4 +1,4 @@
-package com.bearlycattable.bait.commons.other;
+package com.bearlycattable.bait.commons.pubKeyComparison;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
 import com.bearlycattable.bait.commons.enums.PubTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
 
-public class PubComparer {
+public class PubComparerS {
 
-    private static final Logger LOG = Logger.getLogger(PubComparer.class.getName());
+    private static final Logger LOG = Logger.getLogger(PubComparerS.class.getName());
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
     private static final Map<BigDecimal, Map<Integer, BigDecimal>> SCALED_MULTIPLIER_MAPPINGS = initScaledMultiplierMappings();
     private static final Map<Integer, Map<BigDecimal, Integer>> FINAL_POINTS_MAPPINGS = initFinalPointsMappings();
@@ -61,15 +61,15 @@ public class PubComparer {
         return map;
     }
 
-    public PubComparisonResultWrapper selectBest(PubComparisonResultWrapper old, PubComparisonResultWrapper current) {
+    public PubComparisonResultSWrapper selectBest(PubComparisonResultSWrapper old, PubComparisonResultSWrapper current) {
        List<Integer> rankingsOld = old.resultStream()
-               .map(PubComparisonResult::getValueList)
+               .map(PubComparisonResultS::getValueList)
                .flatMap(Collection::stream)
                .sorted(Comparator.reverseOrder())
                .collect(Collectors.toList());
 
         List<Integer> rankingsCurrent = current.resultStream()
-                .map(PubComparisonResult::getValueList)
+                .map(PubComparisonResultS::getValueList)
                 .flatMap(Collection::stream)
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
@@ -89,7 +89,7 @@ public class PubComparer {
         return oldIsHighest ? old : current;
     }
 
-    public Optional<PubComparisonResult> comparePubKeyHashes(PubTypeEnum type, String referencePKH, String currentPKH, ScaleFactorEnum scaleFactor) {
+    public Optional<PubComparisonResultS> comparePubKeyHashes(PubTypeEnum type, String referencePKH, String currentPKH, ScaleFactorEnum scaleFactor) {
         if (referencePKH == null || referencePKH.isEmpty()) {
             return Optional.empty();
         }
@@ -120,7 +120,7 @@ public class PubComparer {
             pointCountNegative = pointCountNegative + pointsNegative;
         }
 
-        return Optional.of(PubComparisonResult.builder()
+        return Optional.of(PubComparisonResultS.builder()
                                    .positive(pointCountPositive)
                                    .negative(pointCountNegative)
                                    .forScaleFactor(forScaleFactor)
@@ -156,6 +156,23 @@ public class PubComparer {
         return difference < 0 ? -difference : overflow_reference;
     }
 
+    public int cacheHelperS(int difference, int overflow_reference, BigDecimal pointsMultiplier, HeatOverflowTypeEnum heatType) {
+        int points;
+
+        switch (heatType) {
+            case HEAT_POSITIVE:
+                points = countPointsPositive(difference, overflow_reference);
+                break;
+            case HEAT_NEGATIVE:
+                points = countPointsNegative(difference, overflow_reference);
+                break;
+            default:
+                throw new IllegalArgumentException("Heat type not supported at #cacheHelperS [type= " + heatType + "]");
+        }
+
+        return calculateWithMultiplier(points, pointsMultiplier);
+    }
+
     public int calculateWithMultiplier(int totalPoints, BigDecimal pointsMultiplier) {
         if (totalPoints < 1) {
             throw new IllegalArgumentException("Points cannot be less than 1");
@@ -167,28 +184,28 @@ public class PubComparer {
         return FINAL_POINTS_MAPPINGS.get(totalPoints).get(pointsMultiplier);
     }
 
-    public PubComparisonResultWrapper getCurrentResult(String currentPrivKey, String referencePKHUncompressed, String referencePKHCompressed, ScaleFactorEnum scaleFactor) {
-        PubComparisonResult resultUncompressed = getCurrentResultForUncompressed(currentPrivKey, referencePKHUncompressed, scaleFactor).orElse(null);
-        PubComparisonResult resultCompressed = getCurrentResultForCompressed(currentPrivKey, referencePKHCompressed, scaleFactor).orElse(null);
+    public PubComparisonResultSWrapper getCurrentResult(String currentPrivKey, String referencePKHUncompressed, String referencePKHCompressed, ScaleFactorEnum scaleFactor) {
+        PubComparisonResultS resultUncompressed = getCurrentResultForUncompressed(currentPrivKey, referencePKHUncompressed, scaleFactor).orElse(null);
+        PubComparisonResultS resultCompressed = getCurrentResultForCompressed(currentPrivKey, referencePKHCompressed, scaleFactor).orElse(null);
 
         if (resultUncompressed == null || resultCompressed == null) {
             return HeatVisualizerConstants.EMPTY_RESULT_WRAPPER;
         }
 
-        return PubComparisonResultWrapper.builder()
+        return PubComparisonResultSWrapper.builder()
                 .resultForUncompressed(resultUncompressed)
                 .resultForCompressed(resultCompressed)
                 .build();
     }
 
-    private Optional<PubComparisonResult> getCurrentResultForUncompressed(String currentPrivKey, String lockedPKHUncompressed, ScaleFactorEnum scaleFactor) {
-        Optional<PubComparisonResult> result = comparePubKeyHashes(PubTypeEnum.UNCOMPRESSED, lockedPKHUncompressed, helper.getPubKeyHashUncompressed(currentPrivKey, true), scaleFactor);
+    private Optional<PubComparisonResultS> getCurrentResultForUncompressed(String currentPrivKey, String lockedPKHUncompressed, ScaleFactorEnum scaleFactor) {
+        Optional<PubComparisonResultS> result = comparePubKeyHashes(PubTypeEnum.UNCOMPRESSED, lockedPKHUncompressed, helper.getPubKeyHashUncompressed(currentPrivKey, true), scaleFactor);
         result.ifPresent(res -> res.setForPriv(currentPrivKey));
         return result;
     }
 
-    private Optional<PubComparisonResult> getCurrentResultForCompressed(String currentPrivKey, String lockedPKHCompressed, ScaleFactorEnum scaleFactor) {
-        Optional<PubComparisonResult> result = comparePubKeyHashes(PubTypeEnum.COMPRESSED, lockedPKHCompressed, helper.getPubKeyHashCompressed(currentPrivKey, true), scaleFactor);
+    private Optional<PubComparisonResultS> getCurrentResultForCompressed(String currentPrivKey, String lockedPKHCompressed, ScaleFactorEnum scaleFactor) {
+        Optional<PubComparisonResultS> result = comparePubKeyHashes(PubTypeEnum.COMPRESSED, lockedPKHCompressed, helper.getPubKeyHashCompressed(currentPrivKey, true), scaleFactor);
         result.ifPresent(res -> res.setForPriv(currentPrivKey));
         return result;
     }

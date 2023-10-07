@@ -10,7 +10,7 @@ import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class QuickSearchContext {
     private final String targetPub; //null if type=COLLISION
     @Setter
     private String seed;
-    private PubComparisonResultWrapper currentHighestResult; //for new searches it is PubComparisonResultWrapper.empty()
+    private PubComparisonResultSWrapper currentHighestResult; //for new searches it is PubComparisonResultWrapper.empty()
     private final List<Integer> disabledWords;
     // @Setter
     // private BiFunction<QuickSearchResponseModel, String, QuickSearchResponseModel> evaluationFunction;
@@ -90,7 +90,7 @@ public class QuickSearchContext {
             return Optional.of("Selected search mode requires a 64-hex digit seed");
         }
 
-        if (SearchModeEnum.ROTATION_PRIV_FULL_NORMAL == searchMode || SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED == searchMode) {
+        if (SearchModeEnum.ROTATION_FULL == searchMode || SearchModeEnum.ROTATION_FULL_WITH_HEADER == searchMode) {
             if (disabledWords != null && !disabledWords.isEmpty()) {
                 return Optional.of("There must be no disabled words for this search mode");
             }

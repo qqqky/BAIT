@@ -10,6 +10,7 @@ import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.functions.TriConsumer;
+import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.paint.Color;
@@ -25,6 +26,8 @@ public class AdvancedSearchContext {
     private final List<Integer> disabledWords;
     @Setter
     private String seed;
+    @Setter
+    private AddressGenerationAndComparisonType addressGenerationAndComparisonType;
     private final ObservableStringValue observableProgressLabelValue;
     private final int progressSpacing;
     private final int printSpacing;

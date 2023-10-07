@@ -37,13 +37,13 @@ public class SimpleSearchHelperFactory {
                 return new QuickSearchHelperRandom(creationContext);
             case RANDOM_SAME_WORD:
                 return new QuickSearchHelperRandomSameWord(creationContext);
-            case ROTATION_PRIV_FULL_NORMAL:
+            case ROTATION_FULL:
                 return new QuickSearchHelperRotationPrivFullNormal(creationContext);
-            case ROTATION_PRIV_FULL_PREFIXED:
+            case ROTATION_FULL_WITH_HEADER:
                 return new QuickSearchHelperRotationPrivFullPrefixed(creationContext);
-            case ROTATION_PRIV_INDEX_VERTICAL:
+            case ROTATION_INDEX_VERTICAL:
                 return new QuickSearchHelperRotationPrivIndexVertical(creationContext);
-            case ROTATION_PRIV_WORDS:
+            case ROTATION_WORDS:
                 return new QuickSearchHelperRotationPrivWords(creationContext);
             // case FUZZING:
             //     return new SimpleSearchHelperFuzzing(creationContext);

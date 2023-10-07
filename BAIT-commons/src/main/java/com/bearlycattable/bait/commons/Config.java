@@ -29,15 +29,15 @@ public class Config {
     public static final int MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE = 5000; //do not change this value
 
     public static final List<SearchModeEnum> DEFAULT_FUZZING_SEARCH_SUBSEQUENCE = Arrays.asList(
-            SearchModeEnum.ROTATION_PRIV_WORDS, SearchModeEnum.INCREMENTAL_WORDS, SearchModeEnum.DECREMENTAL_WORDS,
-            SearchModeEnum.ROTATION_PRIV_INDEX_VERTICAL);
+            SearchModeEnum.ROTATION_WORDS, SearchModeEnum.INCREMENTAL_WORDS, SearchModeEnum.DECREMENTAL_WORDS,
+            SearchModeEnum.ROTATION_INDEX_VERTICAL);
 
     public static final List<String> SUPPORTED_QUICKSEARCH_TYPES = Collections.unmodifiableList(Arrays.asList(
             SearchModeEnum.RANDOM.getLabel(), SearchModeEnum.RANDOM_SAME_WORD.getLabel(),
             SearchModeEnum.INCREMENTAL_ABSOLUTE.getLabel(), SearchModeEnum.INCREMENTAL_WORDS.getLabel(),
             SearchModeEnum.DECREMENTAL_ABSOLUTE.getLabel(), SearchModeEnum.DECREMENTAL_WORDS.getLabel(),
-            SearchModeEnum.ROTATION_PRIV_INDEX_VERTICAL.getLabel(), SearchModeEnum.ROTATION_PRIV_WORDS.getLabel(),
-            SearchModeEnum.ROTATION_PRIV_FULL_NORMAL.getLabel(), SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED.getLabel()
+            SearchModeEnum.ROTATION_INDEX_VERTICAL.getLabel(), SearchModeEnum.ROTATION_WORDS.getLabel(),
+            SearchModeEnum.ROTATION_FULL.getLabel(), SearchModeEnum.ROTATION_FULL_WITH_HEADER.getLabel()
             ));
 
     public static final List<String> SUPPORTED_ADVANCED_SEARCH_TYPES = Collections.unmodifiableList(Arrays.asList(
@@ -46,10 +46,10 @@ public class Config {
             SearchModeEnum.DECREMENTAL_ABSOLUTE.getLabel(), SearchModeEnum.DECREMENTAL_WORDS.getLabel()));
 
     //dev
-    // public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/exactMatchCheckListExample.txt";
-    // public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/matches.txt";
+    public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/exactMatchCheckListExample.txt";
+    public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/matches.txt";
 
     //prod
-    public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/app/exactMatchCheckListExample.txt";
-    public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/app/matches.txt";
+    // public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/app/exactMatchCheckListExample.txt";
+    // public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/app/matches.txt";
 }

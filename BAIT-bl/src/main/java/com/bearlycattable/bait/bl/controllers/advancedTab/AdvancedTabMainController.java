@@ -101,7 +101,7 @@ public class AdvancedTabMainController implements AdvancedToolsAccessProxy, Adva
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (parent): AdvancedTabMainController");
+        System.out.println("CREATING (parent, advanced): AdvancedTabMainController");
 
         AdvancedSubTabSearchControllerInitializer.initialize(advancedSubTabSearchController, this);
         AdvancedSubTabProgressControllerInitializer.initialize(advancedSubTabProgressController, this);

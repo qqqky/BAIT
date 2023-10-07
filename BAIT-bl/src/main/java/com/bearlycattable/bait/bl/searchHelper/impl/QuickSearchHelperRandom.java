@@ -24,27 +24,15 @@ public class QuickSearchHelperRandom extends AbstractQuickSearchHelper implement
         super(creationContext);
     }
 
-    // @NonNull
-    // @Override
-    // public PubComparisonResultWrapper quickSearchSameThread(QuickSearchContext quickSearchContext) {
-    //     List<Integer> disabledWords = quickSearchContext.getDisabledWords();
-    //     quickSearchContext.setNextPrivFunction(seed -> buildNextPriv(seed, disabledWords));
-    //     return iterateForRandomMode(quickSearchContext);
-    // }
-
     @Override
     public QuickSearchTaskWrapper createNewQuickSearchTask(QuickSearchContext quickSearchContext) {
-        // List<Integer> disabledWords = quickSearchContext.getDisabledWords();
-        // quickSearchContext.setNextPrivFunction(seed -> buildNextPriv(seed, disabledWords));
-        // quickSearchContext.setEvaluationFunction(super.createGeneralEvaluationFunction(quickSearchContext));
-        // return QuickSearchTaskFactory.createNewQuickSearchTask(quickSearchContext);
         return quickSearchTaskGuiCreationHelper(quickSearchContext);
     }
 
     @Override
     public String buildNextPriv(String current, List<Integer> disabledWords) {
         if (disabledWords == null || disabledWords.isEmpty()) {
-            return generator.generateValidKey();
+            return generator.generateValidKeyString();
         }
         return generator.generateWithBlacklist(current, disabledWords);
     }
@@ -53,41 +41,4 @@ public class QuickSearchHelperRandom extends AbstractQuickSearchHelper implement
     public SearchModeEnum getSearchMode() {
         return searchMode;
     }
-
-    // /*------ unsupported methods from base class: ------- */
-    //
-    // @Override
-    // public @NonNull String rotateLeft(String current) {
-    //     throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeft(String)");
-    // }
-    //
-    // @Override
-    // public @NonNull String rotateLeftBy(String current, int rotateBy) {
-    //     throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeftBy(String, int)");
-    // }
-    //
-    // @Override
-    // public @NonNull String rotateLeft(String current, List<Integer> disabledWords) {
-    //     throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeft(String, List<Integer>)");
-    // }
-    //
-    // @Override
-    // public @NonNull String rotateLeftBy(String current, int rotateBy, List<Integer> disabledWords) {
-    //     throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeftBy(String, int, List<Integer>)");
-    // }
-    //
-    // @Override
-    // public @NonNull String rotateAtIndex(String current, List<Integer> disabledWords, int index) {
-    //     throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateAtIndex(String, List<Integer>, int)");
-    // }
-    //
-    // @Override
-    // public boolean isValidIndexForVerticalRotation(String address, List<Integer> disabledWords, int selectedIndex) {
-    //     throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@isValidIndexForVerticalRotation(args)");
-    // }
-    //
-    // @Override
-    // public String buildNextPriv(String current, List<Integer> disabledWords, String prefix) {
-    //     throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@buildNextPriv(String, List<Integer>, String)");
-    // }
 }

@@ -36,16 +36,13 @@ import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
-import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 import com.bearlycattable.bait.commons.enums.RandomWordPrefixMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.enums.SeedMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
-import com.bearlycattable.bait.commons.interfaces.PrefixedKeyGenerator;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
-import com.bearlycattable.bait.utility.AddressModifier;
 import com.bearlycattable.bait.utility.BaitUtils;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
@@ -76,7 +73,6 @@ import lombok.Getter;
 public class AdvancedSubTabSearchController {
 
     private static final Logger LOG = Logger.getLogger(AdvancedSubTabSearchController.class.getName());
-    private static final AddressModifier modifier = new AddressModifier(OutputCaseEnum.UPPERCASE);
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "AdvancedSubTabSearch", LocaleUtils.APP_LANGUAGE);
     private final AdvancedSearchHelperProvider advancedSearchHelperProvider = ServiceLoader.load(AdvancedSearchHelperProvider.class).findFirst().orElse(null);
 
@@ -179,6 +175,8 @@ public class AdvancedSubTabSearchController {
     @FXML
     private TextField advancedSearchTextFieldLogKeyEveryXIterations;
     @FXML
+    private CheckBox advancedSearchCbxByteComparisonEnable;
+    @FXML
     private Label advancedSearchErrorLabel;
     @FXML
     private Button advancedBtnSearch;
@@ -195,12 +193,18 @@ public class AdvancedSubTabSearchController {
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (child): AdvancedSubTabSearchController......");
+        System.out.println("CREATING (child, advanced): AdvancedSubTabSearchController......");
     }
 
     void initDevDefaults() {
         //TODO: add dev defaults
-        System.out.println("Dev defaults are empty!");
+        advancedSearchTextFieldLoadSearchTemplateFromFile.setText("D:\\Projects\\TestFiles\\testDelete_first5.json");
+        advancedSearchTextFieldSaveSearchToFile.setText("D:\\Projects\\TestFiles\\zzzz.json");
+        advancedSearchChoiceBoxSearchMode.getSelectionModel().select("Incremental (absolute)");
+        advancedSearchTextFieldIterations.setText("5");
+        advancedSearchTextFieldLogKeyEveryXIterations.setText("1");
+        advancedSearchTextFieldContinueFromSeed.setText("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+        // System.out.println("Dev defaults are empty!");
     }
 
     public void setAdvancedSearchAccessProxy(AdvancedSearchAccessProxy proxy) {
@@ -347,6 +351,7 @@ public class AdvancedSubTabSearchController {
         String seed = buildSeed(advancedSearchHelper);
         if (seed.isEmpty()) {
             addErrorMessageAndRedBorder(rb.getString("error.invalidSeed"), advancedSearchTextFieldContinueFromSeed);
+            advancedBtnSearch.setDisable(false);
             return;
         }
         removeRedBorder(advancedSearchTextFieldContinueFromSeed);
@@ -380,21 +385,26 @@ public class AdvancedSubTabSearchController {
         Pair<RandomWordPrefixMutationTypeEnum, String> modeSpecificConfigs = null;
         String randomWordPrefix = null;
 
-        if (advancedSearchHelper instanceof PrefixedKeyGenerator) {
+        if (SearchModeEnum.isPrefixSupported(advancedSearchHelper.getSearchMode())) {
             PrefixedModeConfigsWrapper prefixedModeConfigsWrapper = gatherModeSpecificConfigs();
             if (!prefixedModeConfigsWrapper.hasValidConfig()) {
+                showErrorMessage(prefixedModeConfigsWrapper.getError());
+                advancedBtnSearch.setDisable(false);
                 return;
             }
 
             randomWordPrefix = prefixedModeConfigsWrapper.getPrefix();
             modeSpecificConfigs = prefixedModeConfigsWrapper.getModeSpecificConfigs();
         }
+        removeMessage();
 
         //handle sound notification tolerance selection
         int soundNotificationTolerance = 0;
         if (advancedSearchCbxEnableSoundNotifications.isSelected()) {
             NotificationConfigsWrapper notificationConfigsWrapper = gatherNotificationConfigs();
             if (!notificationConfigsWrapper.hasValidConfig()) {
+                showErrorMessage(notificationConfigsWrapper.getError());
+                advancedBtnSearch.setDisable(false);
                 return;
             }
 
@@ -408,6 +418,7 @@ public class AdvancedSubTabSearchController {
         System.out.println("Creating ThreadSpawnModel");
         ThreadSpawnModel threadSpawnModel = ThreadSpawnModel.builder()
                 .advancedSearchHelper(advancedSearchHelper)
+                .byteComparisonEnabled(advancedSearchCbxByteComparisonEnable.isSelected())
                 .seed(seed)
                 .disabledWords(disabledWords)
                 .saveLocation(saveLocation)
@@ -423,6 +434,8 @@ public class AdvancedSubTabSearchController {
                 .prefixMutationConfig(randomRelatedMode ? modeSpecificConfigs : null)
                 .build();
 
+        //TODO: splash screen with confirmation loading progress (because loading exact check items might take some time)
+
         //confirm user choice
         if (!confirmUserChoiceForNewSearchThread(threadSpawnModel.makeLabelListForUserNotification((t,u,v) -> advancedSearchAccessProxy.buildMutatedSeed(t, u, v)))) {
             if (advancedSearchAccessProxy.isVerboseMode()) {
@@ -433,11 +446,10 @@ public class AdvancedSubTabSearchController {
             advancedBtnSearch.setDisable(false);
             return;
         }
-        //TODO: only for testing
-        System.out.println("User accepted the search config!");
 
         //init caches if possible
-        initializeTemplateCaches(deepCopy, Objects.requireNonNull(advancedSearchHelper).getScaleFactor());
+        // Object o = ModifierType.STRING; ewfewf
+        // initializeTemplateCaches(deepCopy, Objects.requireNonNull(advancedSearchHelper).getScaleFactor(), ModifierType.STRING);
 
         //TODO: only for testing
         System.out.println("Will now be spawning background search thread");
@@ -493,23 +505,23 @@ public class AdvancedSubTabSearchController {
         return result.build();
     }
 
-    private void initializeTemplateCaches(P2PKHSingleResultData[] deepCopy, ScaleFactorEnum scaleFactor) {
-        if (deepCopy.length <= Config.MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE) {
-            P2PKHSingleResultDataHelper.initializeCaches(deepCopy, ScaleFactorEnum.toJsonScaleFactorEnum(scaleFactor));
-            if (advancedSearchAccessProxy.isVerboseMode()) {
-                String cachedSuccessfully = rb.getString("info.allTemplatesCached");
-                LOG.info(cachedSuccessfully);
-                advancedSearchAccessProxy.logToUi(cachedSuccessfully, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
-            }
-            return;
-        }
-
-        if (advancedSearchAccessProxy.isVerboseMode()) {
-            String templatesCannotBeCached = rb.getString("info.proceedingWithUncached");
-            LOG.info(templatesCannotBeCached);
-            advancedSearchAccessProxy.logToUi(templatesCannotBeCached, Color.DARKORANGE, LogTextTypeEnum.START_OF_SEARCH);
-        }
-    }
+    // private void initializeTemplateCaches(P2PKHSingleResultData[] deepCopy, ScaleFactorEnum scaleFactor, ModifierType cacheType) {
+    //     if (deepCopy.length <= Config.MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE) {
+    //         P2PKHSingleResultDataHelper.initializeCaches(deepCopy, ScaleFactorEnum.toJsonScaleFactorEnum(scaleFactor), cacheType);
+    //         if (advancedSearchAccessProxy.isVerboseMode()) {
+    //             String cachedSuccessfully = rb.getString("info.allTemplatesCached");
+    //             LOG.info(cachedSuccessfully);
+    //             advancedSearchAccessProxy.logToUi(cachedSuccessfully, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
+    //         }
+    //         return;
+    //     }
+    //
+    //     if (advancedSearchAccessProxy.isVerboseMode()) {
+    //         String templatesCannotBeCached = rb.getString("info.proceedingWithUncached");
+    //         LOG.info(templatesCannotBeCached);
+    //         advancedSearchAccessProxy.logToUi(templatesCannotBeCached, Color.DARKORANGE, LogTextTypeEnum.START_OF_SEARCH);
+    //     }
+    // }
 
     @NonNull
     private NotificationConfigsWrapper gatherNotificationConfigs() {
@@ -549,13 +561,20 @@ public class AdvancedSubTabSearchController {
     @NonNull
     private PrefixedModeConfigsWrapper gatherModeSpecificConfigs() {
         PrefixedModeConfigsWrapper.PrefixedModeConfigsWrapperBuilder result = PrefixedModeConfigsWrapper.builder();
+
+        //dev
+        if (advancedSearchTextFieldRandomWordPrefix == null) {
+            result.error("Text field was not available for random word prefix!");
+            return result.build();
+        }
+
         String randomWordPrefix = advancedSearchTextFieldRandomWordPrefix.getText();
 
         if (randomWordPrefix.isEmpty()) {
             return result.build();
         }
 
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_08_OR_LESS.matcher(randomWordPrefix).matches()) {
+        if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(randomWordPrefix).matches()) {
             String error = rb.getString("error.randomWordPrefixInvalid");
             advancedBtnSearch.setDisable(false);
             addErrorMessageAndRedBorder(error, advancedSearchTextFieldRandomWordPrefix);
@@ -668,7 +687,7 @@ public class AdvancedSubTabSearchController {
             retrieveIncOrDecTypeForOptionalConfigs().ifPresent(selectedIncDecMutationType -> {
                 String incDecBy = advancedSearchTextFieldIncDecBy.getText();
 
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_08_OR_LESS.matcher(incDecBy).matches()) {
+                if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(incDecBy).matches()) {
                     incDecResponse.setResponseType(OptionalConfigValidationResponseType.ABORT);
                     incDecResponse.setErrorMessage(rb.getString("error.incDecMustBe8HexOrLess"));
                     return;

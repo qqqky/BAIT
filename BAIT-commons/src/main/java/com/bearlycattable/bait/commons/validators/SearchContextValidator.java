@@ -18,8 +18,8 @@ public class SearchContextValidator {
 
         String testKey = Stream.generate(() -> "1").limit(64).collect(Collectors.joining());
 
-        if ((SearchModeEnum.isIncDecRelatedMode(searchMode) || SearchModeEnum.ROTATION_PRIV_FULL_NORMAL == searchMode
-                || SearchModeEnum.ROTATION_PRIV_WORDS == searchMode || SearchModeEnum.isRandomRelatedMode(searchMode))) {
+        if ((SearchModeEnum.isIncDecRelatedMode(searchMode) || SearchModeEnum.ROTATION_FULL == searchMode
+                || SearchModeEnum.ROTATION_WORDS == searchMode || SearchModeEnum.isRandomRelatedMode(searchMode))) {
             if (nextPrivFunction == null) {
                 return Optional.of("Function for generating a key was not found for requested mode [mode=" + searchMode + "]");
             }
@@ -28,7 +28,7 @@ public class SearchContextValidator {
             }
         }
 
-        if (SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED == searchMode) {
+        if (SearchModeEnum.ROTATION_FULL_WITH_HEADER == searchMode) {
             if (nextPrivFunctionFullPrefixed == null) {
                 return Optional.of("Function for generating a key was not found for requested mode [mode=" + searchMode + "]");
             }
@@ -37,7 +37,7 @@ public class SearchContextValidator {
             }
         }
 
-        if (SearchModeEnum.ROTATION_PRIV_INDEX_VERTICAL == searchMode) {
+        if (SearchModeEnum.ROTATION_INDEX_VERTICAL == searchMode) {
             if (nextPrivFunctionVertical == null) {
                 return Optional.of("Function for generating a key not found for requested mode [mode=" + searchMode + "]");
             }

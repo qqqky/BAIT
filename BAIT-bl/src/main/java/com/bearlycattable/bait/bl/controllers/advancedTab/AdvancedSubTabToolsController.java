@@ -87,7 +87,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (child): AdvancedSubTabToolsController......");
+        System.out.println("CREATING (child, advanced): AdvancedSubTabToolsController......");
 
         advancedToolsRadioCreateTemplateFromManualInput.setOnAction(event -> insertComponentForManualAddressInput());
         advancedToolsRadioCreateTemplateFromFile.setOnAction(event -> insertComponentForFileSelection());

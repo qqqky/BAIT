@@ -11,13 +11,13 @@ import com.bearlycattable.bait.commons.contexts.QuickSearchResponseModel;
 import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
 import com.bearlycattable.bait.commons.enums.QuickSearchResponseEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
-import com.bearlycattable.bait.commons.other.PubComparer;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparerS;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
 public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearchHelper {
     private boolean dynamicAccuracy;
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
-    private final PubComparer pubComparer = new PubComparer();
+    private final PubComparerS pubComparer = new PubComparerS();
 
     protected AbstractBaseQuickSearchHelper() {
         throw new UnsupportedOperationException("Creation of AbstractBaseSearchHelper without context is not allowed");
@@ -59,7 +59,7 @@ public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearc
             return model;
         }
 
-        PubComparisonResultWrapper current = calculateCurrentResult(currentPrivKey, targetPKHUncompressed, targetPKHCompressed, getScaleFactor());
+        PubComparisonResultSWrapper current = calculateCurrentResult(currentPrivKey, targetPKHUncompressed, targetPKHCompressed, getScaleFactor());
         if (isEmpty(current)) {
             model.setResponseCommand(QuickSearchResponseEnum.CONTINUE);
             return model;
@@ -73,10 +73,10 @@ public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearc
             case INCREMENTAL_WORDS:
             case DECREMENTAL_ABSOLUTE:
             case INCREMENTAL_ABSOLUTE:
-            case ROTATION_PRIV_WORDS:
-            case ROTATION_PRIV_FULL_NORMAL:
-            case ROTATION_PRIV_FULL_PREFIXED:
-            case ROTATION_PRIV_INDEX_VERTICAL:
+            case ROTATION_WORDS:
+            case ROTATION_FULL:
+            case ROTATION_FULL_WITH_HEADER:
+            case ROTATION_INDEX_VERTICAL:
                 compareAndUpdateModelGeneral(current, model, requestedAccuracy);
                 break;
             case FUZZING:
@@ -92,7 +92,7 @@ public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearc
         return model;
     }
 
-    private void compareAndUpdateModelGeneral(PubComparisonResultWrapper current, QuickSearchResponseModel model, int requestedAccuracy) {
+    private void compareAndUpdateModelGeneral(PubComparisonResultSWrapper current, QuickSearchResponseModel model, int requestedAccuracy) {
         model.setHighestResult(pubComparer.selectBest(model.getHighestResult(), current));
 
         if (isMoreOrEqualToRequestedAccuracy(model.getHighestResult(), requestedAccuracy)) {
@@ -102,7 +102,7 @@ public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearc
         }
     }
 
-    private void compareAndUpdateModelFuzzing(PubComparisonResultWrapper current, QuickSearchResponseModel model, int requestedAccuracy) {
+    private void compareAndUpdateModelFuzzing(PubComparisonResultSWrapper current, QuickSearchResponseModel model, int requestedAccuracy) {
         model.setHighestResult(pubComparer.selectBest(model.getHighestResult(), current));
 
         if (isMoreOrEqualToRequestedAccuracy(model.getHighestResult(), requestedAccuracy)) {
@@ -112,7 +112,7 @@ public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearc
         }
     }
 
-    private void compareAndUpdateModelMixed(PubComparisonResultWrapper current, QuickSearchResponseModel model, int requestedAccuracy) {
+    private void compareAndUpdateModelMixed(PubComparisonResultSWrapper current, QuickSearchResponseModel model, int requestedAccuracy) {
         //TODO: implement comparison model for MIXED search mode
 
         // if (isEmpty(subResult.getHighestResult())) {
@@ -153,7 +153,7 @@ public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearc
         // return highest;
     }
 
-    protected boolean isEmpty(PubComparisonResultWrapper wrapper) {
+    protected boolean isEmpty(PubComparisonResultSWrapper wrapper) {
         return wrapper == null || wrapper.equalsEmpty();
     }
 
@@ -161,11 +161,11 @@ public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearc
         this.dynamicAccuracy = isDynamic;
     }
 
-    protected boolean isMoreOrEqualToRequestedAccuracy(PubComparisonResultWrapper highestResult, int requestedAccuracy) {
+    protected boolean isMoreOrEqualToRequestedAccuracy(PubComparisonResultSWrapper highestResult, int requestedAccuracy) {
         return highestResult.resultStream().anyMatch(holder -> getSimilarityMappings().get(helper.recalculateIndexForSimilarityMappings(holder.getHighest(), getScaleFactor())).intValue() >= requestedAccuracy);
     }
 
-    protected boolean isMoreThanRequestedAccuracy(PubComparisonResultWrapper highestResult, int requestedAccuracy) {
+    protected boolean isMoreThanRequestedAccuracy(PubComparisonResultSWrapper highestResult, int requestedAccuracy) {
         return highestResult.resultStream().anyMatch(holder -> getSimilarityMappings().get(helper.recalculateIndexForSimilarityMappings(holder.getHighest(), getScaleFactor())).intValue() > requestedAccuracy);
     }
 }

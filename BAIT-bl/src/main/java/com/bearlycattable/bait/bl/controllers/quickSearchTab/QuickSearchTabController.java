@@ -33,7 +33,7 @@ import com.bearlycattable.bait.commons.enums.TextColorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
 import com.bearlycattable.bait.commons.contexts.QuickSearchContext;
 import com.bearlycattable.bait.commons.interfaces.QuickSearchHelper;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 import com.bearlycattable.bait.commons.wrappers.QuickSearchTaskWrapper;
 import com.bearlycattable.bait.utility.BaitUtils;
 import com.bearlycattable.bait.utility.BundleUtils;
@@ -112,7 +112,7 @@ public class QuickSearchTabController {
     private final RandomAddressGenerator generator = RandomAddressGenerator.getSecureGenerator(64);
     private final QuickSearchTaskHelper quickSearchTaskHelper = new QuickSearchTaskHelper();
     @Getter
-    private final Map<String, Task<PubComparisonResultWrapper>> taskMap = new HashMap<>(); //current tasks
+    private final Map<String, Task<PubComparisonResultSWrapper>> taskMap = new HashMap<>(); //current tasks
     private QuickSearchTabAccessProxy quickSearchTabAccessProxy;
     // private volatile String currentSearchResultPK;
     @FXML
@@ -358,7 +358,7 @@ public class QuickSearchTabController {
         performSearchParallel(quickSearchHelper, accuracy);
     }
 
-    public void showQuickSearchResults(@NonNull PubComparisonResultWrapper highest, int forAccuracy) {
+    public void showQuickSearchResults(@NonNull PubComparisonResultSWrapper highest, int forAccuracy) {
         if (highest.equalsEmpty()) {
             insertErrorMessage(rb.getString("error.noSearchResults"));
             return;
@@ -394,10 +394,10 @@ public class QuickSearchTabController {
             case INCREMENTAL_WORDS:
             case DECREMENTAL_ABSOLUTE:
             case DECREMENTAL_WORDS:
-            case ROTATION_PRIV_FULL_NORMAL:
-            case ROTATION_PRIV_FULL_PREFIXED:
-            case ROTATION_PRIV_INDEX_VERTICAL:
-            case ROTATION_PRIV_WORDS:
+            case ROTATION_FULL:
+            case ROTATION_FULL_WITH_HEADER:
+            case ROTATION_INDEX_VERTICAL:
+            case ROTATION_WORDS:
             case FUZZING:
                 if (!quickSearchCbxSelfSeed.isSelected() || quickSearchCbxSelfSeed.isDisabled()) {
                     return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(quickSearchTextFieldSeedPriv.getText()).matches();
@@ -525,7 +525,7 @@ public class QuickSearchTabController {
                 .accuracy(accuracy)
                 .verbose(quickSearchTabAccessProxy.isVerboseMode())
                 .printSpacing(quickSearchTabAccessProxy.isVerboseMode() ? 1 : 0)
-                .currentHighestResult(PubComparisonResultWrapper.empty())
+                .currentHighestResult(PubComparisonResultSWrapper.empty())
                 .build();
 
         QuickSearchTaskWrapper wrapper = quickSearchHelper.createNewQuickSearchTask(quickSearchContext);
@@ -594,7 +594,7 @@ public class QuickSearchTabController {
         return QuickSearchComparisonType.BLIND;
     }
 
-    private void displaySearchResults(PubComparisonResultWrapper highest) {
+    private void displaySearchResults(PubComparisonResultSWrapper highest) {
         if (!highest.isBothPrivsValidAndNonNull()) {
             throw new IllegalStateException("Search results are not valid. This should not happen");
         }

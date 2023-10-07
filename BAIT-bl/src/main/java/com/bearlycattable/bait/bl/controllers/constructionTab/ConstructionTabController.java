@@ -394,19 +394,11 @@ public class ConstructionTabController {
     }
 
     private boolean isValidPrivPattern(String priv) {
-        return priv != null && is64HexPatternMatch(priv);
+        return priv != null && HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(priv).matches();
     }
 
     private boolean isValidPubPattern(String pub) {
         return pub != null && HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(pub).matches();
-    }
-
-    private boolean is64HexPatternMatch(String input) {
-        return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(input).matches();
-    }
-
-    private boolean is08HexPatternMatch(String input) {
-        return HeatVisualizerConstants.PATTERN_SIMPLE_08.matcher(input).matches();
     }
     
     public final boolean isParentValid() {

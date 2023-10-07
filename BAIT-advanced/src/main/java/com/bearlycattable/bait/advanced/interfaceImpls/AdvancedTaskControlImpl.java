@@ -22,25 +22,34 @@ import com.bearlycattable.bait.advanced.interfaces.AdvancedTaskControl;
 import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.contexts.TaskPreparationContext;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTaskControlAccessProxy;
 import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
-import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
-import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentDataAccessor;
 import com.bearlycattable.bait.commons.enums.BackgroundColorEnum;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
+import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 import com.bearlycattable.bait.commons.enums.RandomWordPrefixMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.enums.SeedMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.utility.AddressModifier;
 import com.bearlycattable.bait.utility.BundleUtils;
+import com.bearlycattable.bait.utility.DurationUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 import com.bearlycattable.bait.utility.PathUtils;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.DecrementModifier;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.DecrementModifierImpl;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.HRotatorModifier;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.HRotatorModifierImpl;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.IncrementModifier;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.IncrementModifierImpl;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.VRotatorModifier;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.VRotatorModifierImpl;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
@@ -57,8 +66,6 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
     private static final Logger LOG = Logger.getLogger(AdvancedTaskControlImpl.class.getName());
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "AdvancedTaskControlImpl", LocaleUtils.APP_LANGUAGE);
-
-    private final AddressModifier modifier = new AddressModifier(OutputCaseEnum.UPPERCASE);
 
     private final ConcurrentMap<String, Task<P2PKHSingleResultData[]>> taskMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, P2PKHSingleResultData[]> taskResultsMap = new ConcurrentHashMap<>();
@@ -208,7 +215,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         // searchData = result; -- searchData is not loaded here
         boolean savedNormally = P2PKHSingleResultDataHelper.serializeAndSave(saveLocation, result);
         if (savedNormally) {
-            String messageForUser = "[saved normally after obtaining search results]";
+            String messageForUser = "[saved normally after obtaining search results]" + " Time: " + DurationUtils.getCurrentDateTime();
             LOG.info("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser);
             advancedTaskControlAccessProxy.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
         } else {
@@ -228,7 +235,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
             automergePath.ifPresent(mergeLocation -> {
                 if (!PathUtils.isAccessibleToReadWrite(mergeLocation)) {
                     advancedTaskControlAccessProxy.insertErrorOrSuccessMessageInAdvancedProgressSubTab(rb.getString("error.automergePathInaccessible"), TextColorEnum.RED);
-                   return;
+                    return;
                 }
 
                 P2PKHSingleResultData[] mergedResults = mergeAllExistingTaskResults();
@@ -239,9 +246,9 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
                 boolean automergeSucceeded = P2PKHSingleResultDataHelper.serializeAndSave(mergeLocation, mergedResults);
                 if (automergeSucceeded) {
-                    String messageForUser = "[saved after auto-merge]";
-                    LOG.info("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser);
-                    advancedTaskControlAccessProxy.logToUiBold("Results should have been saved to: " + saveLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
+                    String messageForUser = "[saved after auto-merge]" + " Time: " + DurationUtils.getCurrentDateTime();
+                    LOG.info("Results should have been saved to: " + mergeLocation + System.lineSeparator() + "Additional message: " + messageForUser);
+                    advancedTaskControlAccessProxy.logToUiBold("Results should have been saved to: " + mergeLocation + System.lineSeparator() + "Additional message: " + messageForUser, Color.GREEN, LogTextTypeEnum.END_OF_SEARCH);
                     advancedTaskControlAccessProxy.insertErrorOrSuccessMessageInAdvancedProgressSubTab(MessageFormat.format(rb.getString("info.automergeSuccess"), mergeLocation), TextColorEnum.GREEN);
                     taskResultsMap.clear();
                     disableAutomergeOption();
@@ -557,6 +564,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
                 .searchMode(threadSpawnModel.getAdvancedSearchHelper().getSearchMode())
                 .parentThreadId(parentThreadId)
                 .verbose(advancedTaskControlAccessProxy.isVerboseMode())
+                .addressGenerationAndComparisonType(threadSpawnModel.getAdvancedSearchHelper().isByteComparisonSupported() && threadSpawnModel.isByteComparisonEnabled() ? AddressGenerationAndComparisonType.BYTE : AddressGenerationAndComparisonType.STRING)
                 .build();
     }
 
@@ -584,29 +592,39 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
     }
 
     private synchronized String mutateSeedForType(SeedMutationTypeEnum type, String seed, String value, List<Integer> disabledWords, List<Integer> verticalRotationIndexes) {
+        Object modifier;
+
         switch (type) {
             case INCREMENT_ABSOLUTE:
-                return modifier.incrementPrivAbsoluteBy(seed,  Long.parseLong(value, 16), disabledWords);
+                modifier = new IncrementModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((IncrementModifier) modifier).incrementPrivAbsoluteBy(seed, Long.parseLong(value, 16), disabledWords);
             case INCREMENT_WORDS:
-                return modifier.incrementWordsBy(seed, Long.parseLong(value, 16), disabledWords);
+                modifier = new IncrementModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((IncrementModifier) modifier).incrementWordsBy(seed, Long.parseLong(value, 16), disabledWords);
             case DECREMENT_ABSOLUTE:
-                return modifier.decrementPrivAbsoluteBy(seed,  Long.parseLong(value, 16), disabledWords);
+                modifier = new DecrementModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((DecrementModifier) modifier).decrementPrivAbsoluteBy(seed, Long.parseLong(value, 16), disabledWords);
             case DECREMENT_WORDS:
-                return modifier.decrementWordsBy(seed, Long.parseLong(value, 16), disabledWords);
+                modifier = new DecrementModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((DecrementModifier) modifier).decrementWordsBy(seed, Long.parseLong(value, 16), disabledWords);
             case ROTATE_NORMAL:
-                return modifier.rotateAddressLeftBy(seed, Integer.parseInt(value), false);
+                modifier = new HRotatorModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((HRotatorModifier) modifier).rotateAddressLeftBy(seed, Integer.parseInt(value), false);
             case ROTATE_PREFIXED:
-                return modifier.rotateAddressLeftBy(seed, Integer.parseInt(value), true);
+                modifier = new HRotatorModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((HRotatorModifier) modifier).rotateAddressLeftBy(seed, Integer.parseInt(value), true);
             case ROTATE_WORDS:
-                return modifier.rotateAllWordsBy(seed, Integer.parseInt(value), disabledWords);
+                modifier = new HRotatorModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((HRotatorModifier) modifier).rotateAllWordsBy(seed, Integer.parseInt(value), disabledWords);
             case ROTATE_VERTICAL:
                 int rotationAmount = Integer.parseInt(value);
                 if (rotationAmount < 0 || rotationAmount > Config.MAX_V_ROTATIONS) {
                     throw new IllegalArgumentException("Vertical rotation amount must be between 1 and 16 at #mutateSeedForType [received=" + rotationAmount + "]");
                 }
+                modifier = new VRotatorModifierImpl(OutputCaseEnum.UPPERCASE);
                 String result = seed;
                 for (Integer index : verticalRotationIndexes) {
-                    result = modifier.rotateSelectedIndexVerticallyBy(result, disabledWords, index, value);
+                    result = ((VRotatorModifier) modifier).rotateSelectedIndexVerticallyBy(result, disabledWords, index, value);
                 }
                 return result;
             default:
@@ -616,12 +634,15 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
     private String buildNewPrefix(String currentRandomWordPrefix, RandomWordPrefixMutationTypeEnum prefixMutationType, String prefixMutationHexValue) {
         Objects.requireNonNull(prefixMutationType);
+        Object modifier;
 
         switch (prefixMutationType) {
             case INCREMENT:
-                return modifier.incrementHexStringBy(currentRandomWordPrefix, Long.parseLong(prefixMutationHexValue, 16));
+                modifier = new IncrementModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((IncrementModifier) modifier).incrementHexStringBy(currentRandomWordPrefix, Long.parseLong(prefixMutationHexValue, 16));
             case DECREMENT:
-                return modifier.decrementHexStringBy(currentRandomWordPrefix, Long.parseLong(prefixMutationHexValue, 16));
+                modifier = new DecrementModifierImpl(OutputCaseEnum.UPPERCASE);
+                return ((DecrementModifier) modifier).decrementHexStringBy(currentRandomWordPrefix, Long.parseLong(prefixMutationHexValue, 16));
             default:
                 throw new IllegalArgumentException("This prefix mutation type is not supported [type=" + prefixMutationType + "]");
         }

@@ -12,6 +12,4 @@ public interface IndexRotatorVertical {
     String rotateAtIndex(String current, List<Integer> disabledWords, int index);
 
     boolean isValidIndexForVerticalRotation(String address, List<Integer> disabledWords, int selectedIndex);
-
-    SearchModeEnum getSearchMode();
 }

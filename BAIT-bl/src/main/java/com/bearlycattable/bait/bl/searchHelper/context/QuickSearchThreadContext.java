@@ -1,7 +1,7 @@
 package com.bearlycattable.bait.bl.searchHelper.context;
 
 import com.bearlycattable.bait.bl.controllers.quickSearchTab.QuickSearchTabController;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
 import javafx.concurrent.Task;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.Setter;
 public class QuickSearchThreadContext {
 
     private final String threadId;
-    private final Task<PubComparisonResultWrapper> searchTask;
+    private final Task<PubComparisonResultSWrapper> searchTask;
     private final QuickSearchTabController controller;
     private final int accuracy;
     private final boolean verboseMode;

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import com.bearlycattable.bait.commons.enums.SearchModeEnum;
+
 public interface IndexRotatorHorizontal {
 
     @NonNull

@@ -68,7 +68,7 @@ public class AdvancedSubTabLogController {
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (child): AdvancedSubTabLogController......");
+        System.out.println("CREATING (child, advanced): AdvancedSubTabLogController......");
     }
 
     public void setAdvancedLogAccessProxy(AdvancedLogAccessProxy proxy) {

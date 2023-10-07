@@ -11,12 +11,12 @@ public enum SearchModeEnum {
     INCREMENTAL_WORDS("Incremental (words)", "INC_WORDS"),
     DECREMENTAL_ABSOLUTE ("Decremental (absolute)", "DEC_ABS"),
     DECREMENTAL_WORDS ("Decremental (words)", "DEC_WORDS"),
-    ROTATION_PRIV_FULL_NORMAL ("Rotation (normal)", "HROT"),
-    ROTATION_PRIV_FULL_PREFIXED ("Rotation (prefixed)", "HROT_PREF"),
-    ROTATION_PRIV_WORDS("Rotation (words)", "HROT_WORDS"),
-    ROTATION_PRIV_INDEX_VERTICAL("Rotation (vertical)", "VROT"),
+    ROTATION_FULL("Rotation (full, normal)", "HROT"),
+    ROTATION_FULL_WITH_HEADER("Rotation (full, with header)", "HROT_HEADER"),
+    ROTATION_WORDS("Rotation (words)", "HROT_WORDS"),
+    ROTATION_INDEX_VERTICAL("Rotation (vertical)", "VROT"),
     FUZZING ("Fuzzing (words)", "FUZZING"),
-    MIXED ("Mixed mode (recommended)", "MIXED");
+    MIXED ("Mixed mode (unavailable)", "MIXED");
 
     private String label;
     private String abbr; //abbreviation
@@ -41,18 +41,18 @@ public enum SearchModeEnum {
     }
 
     public static boolean isFiniteMode(SearchModeEnum mode) {
-        return ROTATION_PRIV_INDEX_VERTICAL == mode
-                || ROTATION_PRIV_WORDS == mode
-                || ROTATION_PRIV_FULL_NORMAL == mode
-                || ROTATION_PRIV_FULL_PREFIXED == mode;
+        return ROTATION_INDEX_VERTICAL == mode
+                || ROTATION_WORDS == mode
+                || ROTATION_FULL == mode
+                || ROTATION_FULL_WITH_HEADER == mode;
     }
 
     public static boolean isVerticalRotationMode(SearchModeEnum mode) {
-        return ROTATION_PRIV_INDEX_VERTICAL == mode;
+        return ROTATION_INDEX_VERTICAL == mode;
     }
 
     public static boolean isHorizontalRotationMode(SearchModeEnum mode) {
-        return ROTATION_PRIV_WORDS == mode || ROTATION_PRIV_FULL_NORMAL == mode || ROTATION_PRIV_FULL_PREFIXED == mode;
+        return ROTATION_WORDS == mode || ROTATION_FULL == mode || ROTATION_FULL_WITH_HEADER == mode;
     }
 
     public static boolean isRandomRelatedMode(SearchModeEnum mode) {
@@ -61,5 +61,9 @@ public enum SearchModeEnum {
 
     public static boolean isIncDecRelatedMode(SearchModeEnum mode) {
         return INCREMENTAL_ABSOLUTE == mode || INCREMENTAL_WORDS == mode || DECREMENTAL_ABSOLUTE == mode || DECREMENTAL_WORDS == mode;
+    }
+
+    public static boolean isPrefixSupported(SearchModeEnum mode) {
+        return RANDOM_SAME_WORD == mode || RANDOM_PREFIXED_WORD == mode;
     }
 }

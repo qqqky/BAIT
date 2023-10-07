@@ -2,7 +2,7 @@ package com.bearlycattable.bait.bl.searchHelper.context;
 
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.interfaces.QuickSearchHelper;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,8 +11,8 @@ import lombok.Getter;
 @Getter
 public class MixedSearchEvaluationContext {
 
-    PubComparisonResultWrapper subResult;
-    PubComparisonResultWrapper highest;
+    PubComparisonResultSWrapper subResult;
+    PubComparisonResultSWrapper highest;
     String lockedPKHUncompressed;
     String lockedPKHCompressed;
     QuickSearchHelper currentSearcher;

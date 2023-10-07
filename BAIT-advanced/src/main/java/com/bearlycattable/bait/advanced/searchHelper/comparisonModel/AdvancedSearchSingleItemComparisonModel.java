@@ -1,11 +1,13 @@
 package com.bearlycattable.bait.advanced.searchHelper.comparisonModel;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
+import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparisonResultB;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
+import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.functions.TriConsumer;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
@@ -21,17 +23,20 @@ public class AdvancedSearchSingleItemComparisonModel {
     private final int pointThresholdForNotify;
     private final TriConsumer<String, Color, LogTextTypeEnum> logConsumer;
     private final boolean verbose;
+    private final AddressGenerationAndComparisonType addressGenerationAndComparisonType;
     @Setter
     private P2PKHSingleResultData resultContainer;
     @Setter
-    private PubComparisonResultWrapper newResult;
+    private PubComparisonResultSWrapper newResult;
+    @Setter
+    private AdvancedPubComparisonResultB currentByteComparisonModel;
     @Setter
     private JsonResultTypeEnum type;
     @Setter
     private String currentPrivKey; //new result to compare to
 
     public boolean isPointMappingsCached() {
-        return resultContainer != null && resultContainer.isGeneralPointsCachedForScaleFactor(scaleFactor);
+        return resultContainer != null && resultContainer.isGeneralPointsCachedForScaleFactor(scaleFactor, addressGenerationAndComparisonType);
     }
 
     public boolean isExistingPointsCached() {
@@ -47,7 +52,7 @@ public class AdvancedSearchSingleItemComparisonModel {
     }
 
     public int getNewPoints() {
-        return newResult.getResultByType(type);
+        return newResult != null ? newResult.getResultByType(type) : currentByteComparisonModel.getResultPointsByType(type);
     }
 
     public Pair<String, Integer> getCurrentBestPair() {

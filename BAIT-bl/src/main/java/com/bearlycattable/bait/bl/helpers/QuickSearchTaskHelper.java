@@ -2,7 +2,7 @@ package com.bearlycattable.bait.bl.helpers;
 
 
 import com.bearlycattable.bait.bl.searchHelper.context.QuickSearchThreadContext;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -12,7 +12,7 @@ public class QuickSearchTaskHelper {
     // private QuickSearchTabController quickSearchTabController;
 
     public void prepareTask(QuickSearchThreadContext context) {
-        Task<PubComparisonResultWrapper> searchTask = context.getSearchTask();
+        Task<PubComparisonResultSWrapper> searchTask = context.getSearchTask();
 
         if (!context.getController().getTaskMap().isEmpty()) {
             throw new IllegalStateException("Task map is not empty. Will not prepare a new task.");
@@ -42,7 +42,7 @@ public class QuickSearchTaskHelper {
         if (verboseMode) {
             System.out.println("QuickSearch task has FINISHED.");
         }
-        PubComparisonResultWrapper result = (PubComparisonResultWrapper) event.getSource().getValue();
+        PubComparisonResultSWrapper result = (PubComparisonResultSWrapper) event.getSource().getValue();
 
         String threadNum = context.getThreadId();
 

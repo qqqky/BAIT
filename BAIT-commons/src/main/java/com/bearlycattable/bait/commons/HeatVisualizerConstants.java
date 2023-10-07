@@ -8,13 +8,13 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
 public final class HeatVisualizerConstants {
 
     private HeatVisualizerConstants() {}
 
-    public static final String CURRENT_VERSION = "v1.0.3";
+    public static final String CURRENT_VERSION = "v1.0.5";
     public static final Locale EN_US = new Locale("en", "US");
 
     public static final String ZERO_STRING = "0";
@@ -31,12 +31,9 @@ public final class HeatVisualizerConstants {
     public static final Pattern PATTERN_SIMPLE_64 = Pattern.compile("[0123456789ABCDEFabcdef]{64}");
     public static final Pattern PATTERN_SIMPLE_40 = Pattern.compile("[0123456789ABCDEFabcdef]{40}");
     public static final Pattern PATTERN_SIMPLE_UP_TO_40 = Pattern.compile("^[0123456789ABCDEFabcdef]{1,40}$");
-    public static final Pattern PATTERN_SIMPLE_05 = Pattern.compile("[0123456789ABCDEFabcdef]{5}");
-    public static final Pattern PATTERN_SIMPLE_08 = Pattern.compile("[0123456789ABCDEFabcdef]{8}");
-    public static final Pattern PATTERN_SIMPLE_08_OR_LESS = Pattern.compile("[0123456789ABCDEFabcdef]{1,8}");
-    public static final Pattern PATTERN_SIMPLE_02 = Pattern.compile("[0123456789ABCDEFabcdef]{2}");
     public static final Pattern PATTERN_HEX_01 = Pattern.compile("^[0123456789ABCDEFabcdef]$");
-    public static final Pattern PATTERN_HEX_01_OR_MORE = Pattern.compile("^[0123456789ABCDEFabcdef]+$");
+    public static final Pattern PATTERN_HEX_08 = Pattern.compile("^[0123456789ABCDEFabcdef]{8}$");
+    public static final Pattern PATTERN_HEX_01_TO_08 = Pattern.compile("^[0123456789ABCDEFabcdef]{1,8}$");
     public static final Pattern DIGITS_ONLY_MAX2 = Pattern.compile("^[\\d]{1,2}$");
     public static final Pattern DIGITS_ONLY_MAX3 = Pattern.compile("^[\\d]{1,3}$");
     public static final Pattern DIGITS_ONLY_MAX4 = Pattern.compile("^[\\d]{1,4}$");
@@ -50,19 +47,19 @@ public final class HeatVisualizerConstants {
     private final byte[] ALL_BYTES_MAX = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -70, -82, -36, -26, -81, 72, -96, 59, -65, -46, 94, -116, -48, 54, 65, 64};
 
     public static final List<Integer> ALL_WORD_NUMBERS = Collections.unmodifiableList(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
-    public static final PubComparisonResultWrapper EMPTY_RESULT_WRAPPER = PubComparisonResultWrapper.empty();
+    public static final PubComparisonResultSWrapper EMPTY_RESULT_WRAPPER = PubComparisonResultSWrapper.empty();
 
-    public static final List<SearchModeEnum> MIXED_SEARCH_SEQUENCE_WITH_RANDOM = Collections.unmodifiableList(Arrays.asList(SearchModeEnum.RANDOM, SearchModeEnum.ROTATION_PRIV_FULL_NORMAL, SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED,
+    public static final List<SearchModeEnum> MIXED_SEARCH_SEQUENCE_WITH_RANDOM = Collections.unmodifiableList(Arrays.asList(SearchModeEnum.RANDOM, SearchModeEnum.ROTATION_FULL, SearchModeEnum.ROTATION_FULL_WITH_HEADER,
         SearchModeEnum.FUZZING, SearchModeEnum.INCREMENTAL_ABSOLUTE, SearchModeEnum.DECREMENTAL_ABSOLUTE, SearchModeEnum.INCREMENTAL_WORDS,
-        SearchModeEnum.DECREMENTAL_WORDS, SearchModeEnum.ROTATION_PRIV_INDEX_VERTICAL));
+        SearchModeEnum.DECREMENTAL_WORDS, SearchModeEnum.ROTATION_INDEX_VERTICAL));
 
-    public static final List<SearchModeEnum> MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM = Collections.unmodifiableList(Arrays.asList(SearchModeEnum.ROTATION_PRIV_FULL_NORMAL, SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED, SearchModeEnum.FUZZING,
+    public static final List<SearchModeEnum> MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM = Collections.unmodifiableList(Arrays.asList(SearchModeEnum.ROTATION_FULL, SearchModeEnum.ROTATION_FULL_WITH_HEADER, SearchModeEnum.FUZZING,
         SearchModeEnum.INCREMENTAL_ABSOLUTE, SearchModeEnum.DECREMENTAL_ABSOLUTE, SearchModeEnum.INCREMENTAL_WORDS,
-        SearchModeEnum.DECREMENTAL_WORDS, SearchModeEnum.ROTATION_PRIV_INDEX_VERTICAL));
+        SearchModeEnum.DECREMENTAL_WORDS, SearchModeEnum.ROTATION_INDEX_VERTICAL));
 
-    public static final List<SearchModeEnum> MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM_AND_FUZZING = Collections.unmodifiableList(Arrays.asList(SearchModeEnum.ROTATION_PRIV_FULL_NORMAL, SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED,
+    public static final List<SearchModeEnum> MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM_AND_FUZZING = Collections.unmodifiableList(Arrays.asList(SearchModeEnum.ROTATION_FULL, SearchModeEnum.ROTATION_FULL_WITH_HEADER,
         SearchModeEnum.INCREMENTAL_ABSOLUTE, SearchModeEnum.DECREMENTAL_ABSOLUTE, SearchModeEnum.INCREMENTAL_WORDS,
-        SearchModeEnum.DECREMENTAL_WORDS, SearchModeEnum.ROTATION_PRIV_INDEX_VERTICAL));
+        SearchModeEnum.DECREMENTAL_WORDS, SearchModeEnum.ROTATION_INDEX_VERTICAL));
 
     public static final String[] HEX_ALPHABET = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
 

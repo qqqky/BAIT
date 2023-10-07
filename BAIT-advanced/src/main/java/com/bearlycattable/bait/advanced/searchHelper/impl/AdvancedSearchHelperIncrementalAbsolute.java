@@ -5,22 +5,26 @@ import java.util.logging.Logger;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
 import com.bearlycattable.bait.advanced.searchHelper.AbstractAdvancedSearchHelper;
+import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
+import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
 import com.bearlycattable.bait.advancedCommons.interfaces.PredictableEnd;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
-import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
-import com.bearlycattable.bait.utility.AddressModifier;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.IncrementModifier;
+import com.bearlycattable.bait.utility.addressModifiers.byteModifiers.IncrementModifierB;
+import com.bearlycattable.bait.utility.addressModifiers.byteModifiers.IncrementModifierBImpl;
+import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.IncrementModifierImpl;
 
 public final class AdvancedSearchHelperIncrementalAbsolute extends AbstractAdvancedSearchHelper implements CustomKeyGenerator, PredictableEnd {
 
     private static final Logger LOG = Logger.getLogger(AdvancedSearchHelperIncrementalAbsolute.class.getName());
     private static final SearchModeEnum searchMode = SearchModeEnum.INCREMENTAL_ABSOLUTE;
 
-    private final AddressModifier modifier = new AddressModifier(OutputCaseEnum.UPPERCASE);
+    private final IncrementModifier modifier = new IncrementModifierImpl(OutputCaseEnum.UPPERCASE);
+    private final IncrementModifierB modifierB = new IncrementModifierBImpl();
 
     public AdvancedSearchHelperIncrementalAbsolute(@NonNull AdvancedSearchHelperCreationContext creationContext) {
         super(creationContext);
@@ -28,7 +32,6 @@ public final class AdvancedSearchHelperIncrementalAbsolute extends AbstractAdvan
 
     @Override
     public AdvancedSearchTaskWrapper createNewAdvancedSearchTask(AdvancedSearchContext advancedSearchContext) {
-        // advancedSearchContext.setNextPrivFunction((input) -> buildNextPriv(input, advancedSearchContext.getDisabledWords()));
         return advancedSearchTaskGuiCreationHelper(advancedSearchContext);
     }
 
@@ -38,8 +41,18 @@ public final class AdvancedSearchHelperIncrementalAbsolute extends AbstractAdvan
     }
 
     @Override
+    public byte[] buildNextPrivBytes(byte[] current, List<Integer> disabledWords) {
+        return modifierB.incrementPrivAbsoluteB(current, disabledWords);
+    }
+
+    @Override
     public SearchModeEnum getSearchMode() {
         return searchMode;
+    }
+
+    @Override
+    public boolean isByteComparisonSupported() {
+        return true;
     }
 
     @Override

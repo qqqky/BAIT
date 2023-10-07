@@ -57,16 +57,30 @@ public class HeatVisualizerHelper {
         BigInteger asBigInt = new BigInteger(1, key);
         ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), true));
 
-
         return bytesToHexString(ecKeyLite.getPubKeyHash());
     }
 
-    // public String getPubKeyHashUncompressed(String key, boolean trustInput) {
-    //     if (!trustInput && !isValidKey(key)) {
-    //         return null;
-    //     }
-    //     return bytesToHexString(ECKey.fromPrivate(hexToByteData(key), false).getPubKeyHash());
-    // }
+    public byte[] getPubKeyHashCompressedBytes(byte[] key, boolean trustInput) {
+        if (!trustInput && !isValidKey(key)) {
+            return null;
+        }
+
+        BigInteger asBigInt = new BigInteger(1, key);
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), true));
+
+        return ecKeyLite.getPubKeyHash();
+    }
+
+    public void loadPubKeyHashCompressedBytes(byte[] key, byte[] result, boolean trustInput) {
+        if (!trustInput && !isValidKey(key)) {
+            return;
+        }
+
+        BigInteger asBigInt = new BigInteger(1, key);
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), true));
+
+        System.arraycopy(ecKeyLite.getPubKeyHash(), 0, result, 0, 40);
+    }
 
     public String getPubKeyHashUncompressed(String key, boolean trustInput) {
         if (!trustInput && !isValidKey(key)) {
@@ -88,13 +102,25 @@ public class HeatVisualizerHelper {
         return bytesToHexString(ecKeyLite.getPubKeyHash());
     }
 
-    // public String getWIF(String key, boolean forCompressed) {
-    //     if (!isValidKey(key)) {
-    //         return null;
-    //     }
-    //
-    //    return ECKey.fromPrivate(hexToByteData(key), forCompressed).getPrivateKeyAsWiF(NetworkParameters.fromID(NetworkParameters.ID_MAINNET));
-    // }
+    public byte[] getPubKeyHashUncompressedBytes(byte[] key, boolean trustInput) {
+        if (!trustInput && !isValidKey(key)) {
+            return null;
+        }
+        BigInteger asBigInt = new BigInteger(1, key);
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), false));
+
+        return ecKeyLite.getPubKeyHash();
+    }
+
+    public void loadPubKeyHashUncompressedBytes(byte[] key, byte[] result, boolean trustInput) {
+        if (!trustInput && !isValidKey(key)) {
+            return;
+        }
+        BigInteger asBigInt = new BigInteger(1, key);
+        ECKeyLite ecKeyLite = new ECKeyLite(asBigInt, new LazyECPoint(ECKeyLite.publicPointFromPrivate(asBigInt), false));
+
+        System.arraycopy(ecKeyLite.getPubKeyHash(), 0, result, 0, 40);
+    }
 
     /**
      * Encode private key to WIF (without clutter). Only for Bitcoin MainNet
@@ -194,85 +220,33 @@ public class HeatVisualizerHelper {
         return builder.toString();
     }
 
-    public String padTo8(String hexInput, boolean uppercase) {
-        if (hexInput == null) {
+    /**
+     * Pad (leading) input string with "0" up to required output length
+     * @param hexInput - must be a valid 1-8 character hex string
+     * @param uppercase - whether output should be uppercase
+     * @return
+     */
+    public String padToX(String hexInput, int padTo, boolean uppercase) {
+        if (padTo < 1 || padTo > 8) {
+            throw new IllegalArgumentException("Length of requested padding must be between 1 and 8");
+        }
+        if (hexInput == null || !HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(hexInput).matches()) {
             return null;
         }
 
         int length = hexInput.length();
 
-        if (length == 8) {
+        if (length == padTo) {
             return uppercase ? hexInput.toUpperCase() : hexInput;
-        } else if (length > 8) {
-            throw new IllegalStateException("Received hex word is too long [" + hexInput + "] at HeatVisualizerHelper#padTo8");
         }
 
-        StringBuilder sb = new StringBuilder(8);
+        StringBuilder sb = new StringBuilder(padTo);
         sb.append(hexInput);
-        while (sb.length() != 8) {
+        while (sb.length() != padTo) {
             sb.insert(0, "0");
         }
 
-        String result = sb.toString();
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_08.matcher(result).matches()) {
-            return null;
-        }
-
-        return uppercase ? result.toUpperCase() : result;
-    }
-
-    public String padTo5(String hexInput, boolean uppercase) {
-        if (hexInput == null) {
-            return null;
-        }
-
-        int length = hexInput.length();
-
-        if (length == 5) {
-            return uppercase ? hexInput.toUpperCase() : hexInput;
-        } else if (length > 5) {
-            throw new IllegalStateException("Received hex word is too long [" + hexInput + "] at HeatVisualizerHelper#padTo8");
-        }
-
-        StringBuilder sb = new StringBuilder(5);
-        sb.append(hexInput);
-        while (sb.length() != 5) {
-            sb.insert(0, "0");
-        }
-
-        String result = sb.toString();
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_05.matcher(result).matches()) {
-            return null;
-        }
-
-        return uppercase ? result.toUpperCase() : result;
-    }
-
-    public static String padTo2(String hexInput, boolean uppercase) {
-        if (hexInput == null) {
-            return null;
-        }
-
-        int length = hexInput.length();
-
-        if (length == 2) {
-            return uppercase ? hexInput.toUpperCase() : hexInput;
-        } else if (length > 2) {
-            throw new IllegalStateException("Received hex word is too long [" + hexInput + "] at HeatVisualizerHelper#padTo2");
-        }
-
-        StringBuilder sb = new StringBuilder(2);
-        sb.append(hexInput);
-        while (sb.length() != 2) {
-            sb.insert(0, "0");
-        }
-
-        String result = sb.toString();
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_02.matcher(result).matches()) {
-            return null;
-        }
-
-        return uppercase ? result.toUpperCase() : result;
+        return uppercase ? sb.toString().toUpperCase() : sb.toString();
     }
 
     public Optional<PrivHeatResultWrapper> calculatePrivHeatResults(Long locked, Long current, Long overflow_reference, NumberFormatTypeEnum requestedType) {
@@ -397,7 +371,7 @@ public class HeatVisualizerHelper {
     }
 
     public String getHeatResultFromWrapperData(long wrapperLongResultValue) {
-        return padTo8(Long.toHexString(wrapperLongResultValue), true); //convert result to HEX(padded to 8) to map colors correctly
+        return padToX(Long.toHexString(wrapperLongResultValue), 8, true); //convert result to HEX(padded to 8) to map colors correctly
     }
 
     public static String removeNonBase58Characters(String text) {

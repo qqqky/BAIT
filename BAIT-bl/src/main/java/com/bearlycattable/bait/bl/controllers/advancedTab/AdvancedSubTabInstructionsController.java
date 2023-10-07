@@ -18,7 +18,7 @@ public class AdvancedSubTabInstructionsController {
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (child): AdvancedSubTabInstructionsController......");
+        System.out.println("CREATING (child, advanced): AdvancedSubTabInstructionsController......");
     }
 
     public void setAdvancedInstructionsAccessProxy(AdvancedInstructionsAccessProxy proxy) {

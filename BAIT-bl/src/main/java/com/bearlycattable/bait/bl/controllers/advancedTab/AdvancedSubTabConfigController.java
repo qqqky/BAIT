@@ -40,7 +40,7 @@ public class AdvancedSubTabConfigController implements DarkModeControl {
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (child): AdvancedSubTabConfigController......");
+        System.out.println("CREATING (child, advanced): AdvancedSubTabConfigController......");
     }
 
     public void setAdvancedConfigAccessProxy(AdvancedConfigAccessProxy proxy) {

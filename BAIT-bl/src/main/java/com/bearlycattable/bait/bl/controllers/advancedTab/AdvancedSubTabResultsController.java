@@ -108,7 +108,7 @@ public class AdvancedSubTabResultsController {
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (child): AdvancedSubTabResultsController......");
+        System.out.println("CREATING (child, advanced): AdvancedSubTabResultsController......");
     }
 
     public void setAdvancedResultsAccessProxy(AdvancedResultsAccessProxy proxy) {

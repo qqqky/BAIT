@@ -21,17 +21,20 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
+import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerB;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
+import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
-import com.bearlycattable.bait.commons.other.PubComparer;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparerS;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,7 +45,7 @@ public class P2PKHSingleResultDataHelper {
     private static final int OVERFLOW_REFERENCE = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
     private static final Map<Integer, BigDecimal> similarityMappings = initializeSimilarityMappings();
     private static final HeatVisualizerHelper helper = new HeatVisualizerHelper();
-    private static final PubComparer pubComparer = new PubComparer();
+    private static final PubComparerS pubComparerS = new PubComparerS();
     private static final Logger LOG = Logger.getLogger(P2PKHSingleResultDataHelper.class.getName());
 
     //this is used for merge function
@@ -66,8 +69,10 @@ public class P2PKHSingleResultDataHelper {
      * @param dataCollection - array of search templates to be cached
      * @param scaleFactor - scale factor, which these templates should be cached for
      */
-    public static void initializeCaches(P2PKHSingleResultData[] dataCollection, JsonResultScaleFactorEnum scaleFactor) {
-        PubComparer comparer = new PubComparer();
+    public static void initializeCaches(P2PKHSingleResultData[] dataCollection, JsonResultScaleFactorEnum scaleFactor, AddressGenerationAndComparisonType cacheType) {
+        PubComparerS comparerS = new PubComparerS();
+        AdvancedPubComparerB comparerB = new AdvancedPubComparerB();
+        final boolean cacheForByteVersion = cacheType == AddressGenerationAndComparisonType.BYTE;
 
         System.out.println("Started initializing caches [total: " + dataCollection.length + "]...");
         String lineRemoval = Stream.generate(() -> "\b").limit(40).collect(Collectors.joining());
@@ -79,7 +84,13 @@ public class P2PKHSingleResultDataHelper {
 
         for (P2PKHSingleResultData item: dataCollection) {
             count++;
-            initializeCache(item, scaleFactor, comparer);
+
+            if (cacheForByteVersion) {
+                initializeCacheB(item, scaleFactor, comparerB);
+            } else {
+                initializeCacheS(item, scaleFactor, comparerS);
+            }
+
             if (count % onePercent == 0) {
                 System.out.print(lineRemoval);
                 System.out.print((new BigDecimal(count).setScale(2, RoundingMode.HALF_UP).divide(one, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP) + "% of items cached so far... "));
@@ -90,7 +101,7 @@ public class P2PKHSingleResultDataHelper {
         System.out.println("All caches for result templates have been initialized.");
     }
 
-    private static void initializeCache(P2PKHSingleResultData data, JsonResultScaleFactorEnum scaleFactor, PubComparer comparer) {
+    private static void initializeCacheS(P2PKHSingleResultData data, JsonResultScaleFactorEnum scaleFactor, PubComparerS comparer) {
         List<String> charactersAsStrings = data.getHash().chars().mapToObj(num ->  {
             if (!isValidHexNum(num)) {
                 throw new IllegalStateException("Bad hash... should be 40 hex characters");
@@ -102,30 +113,77 @@ public class P2PKHSingleResultDataHelper {
             throw new IllegalStateException("Incorrect hash. Must be 40 hex characters");
         }
 
-        data.clearPointMaps(); //deep clear
+        data.clearPointMapsS(); //deep clear
 
         BigDecimal pointsMultiplier = JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor).getScaleFactor();
 
         for (int i = 0; i < 40; i++) {
-            data.getPointMapForPositive().put(i, makeSubMap(i, charactersAsStrings, pointsMultiplier, comparer, HeatOverflowTypeEnum.HEAT_POSITIVE));
-            data.getPointMapForNegative().put(i, makeSubMap(i, charactersAsStrings, pointsMultiplier, comparer, HeatOverflowTypeEnum.HEAT_NEGATIVE));
+            data.getPointMapForPositiveS().put(i, makeSubMapS(charactersAsStrings.get(i), pointsMultiplier, comparer, HeatOverflowTypeEnum.HEAT_POSITIVE));
+            data.getPointMapForNegativeS().put(i, makeSubMapS(charactersAsStrings.get(i), pointsMultiplier, comparer, HeatOverflowTypeEnum.HEAT_NEGATIVE));
         }
 
         data.setCachedGeneralPointsForScaleFactor(scaleFactor);
+        data.setCachedGeneralPointsForVersion(AddressGenerationAndComparisonType.STRING);
     }
 
-    private static Map<String, Integer> makeSubMap(int index, List<String> charactersAsStrings, BigDecimal pointsMultiplier, PubComparer comparer, HeatOverflowTypeEnum heatType) {
+    private static void initializeCacheB(P2PKHSingleResultData data, JsonResultScaleFactorEnum scaleFactor, AdvancedPubComparerB comparerB) {
+        byte[] bytes = hexToByteData(data.getHash());
+
+        if (bytes.length != 20) {
+            throw new IllegalStateException("Incorrect hash. Must be 40 hex characters");
+        }
+
+        data.clearPointMapsB(); //deep clear
+
+        BigDecimal pointsMultiplier = JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor).getScaleFactor();
+
+        for (int i = 0; i < 20; i++) {
+            data.getPointMapForPositiveB().put(i, makeSubMapB(bytes[i], pointsMultiplier, comparerB, HeatOverflowTypeEnum.HEAT_POSITIVE));
+            data.getPointMapForNegativeB().put(i, makeSubMapB(bytes[i], pointsMultiplier, comparerB, HeatOverflowTypeEnum.HEAT_NEGATIVE));
+        }
+
+        data.setCachedGeneralPointsForScaleFactor(scaleFactor);
+        data.setCachedGeneralPointsForVersion(AddressGenerationAndComparisonType.BYTE);
+    }
+
+    private static Map<String, Integer> makeSubMapS(String referenceCharacter, BigDecimal pointsMultiplier, PubComparerS comparer, HeatOverflowTypeEnum heatType) {
         Map<String, Integer> map = new HashMap<>();
 
-        String referenceCharacter;
         int difference;
 
         for (int i = 0; i < 16; i++) {
-            referenceCharacter = charactersAsStrings.get(index);
             difference = calculateDifferenceForHexChars(HeatVisualizerConstants.HEX_ALPHABET[i], referenceCharacter);
 
             map.put(HeatVisualizerConstants.HEX_ALPHABET[i].toLowerCase(Locale.ROOT),
-                    comparer.calculateWithMultiplier(HeatOverflowTypeEnum.HEAT_POSITIVE == heatType ? countPointsPositive(difference, OVERFLOW_REFERENCE) : countPointsNegative(difference, OVERFLOW_REFERENCE), pointsMultiplier));
+                    comparer.cacheHelperS(difference, OVERFLOW_REFERENCE, pointsMultiplier, heatType));
+        }
+
+        return map;
+    }
+
+    private static Map<Integer, Integer> makeSubMapB(byte referenceByte, BigDecimal pointsMultiplier, AdvancedPubComparerB comparer, HeatOverflowTypeEnum heatType) {
+        Map<Integer, Integer> map = new HashMap<>();
+
+        int referenceNibbleFirst = (referenceByte & 0xF0) >>> 4;
+        int referenceNibbleSecond = (referenceByte & 0x0F);
+
+        int currentNibbleFirst;
+        int currentNibbleSecond;
+        int differenceFirstNibble;
+        int differenceSecondNibble;
+
+        for (int i = 0; i < 0x10; i++) {
+            for (int j = 0; j < 0x10; j++) {
+                byte num = (byte) (i * 16 + j);
+
+                currentNibbleFirst = (num & 0xF0) >>> 4;
+                currentNibbleSecond = (num & 0x0F);
+
+                differenceFirstNibble = currentNibbleFirst - referenceNibbleFirst;
+                differenceSecondNibble = currentNibbleSecond - referenceNibbleSecond;
+
+                map.put((int) num, comparer.cacheHelperB(differenceFirstNibble, differenceSecondNibble, OVERFLOW_REFERENCE, pointsMultiplier, heatType));
+            }
         }
 
         return map;
@@ -165,7 +223,7 @@ public class P2PKHSingleResultDataHelper {
      * @param scaleFactor
      */
     public static synchronized void revalidateAndInitCacheForExistingPoints(P2PKHSingleResultData[] dataArray, JsonResultScaleFactorEnum scaleFactor) {
-        PubComparer comparer = new PubComparer();
+        PubComparerS comparer = new PubComparerS();
         System.out.println("Started caching the existing points for scaleFactor: " + scaleFactor);
 
         for (P2PKHSingleResultData item : dataArray) {
@@ -176,7 +234,7 @@ public class P2PKHSingleResultDataHelper {
                 if (currentBestKey.isEmpty()) {
                     item.getExistingPoints().put(type, 0);
                 } else {
-                    PubComparisonResultWrapper recalculatedResult = comparer.getCurrentResult(currentBestKey, hash, hash, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
+                    PubComparisonResultSWrapper recalculatedResult = comparer.getCurrentResult(currentBestKey, hash, hash, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
                     item.getExistingPoints().put(type, recalculatedResult.getResultByType(type));
                 }
             }
@@ -237,7 +295,7 @@ public class P2PKHSingleResultDataHelper {
      * @return Map<targetKey, minPointsAcrossAllResultTypes>
      */
     public static synchronized Map<String, Integer> createCurrentMinPointsMap(P2PKHSingleResultData[] dataArray, JsonResultScaleFactorEnum scaleFactor) {
-        PubComparer comparer = new PubComparer(); //make our own pubComparer
+        PubComparerS comparer = new PubComparerS(); //make our own pubComparer
         Map<String, Integer> result = new HashMap<>();
         Arrays.stream(dataArray).forEach(item -> {
             result.put(item.getHash(), findCurrentMinPoints(Collections.singletonList(item).toArray(new P2PKHSingleResultData[0]), scaleFactor, comparer));
@@ -245,17 +303,17 @@ public class P2PKHSingleResultDataHelper {
         return result;
     }
 
-    private static synchronized int findCurrentMinPoints(P2PKHSingleResultData[] dataArray, JsonResultScaleFactorEnum scaleFactor, PubComparer pubComparer) {
+    private static synchronized int findCurrentMinPoints(P2PKHSingleResultData[] dataArray, JsonResultScaleFactorEnum scaleFactor, PubComparerS pubComparer) {
         int min = Integer.MAX_VALUE;
         ScaleFactorEnum sf = JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor);
 
         for (P2PKHSingleResultData item : dataArray) {
-            if (item.isGeneralPointsCachedForScaleFactor(scaleFactor)) {
+            if (item.isGeneralPointsCachedForScaleFactor(scaleFactor, item.getCachedGeneralPointsForVersion())) {
                 for (JsonResultTypeEnum resultType : JsonResultTypeEnum.values()) {
                     min = Math.min(min, item.getExistingPoints().get(resultType));
                 }
             } else {
-                PubComparisonResultWrapper oldResultFromData;
+                PubComparisonResultSWrapper oldResultFromData;
                 String unknownP2PKH = item.getHash();
                 for (JsonResultTypeEnum resultType : JsonResultTypeEnum.values()) {
                     String currentPriv = item.getPair(resultType, scaleFactor).getKey();
@@ -325,8 +383,8 @@ public class P2PKHSingleResultDataHelper {
 
                 //1,1 - both not empty (we recalculate using non-cached version)
                 String unknownP2PKH = hash;
-                PubComparisonResultWrapper resultOne = pubComparer.getCurrentResult(pairOne.getKey(), unknownP2PKH, unknownP2PKH, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
-                PubComparisonResultWrapper resultTwo = pubComparer.getCurrentResult(pairTwo.getKey(), unknownP2PKH, unknownP2PKH, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
+                PubComparisonResultSWrapper resultOne = pubComparerS.getCurrentResult(pairOne.getKey(), unknownP2PKH, unknownP2PKH, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
+                PubComparisonResultSWrapper resultTwo = pubComparerS.getCurrentResult(pairTwo.getKey(), unknownP2PKH, unknownP2PKH, JsonResultScaleFactorEnum.toScaleFactorEnum(scaleFactor));
 
                 int pointsOne = resultOne.getResultByType(resultType);
                 int pointsTwo = resultTwo.getResultByType(resultType);
@@ -355,5 +413,19 @@ public class P2PKHSingleResultDataHelper {
 
         return Arrays.stream(dataArray)
                 .collect(Collectors.toMap(P2PKHSingleResultData::getHash, P2PKHSingleResultData::getResults, (v1,v2) -> v1, LinkedHashMap::new));
+    }
+
+    private static byte[] hexToByteData(@NonNull String hex) {
+        byte[] convertedByteArray = new byte[hex.length() / 2];
+        int count = 0;
+
+        for (int i = 0; i < hex.length() - 1; i += 2) {
+            String output;
+            output = hex.substring(i, (i + 2));
+            int decimal = Integer.parseInt(output, 16);
+            convertedByteArray[count] = (byte) (decimal & 0xFF);
+            count++;
+        }
+        return convertedByteArray;
     }
 }

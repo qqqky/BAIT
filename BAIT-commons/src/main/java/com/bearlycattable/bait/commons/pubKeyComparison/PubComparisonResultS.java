@@ -1,4 +1,4 @@
-package com.bearlycattable.bait.commons.other;
+package com.bearlycattable.bait.commons.pubKeyComparison;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,7 @@ import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import lombok.Builder;
 
 @Builder
-public class PubComparisonResult {
+public class PubComparisonResultS {
 
     int positive; //points; max points depends on scale factor, eg. for "1.3" max possible points = 25200
     int negative;
@@ -63,8 +63,8 @@ public class PubComparisonResult {
         return negative;
     }
 
-    public static PubComparisonResult empty(PubTypeEnum type) {
-        return PubComparisonResult.builder()
+    public static PubComparisonResultS empty(PubTypeEnum type) {
+        return PubComparisonResultS.builder()
                 .positive(0)
                 .negative(0)
                 .forPriv("0000")
@@ -78,11 +78,11 @@ public class PubComparisonResult {
             return true;
         }
 
-        if (!(another instanceof PubComparisonResult)) {
+        if (!(another instanceof PubComparisonResultS)) {
             return false;
         }
 
-        PubComparisonResult obj = (PubComparisonResult) another;
+        PubComparisonResultS obj = (PubComparisonResultS) another;
 
         return this.type == obj.getType()
                 && (this.forPriv != null && obj.getForPriv() != null)

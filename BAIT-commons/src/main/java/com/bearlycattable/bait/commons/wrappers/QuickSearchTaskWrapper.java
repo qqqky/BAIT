@@ -1,5 +1,7 @@
 package com.bearlycattable.bait.commons.wrappers;
 
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
+
 import javafx.concurrent.Task;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +10,7 @@ import lombok.Getter;
 @Builder
 public class QuickSearchTaskWrapper {
 
-    private final Task<PubComparisonResultWrapper> task;
+    private final Task<PubComparisonResultSWrapper> task;
     private final String error;
 
     public boolean hasTask() {

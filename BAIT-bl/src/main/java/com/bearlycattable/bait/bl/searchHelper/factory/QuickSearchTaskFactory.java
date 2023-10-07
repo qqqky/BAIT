@@ -14,7 +14,7 @@
 // import com.bearlycattable.bait.commons.contexts.QuickSearchResponseModel;
 // import com.bearlycattable.bait.commons.enums.QuickSearchResponseEnum;
 // import com.bearlycattable.bait.commons.enums.SearchModeEnum;
-// import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+// import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultWrapper;
 // import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
 //
 // import javafx.concurrent.Task;

@@ -82,7 +82,7 @@ public class AdvancedSubTabProgressController {
 
     @FXML
     void initialize() {
-        System.out.println("CREATING (child): AdvancedSubTabProgressController......");
+        System.out.println("CREATING (child, advanced): AdvancedSubTabProgressController......");
     }
 
     public void setAdvancedProgressAccessProxy(AdvancedProgressAccessProxy proxy) {

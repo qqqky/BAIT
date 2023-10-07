@@ -1,18 +1,19 @@
-package com.bearlycattable.bait.advancedCommons.other;
+package com.bearlycattable.bait.advancedCommons.pubKeyComparison;
 
 import java.util.Optional;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
+import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.enums.PubTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
-import com.bearlycattable.bait.commons.other.PubComparisonResult;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultS;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 
-public class AdvancedPubComparer {
+public class AdvancedPubComparerS {
 
-    private Optional<PubComparisonResult> comparePubKeyHashesCached(PubTypeEnum type, String[] currentPKHArray, P2PKHSingleResultData data) {
+    private Optional<PubComparisonResultS> comparePubKeyHashesCachedS(PubTypeEnum type, String[] currentPKHArray, P2PKHSingleResultData data) {
         if (currentPKHArray == null || currentPKHArray.length == 0) {
             return Optional.empty();
         }
@@ -34,45 +35,42 @@ public class AdvancedPubComparer {
             pointCountNegative = pointCountNegative + pointsNegative;
         }
 
-        return Optional.of(PubComparisonResult.builder()
+        return Optional.of(PubComparisonResultS.builder()
                 .positive(pointCountPositive)
                 .negative(pointCountNegative)
                 .type(type)
                 .build());
     }
 
-    public PubComparisonResultWrapper getCurrentResultCached(String currentPrivKey, String[] UPKHArray, String[] CPKHArray, P2PKHSingleResultData data, ScaleFactorEnum scaleFactor) {
+    public PubComparisonResultSWrapper calculateCurrentResultCachedS(String currentPrivKey, String[] UPKHArray, String[] CPKHArray, P2PKHSingleResultData data, ScaleFactorEnum scaleFactor) {
         JsonResultScaleFactorEnum requestedScaleFactor = ScaleFactorEnum.toJsonScaleFactorEnum(scaleFactor);
 
-        if (!data.isGeneralPointsCachedForScaleFactor(requestedScaleFactor)) {
+        if (!data.isGeneralPointsCachedForScaleFactor(requestedScaleFactor, AddressGenerationAndComparisonType.STRING)) {
             throw new IllegalStateException("Data collection is not cached for the requested scale factor [requested:" + requestedScaleFactor + ", actual: " + data.getCachedForScaleFactor() + "]");
         }
 
-        PubComparisonResult resultUncompressed = getCurrentResultForUncompressedCached(currentPrivKey, UPKHArray, data).orElse(null);
-        PubComparisonResult resultCompressed = getCurrentResultForCompressedCached(currentPrivKey, CPKHArray, data).orElse(null);
+        PubComparisonResultS resultUncompressed = getCurrentResultForUncompressedCached(currentPrivKey, UPKHArray, data).orElse(null);
+        PubComparisonResultS resultCompressed = getCurrentResultForCompressedCached(currentPrivKey, CPKHArray, data).orElse(null);
 
         if (resultUncompressed == null || resultCompressed == null) {
             return HeatVisualizerConstants.EMPTY_RESULT_WRAPPER;
         }
 
-        return PubComparisonResultWrapper.builder()
+        return PubComparisonResultSWrapper.builder()
                 .resultForUncompressed(resultUncompressed)
                 .resultForCompressed(resultCompressed)
                 .build();
     }
 
-    private Optional<PubComparisonResult> getCurrentResultForUncompressedCached(String currentPrivKey, String[] UPKHArray, P2PKHSingleResultData data) {
-        Optional<PubComparisonResult> result = comparePubKeyHashesCached(PubTypeEnum.UNCOMPRESSED, UPKHArray, data);
+    private Optional<PubComparisonResultS> getCurrentResultForUncompressedCached(String currentPrivKey, String[] UPKHArray, P2PKHSingleResultData data) {
+        Optional<PubComparisonResultS> result = comparePubKeyHashesCachedS(PubTypeEnum.UNCOMPRESSED, UPKHArray, data);
         result.ifPresent(res -> res.setForPriv(currentPrivKey));
         return result;
     }
 
-    private Optional<PubComparisonResult> getCurrentResultForCompressedCached(String currentPrivKey, String[] CPKHArray, P2PKHSingleResultData data) {
-        Optional<PubComparisonResult> result = comparePubKeyHashesCached(PubTypeEnum.COMPRESSED, CPKHArray, data);
+    private Optional<PubComparisonResultS> getCurrentResultForCompressedCached(String currentPrivKey, String[] CPKHArray, P2PKHSingleResultData data) {
+        Optional<PubComparisonResultS> result = comparePubKeyHashesCachedS(PubTypeEnum.COMPRESSED, CPKHArray, data);
         result.ifPresent(res -> res.setForPriv(currentPrivKey));
         return result;
     }
-
-
-
 }

@@ -23,7 +23,7 @@ import com.bearlycattable.bait.commons.interfaces.IndexRotatorVertical;
 import com.bearlycattable.bait.commons.interfaces.PrefixedKeyGenerator;
 import com.bearlycattable.bait.commons.interfaces.QuickSearchHelper;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
-import com.bearlycattable.bait.commons.wrappers.PubComparisonResultWrapper;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 import com.bearlycattable.bait.commons.wrappers.QuickSearchTaskWrapper;
 
 import javafx.concurrent.Task;
@@ -60,7 +60,7 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                     .build();
         }
 
-        Task<PubComparisonResultWrapper> task;
+        Task<PubComparisonResultSWrapper> task;
 
         SearchModeEnum mode = quickSearchContext.getSearchMode();
         if (SearchModeEnum.MIXED == mode || SearchModeEnum.FUZZING == mode) {
@@ -83,24 +83,25 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                 .build();
     }
 
-    private Task<PubComparisonResultWrapper> createNewGeneralQuickSearchTask(QuickSearchContext quickSearchContext) {
+    private Task<PubComparisonResultSWrapper> createNewGeneralQuickSearchTask(QuickSearchContext quickSearchContext) {
         return new Task<>() {
+            int iterations = quickSearchContext.getIterations();
+            int accuracy = quickSearchContext.getAccuracy();
+            String seed = quickSearchContext.getSeed();
+            List<Integer> disabledWords = quickSearchContext.getDisabledWords();
+            final boolean prefixed = SearchModeEnum.RANDOM_SAME_WORD == quickSearchContext.getSearchMode();
+            // Function<String, String> nextPrivFunction = quickSearchContext.getNextPrivFunction();
+            BiFunction<QuickSearchResponseModel, String, QuickSearchResponseModel> evaluationFunction = createGeneralEvaluationFunction(quickSearchContext);
+            int printSpacing = quickSearchContext.getPrintSpacing();
+            final boolean verbose = quickSearchContext.isVerbose();
             @Override
-            public PubComparisonResultWrapper call() {
-                int iterations = quickSearchContext.getIterations();
-                int accuracy = quickSearchContext.getAccuracy();
-                String seed = quickSearchContext.getSeed();
-                List<Integer> disabledWords = quickSearchContext.getDisabledWords();
-                final boolean prefixed = SearchModeEnum.RANDOM_SAME_WORD == quickSearchContext.getSearchMode();
-                // Function<String, String> nextPrivFunction = quickSearchContext.getNextPrivFunction();
-                BiFunction<QuickSearchResponseModel, String, QuickSearchResponseModel> evaluationFunction = createGeneralEvaluationFunction(quickSearchContext);
-                int printSpacing = quickSearchContext.getPrintSpacing();
-                final boolean verbose = quickSearchContext.isVerbose();
+            public PubComparisonResultSWrapper call() {
+                String currentPriv = seed;
 
                 SearchModeEnum searchMode = quickSearchContext.getSearchMode();
 
                 QuickSearchResponseModel model = new QuickSearchResponseModel();
-                model.setHighestResult(PubComparisonResultWrapper.empty());
+                model.setHighestResult(PubComparisonResultSWrapper.empty());
 
                 for (int i = 0; i < iterations; i++) {
                     seed = prefixed ? buildNextPrivPrefixed(seed, disabledWords, null) : buildNextPriv(seed, disabledWords);
@@ -125,10 +126,10 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
         };
     }
 
-    private Task<PubComparisonResultWrapper> createNewHorizontalRotationQuickSearchTask(QuickSearchContext quickSearchContext) {
+    private Task<PubComparisonResultSWrapper> createNewHorizontalRotationQuickSearchTask(QuickSearchContext quickSearchContext) {
         return new Task<>() {
             @Override
-            public PubComparisonResultWrapper call() {
+            public PubComparisonResultSWrapper call() {
                 int iterations = quickSearchContext.getIterations();
                 int accuracy = quickSearchContext.getAccuracy();
                 String seed = quickSearchContext.getSeed();
@@ -141,11 +142,11 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                 final boolean verbose = quickSearchContext.isVerbose();
 
                 SearchModeEnum searchMode = quickSearchContext.getSearchMode();
-                final boolean fullPrefixedMode = SearchModeEnum.ROTATION_PRIV_FULL_PREFIXED == searchMode;
+                final boolean fullPrefixedMode = SearchModeEnum.ROTATION_FULL_WITH_HEADER == searchMode;
                 String savedSeed = seed;
 
                 QuickSearchResponseModel model = new QuickSearchResponseModel();
-                model.setHighestResult(PubComparisonResultWrapper.empty());
+                model.setHighestResult(PubComparisonResultSWrapper.empty());
 
                 for (int i = 0; i < iterations; i++) {
                     if (!fullPrefixedMode) {
@@ -180,10 +181,10 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
         };
     }
 
-    private Task<PubComparisonResultWrapper> createNewVerticalRotationQuickSearchTask(QuickSearchContext quickSearchContext) {
+    private Task<PubComparisonResultSWrapper> createNewVerticalRotationQuickSearchTask(QuickSearchContext quickSearchContext) {
         return new Task<>() {
             @Override
-            public PubComparisonResultWrapper call() {
+            public PubComparisonResultSWrapper call() {
                 int iterations = quickSearchContext.getIterations();
                 int accuracy = quickSearchContext.getAccuracy();
                 String seed = quickSearchContext.getSeed();
@@ -197,7 +198,7 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                 final boolean verbose = quickSearchContext.isVerbose();
 
                 QuickSearchResponseModel model = new QuickSearchResponseModel();
-                model.setHighestResult(PubComparisonResultWrapper.empty());
+                model.setHighestResult(PubComparisonResultSWrapper.empty());
 
                 final int maxRotations = 0xF;
                 String start = seed;
@@ -248,11 +249,11 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
         };
     }
 
-    private Task<PubComparisonResultWrapper> createNewFuzzingQuickSearchTask(QuickSearchContext quickSearchContext) {
+    private Task<PubComparisonResultSWrapper> createNewFuzzingQuickSearchTask(QuickSearchContext quickSearchContext) {
         throw new UnsupportedOperationException(getClass().getName() + "#createNewFuzzingQuickSearchTask() unavailable in current version!");
     }
 
-    private Task<PubComparisonResultWrapper> createNewMixedQuickSearchTask(QuickSearchContext quickSearchContext) {
+    private Task<PubComparisonResultSWrapper> createNewMixedQuickSearchTask(QuickSearchContext quickSearchContext) {
         throw new UnsupportedOperationException(getClass().getName() + "#createNewMixedQuickSearchTask() unavailable in current version!");
     }
 
@@ -289,41 +290,51 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
 
     @Override
     public @NonNull String rotateLeft(String current) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeft(String)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#rotateLeft(String)");
     }
 
     @Override
     public @NonNull String rotateLeftBy(String current, int rotateBy) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeftBy(String, int)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#rotateLeftBy(String, int)");
     }
 
     @Override
     public @NonNull String rotateLeft(String current, List<Integer> disabledWords) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeft(String, List<Integer>)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#rotateLeft(String, List<Integer>)");
     }
 
     @Override
     public @NonNull String rotateLeftBy(String current, int rotateBy, List<Integer> disabledWords) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateLeftBy(String, int, List<Integer>)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#rotateLeftBy(String, int, List<Integer>)");
     }
 
     @Override
     public @NonNull String rotateAtIndex(String current, List<Integer> disabledWords, int index) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@rotateAtIndex(String, List<Integer>, int)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#rotateAtIndex(String, List<Integer>, int)");
     }
 
     @Override
     public boolean isValidIndexForVerticalRotation(String address, List<Integer> disabledWords, int selectedIndex) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@isValidIndexForVerticalRotation(String, List<Integer>, int)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#isValidIndexForVerticalRotation(String, List<Integer>, int)");
     }
 
     @Override
     public @NonNull String buildNextPriv(String current, List<Integer> disabledWords) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@buildNextPriv(String, List<Integer>)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#buildNextPriv(String, List<Integer>)");
+    }
+
+    @Override
+    public byte[] buildNextPrivBytes(byte[] current, List<Integer> disabledWords) {
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#buildNextPrivBytes(byte[], List<Integer>)");
     }
 
     @Override
     public String buildNextPrivPrefixed(String current, List<Integer> disabledWords, String prefix) {
-        throw new UnsupportedOperationException("Not supported " + this.getClass().getName() + "@buildNextPriv(String, List<Integer>, String)");
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#buildNextPrivPrefixed(String, List<Integer>, String)");
+    }
+
+    @Override
+    public byte[] buildNextPrivPrefixedBytes(byte[] current, List<Integer> disabledWords, String prefix) {
+        throw new UnsupportedOperationException("Extending class must override this method. Can't use at " + this.getClass().getName() + "#buildNextPrivPrefixedBytes(String, List<Integer>, String)");
     }
 }

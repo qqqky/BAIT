@@ -24,16 +24,17 @@ public final class AdvancedSearchHelperRandomSameWord extends AdvancedSearchHelp
 
     @Override
     public AdvancedSearchTaskWrapper createNewAdvancedSearchTask(AdvancedSearchContext advancedSearchContext) {
-        // String prefix = advancedSearchContext.getWordPrefix();
-        // List<Integer> disabledWords = advancedSearchContext.getDisabledWords();
-        // advancedSearchContext.setNextPrivFunction(key -> buildNextPriv(key, disabledWords, prefix));
-
         return advancedSearchTaskGuiCreationHelper(advancedSearchContext);
     }
 
     @Override
     public String buildNextPrivPrefixed(String current, List<Integer> disabledWords, String prefix) {
         return generator.generateRandomSameWordWithBlacklist(prefix, current, disabledWords);
+    }
+
+    @Override
+    public boolean isByteComparisonSupported() {
+        return false;
     }
 
     @Override

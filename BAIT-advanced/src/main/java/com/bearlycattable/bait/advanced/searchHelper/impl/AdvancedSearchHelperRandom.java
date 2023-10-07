@@ -26,22 +26,33 @@ public class AdvancedSearchHelperRandom extends AbstractAdvancedSearchHelper imp
 
     @Override
     public AdvancedSearchTaskWrapper createNewAdvancedSearchTask(AdvancedSearchContext advancedSearchContext) {
-        // List<Integer> disabledWords = advancedSearchContext.getDisabledWords();
-        // advancedSearchContext.setNextPrivFunction(seed -> buildNextPriv(seed, disabledWords));
-
         return advancedSearchTaskGuiCreationHelper(advancedSearchContext);
     }
 
     @Override
     public String buildNextPriv(String current, List<Integer> disabledWords) {
         if (disabledWords == null || disabledWords.isEmpty()) {
-            return generator.generateValidKey();
+            return generator.generateValidKeyString();
         }
+        return generator.generateWithBlacklist(current, disabledWords);
+    }
+
+    @Override
+    public byte[] buildNextPrivBytes(byte[] current, List<Integer> disabledWords) {
+        if (disabledWords == null || disabledWords.isEmpty()) {
+            return generator.generateValidKeyBytes();
+        }
+
         return generator.generateWithBlacklist(current, disabledWords);
     }
 
     @Override
     public SearchModeEnum getSearchMode() {
         return searchMode;
+    }
+
+    @Override
+    public boolean isByteComparisonSupported() {
+        return true;
     }
 }

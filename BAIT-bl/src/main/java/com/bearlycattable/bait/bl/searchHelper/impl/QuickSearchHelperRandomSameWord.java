@@ -22,22 +22,8 @@ public final class QuickSearchHelperRandomSameWord extends QuickSearchHelperRand
         super(creationContext);
     }
 
-    // @NonNull
-    // @Override
-    // public PubComparisonResultWrapper quickSearchSameThread(QuickSearchContext quickSearchContext) {
-    //     List<Integer> disabledWords = quickSearchContext.getDisabledWords();
-    //     String prefix = quickSearchContext.getWordPrefixForRandomMode();
-    //     quickSearchContext.setNextPrivFunction(key -> buildNextPriv(key, disabledWords, prefix));
-    //     return iterateForRandomMode(quickSearchContext);
-    // }
-
     @Override
     public QuickSearchTaskWrapper createNewQuickSearchTask(QuickSearchContext quickSearchContext) {
-        // List<Integer> disabledWords = quickSearchContext.getDisabledWords();
-        // String prefix = quickSearchContext.getWordPrefixForRandomMode();
-        // quickSearchContext.setNextPrivFunction(key -> buildNextPriv(key, disabledWords, prefix));
-        // quickSearchContext.setEvaluationFunction(super.createGeneralEvaluationFunction(quickSearchContext));
-        // return QuickSearchTaskFactory.createNewQuickSearchTask(quickSearchContext);
         return quickSearchTaskGuiCreationHelper(quickSearchContext);
     }
 

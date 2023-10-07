@@ -7,12 +7,12 @@
   <parent>
     <groupId>com.bearlycattable</groupId>
     <artifactId>bait</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.5</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>bait-commons</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <dependencies>

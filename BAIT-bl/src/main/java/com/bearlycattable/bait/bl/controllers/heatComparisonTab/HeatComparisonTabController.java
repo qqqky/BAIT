@@ -29,8 +29,8 @@ import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
-import com.bearlycattable.bait.commons.other.PubComparer;
-import com.bearlycattable.bait.commons.other.PubComparisonResult;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparerS;
+import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultS;
 import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapper;
 import com.bearlycattable.bait.commons.wrappers.PrivHeatResultWrapperDecimal;
@@ -61,7 +61,7 @@ public class HeatComparisonTabController {
     private static final Logger LOG = Logger.getLogger(HeatComparisonTabController.class.getName());
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "HeatComparisonTab", LocaleUtils.APP_LANGUAGE);
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
-    private final PubComparer pubComparer = new PubComparer();
+    private final PubComparerS pubComparer = new PubComparerS();
     private final Map<Integer, BigDecimal> similarityMappings = Collections.unmodifiableMap(BaitUtils.buildSimilarityMappings());
     private final Map<Integer, String> colorMappings = Collections.unmodifiableMap(BaitUtils.buildColorMappings());
 
@@ -411,7 +411,6 @@ public class HeatComparisonTabController {
         String targetPK = heatComparisonContext.getTargetPK();
         String referenceKey = heatComparisonContext.getReferenceKey();
         QuickSearchComparisonType comparisonType = heatComparisonContext.getComparisonType();
-        ScaleFactorEnum scaleFactor = heatComparisonContext.getScaleFactor();
 
         String targetUPKH = helper.getPubKeyHashUncompressed(targetPK, false);
         String targetCPKH = helper.getPubKeyHashCompressed(targetPK, false);
@@ -428,6 +427,7 @@ public class HeatComparisonTabController {
         setTargetPKHAndCompareHeatWithReference(targetCPKH, referenceCPKH, pubCompressedHeatPositiveAbsoluteIndexes, pubCompressedHeatNegativeAbsoluteIndexes);
 
         //TODO: percent labels will be needed...
+
                 //compare and set pub accuracy labels
         // compareWithReferenceKey(targetUPKH, referenceUPKH, PubTypeEnum.UNCOMPRESSED, scaleFactor)
         //         .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.UNCOMPRESSED));
@@ -687,7 +687,7 @@ public class HeatComparisonTabController {
         return selectedScaleFactor;
     }
 
-    void insertPubSimilarityPercentLabels(PubComparisonResult heatResult, PubTypeEnum pubType) {
+    void insertPubSimilarityPercentLabels(PubComparisonResultS heatResult, PubTypeEnum pubType) {
         if (heatResult == null || pubType == null) {
             return;
         }
@@ -709,7 +709,7 @@ public class HeatComparisonTabController {
         }
     }
 
-    private int getResultForHeatType(PubComparisonResult currentResult, HeatOverflowTypeEnum heatType) {
+    private int getResultForHeatType(PubComparisonResultS currentResult, HeatOverflowTypeEnum heatType) {
         return heatComparisonTabAccessProxy.getNormalizedMapIndexFromComparisonResult(HeatOverflowTypeEnum.HEAT_POSITIVE == heatType ? currentResult.getPositive() : currentResult.getNegative(), currentResult.getForScaleFactor());
     }
 
@@ -787,7 +787,7 @@ public class HeatComparisonTabController {
         pubNegativeHeatMappings.get(wordNumber).getStyleClass().add(colorMappings.get(resultWrapper.getHeatNegative()));
     }
 
-    private Optional<PubComparisonResult> compareWithReferenceKey(String currentPHK, String referencePKH, PubTypeEnum type, ScaleFactorEnum scaleFactor) {
+    private Optional<PubComparisonResultS> compareWithReferenceKey(String currentPHK, String referencePKH, PubTypeEnum type, ScaleFactorEnum scaleFactor) {
         if (type == null) {
             return Optional.empty();
         }
@@ -957,7 +957,7 @@ public class HeatComparisonTabController {
             case DECIMAL:
                 return String.valueOf(heatResult).toUpperCase();
             case HEX:
-                return helper.padTo8(Long.toHexString(heatResult), true);
+                return helper.padToX(Long.toHexString(heatResult), 8, true);
             default:
                 throw new IllegalArgumentException("Number format type not supported [type=" + targetType + "]");
         }

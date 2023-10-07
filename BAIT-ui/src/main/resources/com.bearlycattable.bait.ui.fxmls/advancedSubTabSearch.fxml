@@ -225,7 +225,8 @@
                 <TextField fx:id="advancedSearchTextFieldLogKeyEveryXIterations" styleClass="iterationsInput" alignment="CENTER" prefWidth="100.0" />
                 <HBox prefWidth="5.0" />
                 <Label alignment="CENTER_RIGHT" prefHeight="32.0" text="%label.logProgressEvery.end" />
-                <HBox prefWidth="5.0" />
+                <HBox prefWidth="15.0" />
+                <CheckBox fx:id="advancedSearchCbxByteComparisonEnable" mnemonicParsing="false" text="%label.byteComparison" />
               </children>
             </HBox>
           </children>

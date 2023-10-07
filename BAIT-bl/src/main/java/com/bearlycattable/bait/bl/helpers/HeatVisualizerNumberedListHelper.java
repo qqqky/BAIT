@@ -52,6 +52,7 @@ public class HeatVisualizerNumberedListHelper {
         Pattern regex = Pattern.compile("//\\[[\\d]{1,2}]\\\\\\\\[.]"); //matches //[nn]\\. where nn is 'one or two' digits
         int tooltipCount = 0;
         boolean tooltipOpened = false;
+        HeatVisualizerHelper helper = new HeatVisualizerHelper();
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line;
@@ -75,7 +76,7 @@ public class HeatVisualizerNumberedListHelper {
                     if (line.contains("]]]")) { //tooltip end found
                         tooltipBuilder.append(line, 0, line.indexOf("]]]"));
                         tooltipOpened = false;
-                        tooltipPlaceholder = "[#T" + HeatVisualizerHelper.padTo2(Integer.toHexString(++tooltipCount), true) + "]";
+                        tooltipPlaceholder = "[#T" + helper.padToX(Integer.toHexString(++tooltipCount), 2, true) + "]";
                         line = line.substring(line.indexOf("]]]") + "]]]".length());
                         intermediary.append(tooltipPlaceholder);
                         SPECIAL_TOOLTIPS.put(tooltipPlaceholder, tooltipBuilder.toString().trim());
@@ -112,7 +113,7 @@ public class HeatVisualizerNumberedListHelper {
                     if (line.contains("]]]")) {
                         int tooltipEndIndex = line.indexOf("]]]");
                         tooltipBuilder.append(line, tooltipStartIndex + "[[[tooltip:".length(), tooltipEndIndex);
-                        tooltipPlaceholder = "[#T" + HeatVisualizerHelper.padTo2(Integer.toHexString(++tooltipCount), true) + "]";
+                        tooltipPlaceholder = "[#T" + helper.padToX(Integer.toHexString(++tooltipCount), 2, true) + "]";
                         String start = line.substring(0, tooltipStartIndex);
                         String end = line.substring(tooltipEndIndex + "]]]".length());
                         line = start + tooltipPlaceholder + end;

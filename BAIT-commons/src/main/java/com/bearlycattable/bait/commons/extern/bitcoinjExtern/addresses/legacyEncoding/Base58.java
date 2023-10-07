@@ -1,11 +1,3 @@
-package com.bearlycattable.bait.commons.helpers;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
-import org.bitcoinj.core.Sha256Hash;
-
 /*
  * Copyright 2011 Google Inc.
  * Copyright 2018 Andreas Schildbach
@@ -22,6 +14,14 @@ import org.bitcoinj.core.Sha256Hash;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.bearlycattable.bait.commons.extern.bitcoinjExtern.addresses.legacyEncoding;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import com.bearlycattable.bait.commons.extern.bitcoinjExtern.Sha256Hash;
 
 public class Base58 {
 
@@ -196,31 +196,31 @@ public class Base58 {
      * @return the base58-encoded string
      */
     public String encodeChecked(int version, byte[] payload) {
-        if (version < 0 || version > 255)
+        if (version < 0 || version > 255) {
             throw new IllegalArgumentException("Version not in range.");
+        }
 
         // A stringified buffer is:
         // 1 byte version + data bytes + 4 bytes check code (a truncated hash)
 
-
         //byte[] addressBytes = new byte[1 + payload.length + 4];
         //EDIT: since we are using Java's SHA, we omit the trailing 00's
-        byte[] addressBytes = new byte[1+payload.length];
+        byte[] addressBytes = new byte[1 + payload.length];
         addressBytes[0] = (byte) version;
 
         System.arraycopy(payload, 0, addressBytes, 1, payload.length);
         //EDIT: we use native java instead of bitcoinj
         //  byte[] checksum = Sha256Hash.hashTwice(addressBytes, 0, payload.length + 1);
-        byte[]firstSha = getDigester().digest(addressBytes);
-        byte[]secondSha = getDigester().digest(firstSha);
-        //System.out.println("Second SHA: "+AddressConverter.bytesToHexString(secondsha));
+        byte[] firstSha = getDigester().digest(addressBytes);
+        byte[] secondSha = getDigester().digest(firstSha);
+        //System.out.println("Second SHA: " + AddressConverter.bytesToHexString(secondsha));
         // byte[] checksum = Arrays.copyOfRange(secondsha, 0, 4);
-        //System.out.println("CHECKSUM: "+AddressConverter.bytesToHexString(checksum));
+        //System.out.println("CHECKSUM: " + AddressConverter.bytesToHexString(checksum));
 
         //only now make the extended array to include checksum:
-        byte[] last = new byte[1+payload.length+4];
+        byte[] last = new byte[1 + payload.length + 4];
         System.arraycopy(addressBytes, 0, last, 0, addressBytes.length); //first copy RIPEd address with 0 prefix
-        System.arraycopy(secondSha, 0, last, last.length-4, 4); //then copy the checksum from second SHA
+        System.arraycopy(secondSha, 0, last, last.length - 4, 4); //then copy the checksum from second SHA
         return encode(last);
     }
 
