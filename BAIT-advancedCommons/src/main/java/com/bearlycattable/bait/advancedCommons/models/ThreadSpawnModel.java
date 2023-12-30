@@ -9,10 +9,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
+import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.PredictableEnd;
 import com.bearlycattable.bait.commons.Config;
-import com.bearlycattable.bait.advancedCommons.dataAccessors.SeedMutationConfigDataAccessor;
 import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.enums.RandomWordPrefixMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
@@ -21,10 +21,10 @@ import com.bearlycattable.bait.commons.enums.SeedMutationTypeEnum;
 import com.bearlycattable.bait.commons.functions.TriFunction;
 
 import javafx.util.Pair;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
+@Builder
 @Data
 public class ThreadSpawnModel {
 

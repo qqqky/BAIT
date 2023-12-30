@@ -14,6 +14,8 @@ module bait.bl {
     requires static org.checkerframework.checker.qual;
     requires static lombok;
 
+    exports com.bearlycattable.bait.bl.contexts; //for warnings about "HeatComparisonContext" class
+
     exports com.bearlycattable.bait.bl.controllers to bait.ui;
     opens com.bearlycattable.bait.bl.controllers to javafx.fxml;
 

@@ -141,7 +141,7 @@ public final class AdvancedSubTabSearchControllerInitializer {
     }
 
     private void initializeLogComponent() {
-        controller.getAdvancedSearchTextFieldLogKeyEveryXIterations().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(1_000_000));
+        controller.getAdvancedSearchTextFieldLogKeyEveryXIterations().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_LOG_SPACING_ADVANCED_SEARCH));
         controller.getAdvancedSearchTextFieldLogKeyEveryXIterations().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -159,7 +159,7 @@ public final class AdvancedSubTabSearchControllerInitializer {
             //when unfocused, check if max value is not breached
             if (!newVal) {
                 String current = controller.getAdvancedSearchTextFieldIterations().getText();
-                if (!current.isEmpty() && Integer.parseInt(current) > Config.MAX_ITERATIONS_ADVANCED_SEARCH) {
+                if (!current.isEmpty() && Long.parseLong(current) > Config.MAX_ITERATIONS_ADVANCED_SEARCH) {
                     controller.getAdvancedSearchTextFieldIterations().setText(Integer.toString(Config.MAX_ITERATIONS_ADVANCED_SEARCH));
                 }
             }

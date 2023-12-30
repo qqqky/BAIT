@@ -34,8 +34,4 @@ public class PrivHeatResultWrapperHex implements PrivHeatResultWrapper {
         return Long.toString(heatNegative, 16);
     }
 
-    // public boolean isValid() {
-    //     return (heatPositive != null && !heatPositive.isEmpty())
-    //             && (heatNegative != null && !heatNegative.isEmpty());
-    // }
 }

@@ -524,7 +524,7 @@ public class QuickSearchTabController {
                 .iterations(quickSearchHelper.getIterations())
                 .accuracy(accuracy)
                 .verbose(quickSearchTabAccessProxy.isVerboseMode())
-                .printSpacing(quickSearchTabAccessProxy.isVerboseMode() ? 1 : 0)
+                .printSpacing(quickSearchTabAccessProxy.isVerboseMode() ? 1 : 0) //TODO: explain here?
                 .currentHighestResult(PubComparisonResultSWrapper.empty())
                 .build();
 
@@ -607,14 +607,6 @@ public class QuickSearchTabController {
                 .build();
 
         quickSearchTabAccessProxy.showFullHeatComparison(heatComparisonContext);
-
-        // highest.getResultAsOptionalForUncompressed().ifPresent(result -> quickSearchTabAccessProxy.insertSearchResultsToUiForUncompressed(result));
-        // highest.getResultAsOptionalForCompressed().ifPresent(result -> quickSearchTabAccessProxy.insertSearchResultsToUiForCompressed(result));
-
-        // quickSearchTabAccessProxy.setCurrentKeyInComparisonTab(highest.getCommonPriv());
-        // quickSearchTabAccessProxy.setReferenceKeyInComparisonTab(quickSearchTextFieldTargetKey.getText(), getQuickSearchTypeFromUi());
-        // quickSearchTabAccessProxy.setScaleFactorInComparisonTab(highest.getCommonScaleFactor());
-        // quickSearchTabAccessProxy.calculateOutputs();
     }
 
     public int getNormalizedMapIndexFromComparisonResult(int resultPoints, ScaleFactorEnum scaleFactor) {

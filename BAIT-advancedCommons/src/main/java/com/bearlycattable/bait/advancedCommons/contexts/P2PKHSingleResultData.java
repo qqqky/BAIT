@@ -135,6 +135,11 @@ public class P2PKHSingleResultData {
     }
 
     @JsonIgnore
+    public int getFromCache(int forIndex, int forValue, boolean forPositive) {
+        return forPositive ? pointMapForPositiveB.get(forIndex).get(forValue) : pointMapForNegativeB.get(forIndex).get(forValue);
+    }
+
+    @JsonIgnore
     public Map<Integer, Map<Integer, Integer>> getPointMapForNegativeB() {
         return pointMapForNegativeB;
     }
@@ -205,35 +210,7 @@ public class P2PKHSingleResultData {
     }
 
     @JsonIgnore
-    public static synchronized String toStringPretty(P2PKHSingleResultData[] array) {
-        if (array == null || array.length == 0) {
-           return null;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        int length = array.length;
-        String newLine = System.lineSeparator();
-
-        sb.append("[").append(newLine);
-        if (array.length == 1) {
-            sb.append(array[0].toStringPretty()).append(newLine).append("]");
-            return sb.toString();
-        }
-
-        for (int i = 0; i < length; i++) {
-            sb.append(array[i].toStringPretty());
-            if (i < (length - 1)) {
-                sb.append(",");
-            }
-            sb.append(newLine);
-        }
-
-        sb.append("]");
-        return sb.toString();
-    }
-
-    @JsonIgnore
-    private String toStringPretty() {
+    public String toStringPretty() {
 
         StringBuilder sb = new StringBuilder();
         String newLine = System.lineSeparator();

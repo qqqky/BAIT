@@ -38,7 +38,7 @@ public final class HeatVisualizerConstants {
     public static final Pattern DIGITS_ONLY_MAX3 = Pattern.compile("^[\\d]{1,3}$");
     public static final Pattern DIGITS_ONLY_MAX4 = Pattern.compile("^[\\d]{1,4}$");
     public static final Pattern DIGITS_ONLY_MAX6 = Pattern.compile("^[\\d]{1,6}$");
-    public static final Pattern DIGITS_ONLY_MAX9 = Pattern.compile("^[\\d]{1,9}$");
+    public static final Pattern DIGITS_ONLY_MAX10 = Pattern.compile("^[\\d]{1,10}$");
     public static final long OVERFLOW_REFERENCE_8_HEX = 0x100000000L;
     public static final int OVERFLOW_REFERENCE_1_HEX = 0x10;
 

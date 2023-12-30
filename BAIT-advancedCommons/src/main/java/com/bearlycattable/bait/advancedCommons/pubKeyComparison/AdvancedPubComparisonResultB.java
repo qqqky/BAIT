@@ -17,7 +17,7 @@ public class AdvancedPubComparisonResultB {
     public static final ScaleFactorEnum DEFAULT_SCALE_FACTOR = ScaleFactorEnum.MEDIUM;
     private static final int IGNORED_HEAT_DIFFERENCE = 2;
 
-    //points; max points depends on scale factor, eg. for "1.3" max possible points = 25200
+    //points; max points depend on scale factor, eg. for "1.3" max possible points = 25200
     int pointsPosUPKH;
     int pointsNegUPKH;
     int pointsPosCPKH;
@@ -34,7 +34,7 @@ public class AdvancedPubComparisonResultB {
     public int getResultPointsByType(@NonNull JsonResultTypeEnum type) {
         switch (type) {
             case UHP:
-                return getPointsPosUPKH(); //UH
+                return getPointsPosUPKH();
             case UHN:
                 return getPointsNegUPKH();
             case CHP:
@@ -42,7 +42,7 @@ public class AdvancedPubComparisonResultB {
             case CHN:
                 return getPointsNegCPKH();
             default:
-                throw new IllegalArgumentException("Type not supported at PubComparisonResultWrapper#getResultByType [type="+type+"]");
+                throw new IllegalArgumentException("Type not supported at PubComparisonResultWrapper#getResultByType [type=" + type + "]");
         }
     }
 
@@ -63,6 +63,5 @@ public class AdvancedPubComparisonResultB {
             throw new IllegalStateException("Current CPKH is not valid at #validateForBlindComparison");
         }
     }
-
 
 }

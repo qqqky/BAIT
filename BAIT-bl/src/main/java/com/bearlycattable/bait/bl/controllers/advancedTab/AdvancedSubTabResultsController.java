@@ -293,7 +293,7 @@ public class AdvancedSubTabResultsController {
             return;
         }
         removeErrorLabel();
-        advancedResultsAccessProxy.logToUi(P2PKHSingleResultData.toStringPretty(P2PKHSingleResultDataHelper.toArray(filteredMap)), Color.LIGHTGRAY, LogTextTypeEnum.GENERAL);
+        advancedResultsAccessProxy.logToUi(P2PKHSingleResultDataHelper.toStringPretty(P2PKHSingleResultDataHelper.toArray(filteredMap)), Color.LIGHTGRAY, LogTextTypeEnum.GENERAL);
         advancedResultsAccessProxy.logToUi("Number of filtered items: " + filteredMap.keySet().size(), Color.GREEN, LogTextTypeEnum.GENERAL);
 
         showInfoLabel(rb.getString("info.filterSuccess") + filteredMap.keySet().size(), TextColorEnum.GREEN);

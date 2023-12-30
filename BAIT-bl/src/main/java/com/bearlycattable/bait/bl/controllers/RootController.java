@@ -5,6 +5,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.util.logging.Logger;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
 import com.bearlycattable.bait.bl.controllers.aboutTheProjectTab.AboutTheProjectTabController;
@@ -87,12 +89,15 @@ public class RootController implements ConstructionTabAccessProxy, HeatCompariso
         System.out.println("Initializing DEV defaults on ADVANCED_SEARCH");
         advancedTabMainController.initDevDefaults();
 
-        //default to dark mode
-        DarkModeHelper.toggleDarkModeGlobal(true, tabPaneMain, advancedTabMainController);
-        advancedTabMainController.selectDarkModeOption(true); //TODO: config from file
-        System.out.println("Dark mode set to: enabled");
+        defaultToDarkMode(); //TODO: later this should be read from config file
 
         System.out.println("ROOT controller has been initialized successfully......");
+    }
+
+    private void defaultToDarkMode() {
+        DarkModeHelper.toggleDarkModeGlobal(true, tabPaneMain, advancedTabMainController);
+        advancedTabMainController.setDarkModeFlag(true);
+        System.out.println("Dark mode set to: enabled");
     }
 
     @Override
@@ -101,7 +106,7 @@ public class RootController implements ConstructionTabAccessProxy, HeatCompariso
     }
 
     @Override
-    public String getCurrentInput() {
+    public @NonNull String getCurrentInput() {
         return constructionTabController.getCurrentInputForced();
     }
 
@@ -129,6 +134,11 @@ public class RootController implements ConstructionTabAccessProxy, HeatCompariso
             return;
         }
         tabPaneMain.getSelectionModel().select(index);
+    }
+
+    @Override
+    public void setDarkModeFlag(boolean enabled) {
+        darkModeEnabled = enabled;
     }
 
     @Override

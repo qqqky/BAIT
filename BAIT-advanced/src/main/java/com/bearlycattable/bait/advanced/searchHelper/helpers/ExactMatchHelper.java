@@ -12,7 +12,7 @@ public class ExactMatchHelper {
 
     private static final Logger LOG = Logger.getLogger(ExactMatchHelper.class.getName());
 
-    public static synchronized String appendMatchToFile(String priv, String matchedPKH, String targetPath) {
+    public static synchronized boolean appendMatchToFile(String priv, String matchedPKH, String targetPath) {
 
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(targetPath).toAbsolutePath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
             writer.write(priv + " matched the following unknownPKH: " + matchedPKH);
@@ -23,8 +23,9 @@ public class ExactMatchHelper {
             + "Priv was: " + priv + System.lineSeparator()
             + "PKH matched: " + matchedPKH);
             e.printStackTrace();
+            return false;
         }
 
-        return targetPath;
+        return true;
     }
 }

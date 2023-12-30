@@ -68,12 +68,9 @@ public class AdvancedSubTabConfigController implements DarkModeControl {
     }
 
     @Override
-    public void setDarkModeEnabled(boolean enabled) {
-        advancedConfigAccessProxy.setDarkModeEnabled(enabled);
+    public void setDarkMode(boolean enabled) {
+        advancedConfigCbxDarkMode.setSelected(enabled);
+        advancedConfigAccessProxy.setDarkModeFlag(enabled);
     }
 
-    @Override
-    public void refreshLogView() {
-        advancedConfigAccessProxy.refreshLogView();
-    }
 }

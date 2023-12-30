@@ -28,7 +28,7 @@ public interface AdvancedTaskControlAccessProxy {
 
     boolean isVerboseMode();
 
-    boolean isDarkModeEnabled(); //TODO: rename?
+    boolean isDarkModeEnabled();
 
     void setBackgroundColorForProgressHBox(String threadNum, String childThreadNum, BackgroundColorEnum color);
 

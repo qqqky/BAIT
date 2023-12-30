@@ -393,23 +393,30 @@ public class HeatComparisonTabController {
         }
         removeErrorOrInfoMessage();
 
-        showPubHeatComparison(heatComparisonContext);
-
-        if (QuickSearchComparisonType.BLIND == heatComparisonContext.getComparisonType()) {
-            removePrivStats();
-            comparisonTextFieldCurrentKey.setText(heatComparisonContext.getTargetPK());
-            comparisonTextFieldReferenceKey.setText(heatComparisonContext.getReferenceKey());
-            setScaleFactor(heatComparisonContext.getScaleFactor());
-            return;
+        switch (heatComparisonContext.getComparisonType()) {
+            case BLIND:
+                comparisonRadioReferenceKeyTypePKH.fire();
+                showPubHeatComparison(heatComparisonContext);
+                removePrivStats();
+                comparisonTextFieldCurrentKey.setText(heatComparisonContext.getTargetPK());
+                comparisonTextFieldReferenceKey.setText(heatComparisonContext.getReferenceKey());
+                setScaleFactor(heatComparisonContext.getScaleFactor());
+                return;
+            case COLLISION:
+                comparisonRadioReferenceKeyTypePK.fire();
+                showPubHeatComparison(heatComparisonContext);
+                modifyAccessForShowPrivStatsButton(false);
+                showPrivHeatComparison(heatComparisonContext);
+                return;
+            default:
+                throw new IllegalArgumentException("Illegal comparison type provided at #showFullHeatComparison [type=" + heatComparisonContext.getComparisonType() + "]");
         }
-
-        modifyAccessForShowPrivStatsButton(false);
-        showPrivHeatComparison(heatComparisonContext);
     }
 
     private void showPubHeatComparison(HeatComparisonContext heatComparisonContext) {
         String targetPK = heatComparisonContext.getTargetPK();
         String referenceKey = heatComparisonContext.getReferenceKey();
+        ScaleFactorEnum scaleFactor = heatComparisonContext.getScaleFactor();
         QuickSearchComparisonType comparisonType = heatComparisonContext.getComparisonType();
 
         String targetUPKH = helper.getPubKeyHashUncompressed(targetPK, false);
@@ -426,13 +433,11 @@ public class HeatComparisonTabController {
         setTargetPKHAndCompareHeatWithReference(targetUPKH, referenceUPKH, pubUncompressedHeatPositiveAbsoluteIndexes, pubUncompressedHeatNegativeAbsoluteIndexes);
         setTargetPKHAndCompareHeatWithReference(targetCPKH, referenceCPKH, pubCompressedHeatPositiveAbsoluteIndexes, pubCompressedHeatNegativeAbsoluteIndexes);
 
-        //TODO: percent labels will be needed...
-
-                //compare and set pub accuracy labels
-        // compareWithReferenceKey(targetUPKH, referenceUPKH, PubTypeEnum.UNCOMPRESSED, scaleFactor)
-        //         .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.UNCOMPRESSED));
-        // compareWithReferenceKey(targetCPKH, referenceCPKH, PubTypeEnum.COMPRESSED, scaleFactor)
-        //         .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.COMPRESSED));
+        //compare and set pub accuracy labels
+        compareWithReferenceKey(targetUPKH, referenceUPKH, PubTypeEnum.UNCOMPRESSED, scaleFactor)
+                .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.UNCOMPRESSED));
+        compareWithReferenceKey(targetCPKH, referenceCPKH, PubTypeEnum.COMPRESSED, scaleFactor)
+                .ifPresent(heatResult -> insertPubSimilarityPercentLabels(heatResult, PubTypeEnum.COMPRESSED));
     }
 
     private void setTargetPKHAndCompareHeatWithReference(String targetUPKH, String referenceUPKH, Map<Integer, Label> pubPositiveHeatMappings, Map<Integer, Label> pubNegativeHeatMappings) {
@@ -712,54 +717,6 @@ public class HeatComparisonTabController {
     private int getResultForHeatType(PubComparisonResultS currentResult, HeatOverflowTypeEnum heatType) {
         return heatComparisonTabAccessProxy.getNormalizedMapIndexFromComparisonResult(HeatOverflowTypeEnum.HEAT_POSITIVE == heatType ? currentResult.getPositive() : currentResult.getNegative(), currentResult.getForScaleFactor());
     }
-
-    // private void insertColorsToPubHeatMaps(String pubUncompressed, String pubCompressed) {
-    //     insertColorsToPubHeatMapsForUncomp(pubUncompressed);
-    //     insertColorsToPubHeatMapsForComp(pubCompressed);
-    // }
-    //
-    // private void insertCalculatedHashesToPubHeatMaps(String pubUncompressed, String pubCompressed) {
-    //     insertCalculatedHashesToPubHeatMapsForUncomp(pubUncompressed);
-    //     insertCalculatedHashesToPubHeatMapsForComp(pubCompressed);
-    // }
-
-    // void insertCalculatedHashesToPubHeatMapsForUncomp(String pubUncompressed) {
-    //     for (int i = 0; i < pubUncompressed.length(); i++) {
-    //         String current = String.valueOf(pubUncompressed.charAt(i));
-    //         pubUncompressedHeatPositiveAbsoluteIndexes.get(i).setText(current);
-    //         pubUncompressedHeatNegativeAbsoluteIndexes.get(i).setText(current);
-    //     }
-    // }
-
-    // void insertCalculatedHashesToPubHeatMapsForComp(String pubCompressed) {
-    //     for (int i = 0; i < pubCompressed.length(); i++) {
-    //         String current = String.valueOf(pubCompressed.charAt(i));
-    //         pubCompressedHeatPositiveAbsoluteIndexes.get(i).setText(current);
-    //         pubCompressedHeatNegativeAbsoluteIndexes.get(i).setText(current);
-    //     }
-    // }
-
-    // public void insertSearchResultsToUiForUncompressed(PubComparisonResult result) {
-    //     String pubKeyHashUncompressed = helper.getPubKeyHashUncompressed(result.getForPriv(), false);
-    //
-    //     //add highest items to pub heat map (and translate accuracy)
-    //     insertCalculatedHashesToPubHeatMapsForUncomp(pubKeyHashUncompressed);
-    //     insertColorsToPubHeatMapsForUncomp(pubKeyHashUncompressed);
-    //
-    //     //set pub accuracy labels
-    //     insertPubSimilarityPercentLabels(result, PubTypeEnum.UNCOMPRESSED);
-    // }
-    //
-    // public void insertSearchResultsToUiForCompressed(PubComparisonResult result) {
-    //     String pubKeyHashCompressed = helper.getPubKeyHashCompressed(result.getForPriv(), false);
-    //
-    //     //add highest items to pub heat map (and translate accuracy)
-    //     insertCalculatedHashesToPubHeatMapsForComp(pubKeyHashCompressed);
-    //     insertColorsToPubHeatMapsForComp(pubKeyHashCompressed);
-    //
-    //     //set pub accuracy labels
-    //     insertPubSimilarityPercentLabels(result, PubTypeEnum.COMPRESSED);
-    // }
 
     private String getReferencePKHForUncompressedFromUi() {
         StringBuilder sb = new StringBuilder(40);

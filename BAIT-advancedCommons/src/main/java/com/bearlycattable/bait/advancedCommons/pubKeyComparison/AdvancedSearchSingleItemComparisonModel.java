@@ -1,4 +1,4 @@
-package com.bearlycattable.bait.advanced.searchHelper.comparisonModel;
+package com.bearlycattable.bait.advancedCommons.pubKeyComparison;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparisonResultB;

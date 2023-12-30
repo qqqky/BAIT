@@ -159,14 +159,6 @@ public class HeatVisualizerFormatterFactory {
                 System.out.println("Result after trim: " + result);
             }
 
-            // if (Integer.parseInt(result) < minValue) {
-            //    result = Integer.toString(minValue);
-            // }
-            //
-            // if (Integer.parseInt(result) > maxValue) {
-            //     result = Integer.toString(maxValue);
-            // }
-
             changeObject.setText(result);
             String previousText = ((TextField) changeObject.getControl()).getText();
 

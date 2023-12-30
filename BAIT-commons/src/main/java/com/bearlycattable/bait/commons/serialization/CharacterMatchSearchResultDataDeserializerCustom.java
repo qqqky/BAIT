@@ -46,8 +46,7 @@ public class CharacterMatchSearchResultDataDeserializerCustom extends StdDeseria
             }
         }
 
-        CharacterMatchSearchResultData myObject = new CharacterMatchSearchResultData(results);
-        return myObject;
+        return new CharacterMatchSearchResultData(results);
     }
 
     private PubTypeEnum readResultType(Map.Entry<String, JsonNode> resultTypeEntry) {

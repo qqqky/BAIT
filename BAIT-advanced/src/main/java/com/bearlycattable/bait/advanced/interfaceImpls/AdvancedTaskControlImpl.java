@@ -53,6 +53,7 @@ import com.bearlycattable.bait.utility.addressModifiers.stringModifiers.VRotator
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
@@ -154,7 +155,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         searchTask.setOnRunning(event -> doOnRunning(context));
         searchTask.setOnSucceeded(event -> doOnSucceeded(context, event));
         searchTask.setOnCancelled(event -> doOnCancelled(context));
-        searchTask.setOnFailed(event -> doOnFailed(context));
+        searchTask.setOnFailed(event -> doOnFailed(context, searchTask));
 
         logTaskPreparedMessage(context);
 
@@ -182,7 +183,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
     }
 
     private void logDebugInfoForAccessor(ThreadComponentDataAccessor accessor, String message) {
-        if (!advancedTaskControlAccessProxy.isVerboseMode()) {
+        if (advancedTaskControlAccessProxy.isVerboseMode()) {
             LOG.info(accessor.buildDebugInfo(message));
         }
     }
@@ -342,7 +343,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         context.getTaskMap().remove(threadNum);
     }
 
-    private void doOnFailed(TaskPreparationContext context) {
+    private void doOnFailed(TaskPreparationContext context, Task<P2PKHSingleResultData[]> self) {
         ThreadComponentDataAccessor accessor = context.getAccessor();
         String threadNum = accessor.getThreadNum();
 
@@ -350,6 +351,11 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
         String errorMessage = buildErrorMessageOnFailed(context);
         logErrorMessage(errorMessage);
+
+        //experimental
+        if (context.isVerboseMode()) {
+            logErrorMessage(Arrays.stream(self.getException().getStackTrace()).collect(Collectors.toList()).toString());
+        }
 
         accessor.getRemoveButton().setDisable(false);
         accessor.getStopThreadButton().setDisable(true);
@@ -681,8 +687,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         alert.getDialogPane().setContentText(rb.getString("label.doYouReallyWantToStop") + System.lineSeparator() + rb.getString("label.resultsWillNotBeSaved") + System.lineSeparator());
 
         //must add our default stylesheet for styles to work on Alert
-        boolean darkModeEnabled = advancedTaskControlAccessProxy.isDarkModeEnabled();
-        if (darkModeEnabled) {
+        if (advancedTaskControlAccessProxy.isDarkModeEnabled()) {
             alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("com.bearlycattable.bait.ui.css/styles.css")).toExternalForm());
             alert.getDialogPane().getStyleClass().add("alertDark");
         }

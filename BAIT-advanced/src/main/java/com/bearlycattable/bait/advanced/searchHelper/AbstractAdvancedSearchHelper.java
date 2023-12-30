@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.advanced.searchHelper.comparisonModel.AdvancedSearchSingleItemComparisonModel;
+import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedSearchSingleItemComparisonModel;
 import com.bearlycattable.bait.advanced.searchHelper.helpers.ExactMatchHelper;
 import com.bearlycattable.bait.advancedCommons.ShortSoundEffects;
 import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;
@@ -26,8 +26,8 @@ import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCrea
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
-import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerB;
-import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerS;
+import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerBImpl;
+import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerSImpl;
 import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparisonResultB;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
 import com.bearlycattable.bait.commons.Config;
@@ -65,8 +65,8 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
 
     @Getter
     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
-    private final AdvancedPubComparerS advancedPubComparerS = new AdvancedPubComparerS();
-    private final AdvancedPubComparerB advancedPubComparerB = new AdvancedPubComparerB();
+    private final AdvancedPubComparerSImpl advancedPubComparerS = new AdvancedPubComparerSImpl();
+    private final AdvancedPubComparerBImpl advancedPubComparerB = new AdvancedPubComparerBImpl();
 
     private final Set<String> unknownPKHs = new HashSet<>();
     private final Set<ByteBuffer> unknownPKHsB = new HashSet<>();
@@ -301,7 +301,10 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
                 Platform.runLater(() -> logConsumer.accept(exactMatchFoundMessage, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
 
                 String targetPath = Config.EXACT_MATCH_SAVE_PATH;
-                ExactMatchHelper.appendMatchToFile(currentPriv, unknownPKHs.contains(UPKH) ? UPKH : CPKH, targetPath);
+                if (ExactMatchHelper.appendMatchToFile(currentPriv, unknownPKHs.contains(UPKH) ? UPKH : CPKH, targetPath)) {
+                    Platform.runLater(() -> logConsumer.accept("Match saved at path: " + targetPath, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
+                }
+
                 ShortSoundEffects.DOUBLE_BEEP.play();
                 updateProgress((i + 1), iterations);
                 updateProgressLabel((i + 1), observableProgressLabelValue);
@@ -379,14 +382,18 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
             public P2PKHSingleResultData[] call() {
                 byte[] currentPriv = hexToByteData(seed);
 
-                initializeTemplateCaches(dataArray, getScaleFactor(), AddressGenerationAndComparisonType.BYTE, verbose, logConsumer);
+                // initializeTemplateCaches(dataArray, getScaleFactor(), AddressGenerationAndComparisonType.BYTE, verbose, logConsumer);
                 convertExactMatchCheckMapToByteVersion();
 
                 final JsonResultScaleFactorEnum currentScaleFactor = ScaleFactorEnum.toJsonScaleFactorEnum(getScaleFactor());
-                final boolean allPointMappingsCached = Arrays.stream(dataArray).allMatch(item -> item.isGeneralPointsCachedForScaleFactor(currentScaleFactor, AddressGenerationAndComparisonType.BYTE));
+                // final boolean allPointMappingsCached = Arrays.stream(dataArray).allMatch(item -> item.isGeneralPointsCachedForScaleFactor(currentScaleFactor, AddressGenerationAndComparisonType.BYTE));
 
                 //cache existing points to avoid having to recalculate (stored in dataArray)
                 P2PKHSingleResultDataHelper.revalidateAndInitCacheForExistingPoints(dataArray, ScaleFactorEnum.toJsonScaleFactorEnum(getScaleFactor()));
+
+                //TODO: dev test
+
+                // System.out.println("Will use the cached version? " + allPointMappingsCached);
 
                 //save current min points for every item in the template
                 Map<String, Integer> currentMinPointsMap = P2PKHSingleResultDataHelper.createCurrentMinPointsMap(dataArray, ScaleFactorEnum.toJsonScaleFactorEnum(getScaleFactor())); //for every P2PKHSingleResultData item
@@ -445,13 +452,7 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
                         continue;
                     }
 
-                    //update arrays with current values of UPKH and CPKH
-                    // updatePKHArray(UPKHArray, UPKH);
-                    // updatePKHArray(CPKHArray, CPKH);
-
                     String unknownP2PKH;
-
-                    // dataModel.setCurrentPrivKey(currentPriv);
 
                     for (P2PKHSingleResultData item : dataArray) {
                         unknownP2PKH = item.getHash();
@@ -460,12 +461,8 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
                         dataModel.getCurrentByteComparisonModel().setCurrentUPKH(UPKHBytes);
                         dataModel.getCurrentByteComparisonModel().setCurrentCPKH(CPKHBytes);
 
-                        // unknownP2PKH = item.getHash();
-                        // newResult = dataModel.getCurrentByteComparisonModel(item.getHash());
-                        // assert newResult != null : "Byte comparison model was null, this should never happen!";
-
                         // if (allPointMappingsCached) {
-                        //     updateResultBModelCached(dataModel.getCurrentByteComparisonModel());
+                        //     updateResultBModelCached(dataModel);
                         // } else {
                             updateResultBModel(dataModel.getCurrentByteComparisonModel());
                         // }
@@ -482,7 +479,6 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
                                 continue;
                             }
 
-                            // dataModel.setNewResult(newResult);
                             dataModel.setType(type);
                             dataModel.setCurrentPrivKey(bytesToHexString(currentPriv));
 
@@ -574,7 +570,10 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
                 Platform.runLater(() -> logConsumer.accept(exactMatchFoundMessage, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
 
                 String targetPath = Config.EXACT_MATCH_SAVE_PATH;
-                ExactMatchHelper.appendMatchToFile(currentPriv, unknownPKHs.contains(UPKH) ? UPKH : CPKH, targetPath);
+                if (ExactMatchHelper.appendMatchToFile(currentPriv, unknownPKHs.contains(UPKH) ? UPKH : CPKH, targetPath)) {
+                    Platform.runLater(() -> logConsumer.accept("Match saved at path: " + targetPath, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
+                }
+
                 ShortSoundEffects.DOUBLE_BEEP.play();
                 updateProgress((i + 1), iterations);
                 updateProgressLabel((i + 1), observableProgressLabelValue);
@@ -671,6 +670,7 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
 
     private void playNotificationSoundMaybe(AdvancedSearchSingleItemComparisonModel comparisonModel, int pointsGained) {
         if (comparisonModel.getPointThresholdForNotify() > 0 && pointsGained >= comparisonModel.getPointThresholdForNotify()) {
+            comparisonModel.getLogConsumer().accept("At #playNotificationSoundMaybe() want to play SINGLE_BEEP sound", Color.DARKCYAN, LogTextTypeEnum.GENERAL);
             ShortSoundEffects.SINGLE_BEEP.play();
         }
     }
@@ -767,8 +767,8 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
         advancedPubComparerB.comparePubKeyHashesB(model);
     }
 
-    public void updateResultBModelCached(AdvancedPubComparisonResultB model) {
-        advancedPubComparerB.comparePubKeyHashesCachedB(model);
+    public void updateResultBModelCached(AdvancedSearchSingleItemComparisonModel fullModel) {
+        advancedPubComparerB.comparePubKeyHashesCachedB(fullModel);
     }
 
     private void initializeTemplateCaches(P2PKHSingleResultData[] deepCopy, ScaleFactorEnum scaleFactor, AddressGenerationAndComparisonType cacheType, boolean verbose, TriConsumer<String, Color, LogTextTypeEnum> logConsumer) {

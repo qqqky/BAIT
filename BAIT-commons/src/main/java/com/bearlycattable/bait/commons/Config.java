@@ -16,14 +16,14 @@ public class Config {
     public static final ScaleFactorEnum DEFAULT_SCALE_FACTOR = ScaleFactorEnum.MEDIUM;
 
     public static final int MAX_ITERATIONS_QUICK_SEARCH = 1_048_576; //0x00100000
-    public static final int MAX_ITERATIONS_ADVANCED_SEARCH = 268_435_456; //0x10000000 (remove later?)
+    public static final int MAX_ITERATIONS_ADVANCED_SEARCH = 1_431_655_766; //0xFFFFFFFF+1 /3 (remove later?)
 
     public static final int MAX_H_ROTATIONS_WORDS = 8;
     public static final int MAX_H_ROTATIONS_FULL = 64;
     public static final int MAX_H_ROTATIONS_PREFIXED = 128;
     public static final int MAX_V_ROTATIONS = 16;
     public static final int MAX_LOOPS = 256; //0x00000100
-    public static final int MAX_LOG_SPACING_ADVANCED_SEARCH = 8_388_608; //1048576 * 8
+    public static final int MAX_LOG_SPACING_ADVANCED_SEARCH = 16_777_216; //1048576 * 16
     public static final int MAX_SOUND_NOTIFICATION_POINT_BARRIER = 9999;
 
     public static final int MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE = 5000; //do not change this value

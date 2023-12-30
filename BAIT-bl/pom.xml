@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>bait-bl</artifactId>
-<!--  <version>${bait-bl.version}</version>-->
+  <version>1.0.5</version>
   <packaging>jar</packaging>
 
   <dependencies>

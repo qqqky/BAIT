@@ -101,8 +101,7 @@ public class DarkModeHelper {
         addOrRemoveStyle(rootVBox, bcgPaneDark, enabled);
         rootVBox.getChildren().forEach(child -> darkModeHelper(child, enabled));
 
-        darkModeControl.setDarkModeEnabled(enabled);
-        darkModeControl.refreshLogView();
+        darkModeControl.setDarkMode(enabled);
     }
 
     public static void toggleDarkModeForComponent(boolean enable, Node component) {

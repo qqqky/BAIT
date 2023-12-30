@@ -36,7 +36,6 @@ import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabProgres
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabResultsControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabSearchControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedSubTabToolsControllerInitializer;
-import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.enums.BackgroundColorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
@@ -44,7 +43,7 @@ import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Control;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
@@ -54,6 +53,7 @@ import javafx.util.Pair;
 import lombok.Getter;
 
 /**
+ * //TODO: don't need this, right?
  * Dev notes:
  * 1. Do not use more than 10K entries for multiple search (GC error while initializing cache)!
  *      can make it use the non-cached version of the search, but it is too slow.
@@ -132,11 +132,20 @@ public class AdvancedTabMainController implements AdvancedToolsAccessProxy, Adva
         return advancedTaskControl.isBackgroundThreadWorking(currentThreadNum);
     }
 
-    private void addRedBorder(Control component) {
-        if (!component.getStyleClass().contains(CssConstants.BORDER_RED)) {
-            component.getStyleClass().add(CssConstants.BORDER_RED);
+    public Optional<String> getOverriddenExactMatchCheckPathToAddresses() {
+        CheckBox cbxEmo = advancedSubTabConfigController.getAdvancedConfigCbxOverrideExactMatchPath();
+        if (cbxEmo.isDisabled() || !cbxEmo.isSelected()) {
+            return Optional.empty();
         }
+
+        return Optional.of(advancedSubTabConfigController.getAdvancedConfigTextFieldExactMatchPath().getText());
     }
+
+    // private void addRedBorder(Control component) {
+    //     if (!component.getStyleClass().contains(CssConstants.BORDER_RED)) {
+    //         component.getStyleClass().add(CssConstants.BORDER_RED);
+    //     }
+    // }
 
     @Override
     public void insertThreadInfoLabelsToUi(String parentThreadId, String childThreadId, List<String> infoLabels) {
@@ -186,11 +195,6 @@ public class AdvancedTabMainController implements AdvancedToolsAccessProxy, Adva
         return advancedTabAccessProxy.getCurrentInput();
     }
 
-    // @Override
-    // public void setScaleFactorInComparisonTab(ScaleFactorEnum scaleFactor) {
-    //     advancedTabAccessProxy.setScaleFactorInComparisonTab(scaleFactor);
-    // }
-
     @Override
     public void showFullHeatComparison(HeatComparisonContext heatComparisonContext) {
         advancedTabAccessProxy.showFullHeatComparison(heatComparisonContext);
@@ -204,11 +208,6 @@ public class AdvancedTabMainController implements AdvancedToolsAccessProxy, Adva
     public void switchToChildTabX(int index) {
         advancedSearchTab.getTabPane().getSelectionModel().select(index);
     }
-
-    // @Override
-    // public synchronized void loadAdvancedSearchResultsToUi(String pathToResultFile, Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> advancedSearchResultsAsMap) {
-    //     advancedSubTabResultsController.loadAdvancedSearchResultsToUi(pathToResultFile, advancedSearchResultsAsMap);
-    // }
 
     @Override
     public synchronized final Optional<ThreadComponentDataAccessor> addNewThreadProgressContainerToProgressAndResultsTab(@Nullable String parentThreadNum, @Nullable String titleMessage) {
@@ -254,24 +253,10 @@ public class AdvancedTabMainController implements AdvancedToolsAccessProxy, Adva
         advancedSubTabSearchController.initDevDefaults();
     }
 
-    public void modifyAccessToFilterBtn(boolean enabled) {
-        advancedSubTabResultsController.modifyAccessToFilterBtn(enabled);
-    }
-
     @Override
     public void setBackgroundColorForProgressHBox(String threadNum, String childThreadNum, BackgroundColorEnum color) {
         advancedSubTabProgressController.setBackgroundColorForProgressHBox(threadNum, childThreadNum, color);
     }
-
-    // @Override
-    // public void setReferenceKeyInComparisonTab(String input, QuickSearchComparisonType type) {
-    //     advancedTabAccessProxy.setReferenceKeyInComparisonTab(input, type);
-    // }
-    //
-    // @Override
-    // public void setCurrentKeyInComparisonTab(String input) {
-    //     advancedTabAccessProxy.setCurrentKeyInComparisonTab(input);
-    // }
 
     @Override
     public void switchToComparisonTab() {
@@ -283,23 +268,21 @@ public class AdvancedTabMainController implements AdvancedToolsAccessProxy, Adva
         return advancedTabAccessProxy != null && advancedTabAccessProxy.isDarkModeEnabled();
     }
 
-    public boolean isExactMatchCheckOnlyEnabled() {
-        return advancedTabAccessProxy != null && advancedTabAccessProxy.isExactMatchOnly();
-    }
-
     @Override
-    public void setDarkModeEnabled(boolean enabled) {
-        advancedTabAccessProxy.setDarkModeEnabled(enabled);
-    }
-
-    @Override
-    public void refreshLogView() {
+    public void setDarkMode(boolean enabled) {
+        advancedSubTabConfigController.setDarkMode(true);
         advancedSubTabLogController.getAdvancedLogListView().refresh();
     }
 
-    public void selectDarkModeOption(boolean select) {
-        advancedSubTabConfigController.getAdvancedConfigCbxDarkMode().setSelected(select);
+    @Override
+    public void setDarkModeFlag(boolean enabled) {
+        advancedTabAccessProxy.setDarkModeFlag(enabled);
     }
+
+    // @Override
+    // public void refreshLogView() {
+    //     advancedSubTabLogController.getAdvancedLogListView().refresh();
+    // }
 
     @Override
     public boolean isVerboseMode() {

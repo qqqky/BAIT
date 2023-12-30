@@ -28,8 +28,6 @@ public class QuickSearchContext {
     private String seed;
     private PubComparisonResultSWrapper currentHighestResult; //for new searches it is PubComparisonResultWrapper.empty()
     private final List<Integer> disabledWords;
-    // @Setter
-    // private BiFunction<QuickSearchResponseModel, String, QuickSearchResponseModel> evaluationFunction;
     private int accuracy;
     @Setter
     private int iterations;

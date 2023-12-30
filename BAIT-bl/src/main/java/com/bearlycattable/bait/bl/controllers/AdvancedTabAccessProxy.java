@@ -1,20 +1,20 @@
 package com.bearlycattable.bait.bl.controllers;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
 
 public interface AdvancedTabAccessProxy {
 
     void setCurrentInputForced(String input);
 
-    String getCurrentInput();
+    @NonNull String getCurrentInput();
 
     void showFullHeatComparison(HeatComparisonContext heatComparisonContext);
 
     void switchToParentTabX(int index);
 
-    boolean isExactMatchOnly();
-
-    void setDarkModeEnabled(boolean enabled);
+    void setDarkModeFlag(boolean enabled);
 
     boolean isDarkModeEnabled();
 

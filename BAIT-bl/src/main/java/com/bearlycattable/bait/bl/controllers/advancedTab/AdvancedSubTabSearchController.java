@@ -21,6 +21,7 @@ import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
+import com.bearlycattable.bait.advancedCommons.models.MutableThreadSpawnModel;
 import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
 import com.bearlycattable.bait.advancedCommons.serialization.SerializedSearchResultsReader;
 import com.bearlycattable.bait.advancedCommons.validators.OptionalConfigValidationResponseType;
@@ -58,6 +59,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -79,6 +81,7 @@ public class AdvancedSubTabSearchController {
     //format: Pair<PathToTemplate, TemplateData>
     private Pair<String, P2PKHSingleResultData[]> loadedSearchTemplateData;
     private static final List<Integer> disabledWords = new ArrayList<>();
+    private volatile SearchModeEnum currentSearchMode = null;
 
     @FXML
     private TextField advancedSearchTextFieldLoadSearchTemplateFromFile;
@@ -197,7 +200,6 @@ public class AdvancedSubTabSearchController {
     }
 
     void initDevDefaults() {
-        //TODO: add dev defaults
         advancedSearchTextFieldLoadSearchTemplateFromFile.setText("D:\\Projects\\TestFiles\\testDelete_first5.json");
         advancedSearchTextFieldSaveSearchToFile.setText("D:\\Projects\\TestFiles\\zzzz.json");
         advancedSearchChoiceBoxSearchMode.getSelectionModel().select("Incremental (absolute)");
@@ -333,124 +335,238 @@ public class AdvancedSubTabSearchController {
             return;
         }
 
-        //REMINDER: num of iterations are included while constructing the SimpleSearchHelper!
+        ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder = ThreadSpawnModel.builder();
+
+        //1. search helper, seed
+        if (!addSearchHelper(modelBuilder)) {
+            return;
+        }
+
+        //2. log spacing, disabled words, byte comparison checkbox
+        addLogSpacing(modelBuilder);
+        addDisabledWords(modelBuilder);
+        addByteComparisonSelection(modelBuilder);
+
+        //3. save location
+        if (!addSaveLocation(modelBuilder)) {
+            return;
+        }
+
+        //4. number of loops
+        if (!addNumberOfLoops(modelBuilder)) {
+            return;
+        }
+
+        //5. seed mutation configs
+        if (!addSeedMutationConfigs(modelBuilder)) {
+            return;
+        }
+
+        //6. mode-specific config (currently only prefix and config for its mutation)
+        if (!addModeSpecificConfigs(modelBuilder)) {
+            return;
+        }
+
+        //7. sound notification tolerance
+        if (!addSoundNotificationTolerance(modelBuilder)) {
+            return;
+        }
+
+        //8. finally, copy and add current search template (costly operation, high chance model is otherwise valid at this point)
+        addActiveSearchTemplate(modelBuilder);
+
+        //9. create model
+        ThreadSpawnModel threadSpawnModel = modelBuilder.build();
+
+        //TODO: splash screen with confirmation loading progress (because loading exact check items might take some time)
+
+        //10. confirm user choice
+        if (!acceptUserConfirmationModal(threadSpawnModel)) {
+            return;
+        }
+
+        launchBackgroundSearch(threadSpawnModel);
+        advancedBtnSearch.setDisable(false);
+    }
+
+    private boolean addSearchHelper(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        //REMINDER: scale factor and num of iterations are included while constructing the SearchHelper!
         AdvancedSearchHelper advancedSearchHelper = constructSearchHelperFromUiData().orElse(null);
 
         if (advancedSearchHelper == null) {
             appendToErrorMessage(rb.getString("error.searchHelperConstructionError"));
             advancedBtnSearch.setDisable(false);
-            return;
-        } else {
-            enableExactMatchCheckIfEligible(advancedSearchHelper, Config.EXACT_MATCH_ADDRESSES_LIST_PATH);
-            removeMessage();
+            return false;
+        }
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.initModality(Modality.NONE);
+        a.setTitle("Loading...");
+        a.setResizable(false);
+        ProgressBar pb = new ProgressBar();
+        // pb.progressProperty().bind(modelCreatorTask.progressProperty());
+        a.getDialogPane().setGraphic(pb);
+        a.show();
+
+        enableExactMatchCheckIfEligible(advancedSearchHelper, Config.EXACT_MATCH_ADDRESSES_LIST_PATH);
+
+        a.hide();
+        removeMessage();
+
+        modelBuilder.advancedSearchHelper(advancedSearchHelper);
+
+        if (!addSeed(modelBuilder, advancedSearchHelper)) {
+            return false;
         }
 
-        int logSpacing = Integer.parseInt(advancedSearchTextFieldLogKeyEveryXIterations.getText());
+        currentSearchMode = advancedSearchHelper.getSearchMode();
+        return true;
+    }
 
+    private boolean addSeed(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder, AdvancedSearchHelper advancedSearchHelper) {
         //must validate seed for all modes (and generate any for random-related ones)
         String seed = buildSeed(advancedSearchHelper);
         if (seed.isEmpty()) {
             addErrorMessageAndRedBorder(rb.getString("error.invalidSeed"), advancedSearchTextFieldContinueFromSeed);
             advancedBtnSearch.setDisable(false);
-            return;
+            return false;
         }
+
+        modelBuilder.seed(seed);
         removeRedBorder(advancedSearchTextFieldContinueFromSeed);
 
+        return true;
+    }
+
+    private void addLogSpacing(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        int logSpacing = 0;
+        try {
+            logSpacing = Integer.parseInt(advancedSearchTextFieldLogKeyEveryXIterations.getText());
+        } catch (NumberFormatException e) {
+            modelBuilder.logSpacing(logSpacing);
+            LOG.info("Invalid logSpacing number format. Using the default value of " + logSpacing);
+        }
+
+        modelBuilder.logSpacing(logSpacing);
+    }
+
+    private void addDisabledWords(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        modelBuilder.disabledWords(readDisabledWordsFromUi());
+    }
+
+    private void addByteComparisonSelection(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        modelBuilder.byteComparisonEnabled(!advancedSearchCbxByteComparisonEnable.isDisabled() && advancedSearchCbxByteComparisonEnable.isSelected());
+    }
+
+    private boolean addSaveLocation(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
         //validate save location
         String saveLocation = advancedSearchTextFieldSaveSearchToFile.getText();
         if (!saveLocation.endsWith(".json") || !PathUtils.isAccessibleToWrite(saveLocation)) {
             addErrorMessageAndRedBorder(rb.getString("error.invalidSaveLocation"), advancedSearchTextFieldSaveSearchToFile);
+            advancedBtnSearch.setDisable(false);
+            return false;
         }
-        removeRedBorder(advancedSearchTextFieldSaveSearchToFile);
 
-        int numberOfLoops = getNumberOfLoopsFromUi(getNumberOfLoopsFromUi(Config.MAX_LOOPS));
+        removeRedBorder(advancedSearchTextFieldSaveSearchToFile);
+        modelBuilder.saveLocation(saveLocation);
+
+        return true;
+    }
+
+    private boolean addNumberOfLoops(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        int numberOfLoops = getNumberOfLoopsFromUi(Config.MAX_LOOPS);
 
         if (numberOfLoops == -1) {
             advancedBtnSearch.setDisable(false);
-            return;
+            return false;
         }
 
+        modelBuilder.totalLoopsRequested(numberOfLoops);
+        modelBuilder.remainingLoops(numberOfLoops);
         removeMessage();
         removeRedBorder(advancedSearchTextFieldNumberOfLoops);
 
-        List<Integer> disabledWords = readDisabledWordsFromUi();
-        Map<SeedMutationTypeEnum, Object> seedMutationConfigs = null;
+        return true;
+    }
 
-        boolean randomRelatedMode = SearchModeEnum.isRandomRelatedMode(advancedSearchHelper.getSearchMode());
-
-        if (!randomRelatedMode) {
-            seedMutationConfigs = buildSeedMutationConfigs().orElse(null);
+    private boolean addSeedMutationConfigs(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        if (SearchModeEnum.isRandomRelatedMode(currentSearchMode)) {
+            modelBuilder.seedMutationConfigs(null);
+            return true;
         }
 
-        Pair<RandomWordPrefixMutationTypeEnum, String> modeSpecificConfigs = null;
-        String randomWordPrefix = null;
+        Optional<Map<SeedMutationTypeEnum, Object>> configs = buildSeedMutationConfigs();
 
-        if (SearchModeEnum.isPrefixSupported(advancedSearchHelper.getSearchMode())) {
-            PrefixedModeConfigsWrapper prefixedModeConfigsWrapper = gatherModeSpecificConfigs();
-            if (!prefixedModeConfigsWrapper.hasValidConfig()) {
-                showErrorMessage(prefixedModeConfigsWrapper.getError());
-                advancedBtnSearch.setDisable(false);
-                return;
-            }
-
-            randomWordPrefix = prefixedModeConfigsWrapper.getPrefix();
-            modeSpecificConfigs = prefixedModeConfigsWrapper.getModeSpecificConfigs();
-        }
-        removeMessage();
-
-        //handle sound notification tolerance selection
-        int soundNotificationTolerance = 0;
-        if (advancedSearchCbxEnableSoundNotifications.isSelected()) {
-            NotificationConfigsWrapper notificationConfigsWrapper = gatherNotificationConfigs();
-            if (!notificationConfigsWrapper.hasValidConfig()) {
-                showErrorMessage(notificationConfigsWrapper.getError());
-                advancedBtnSearch.setDisable(false);
-                return;
-            }
-
-            soundNotificationTolerance = notificationConfigsWrapper.getNotificationTolerance();
-        }
-
-        //need to make a proper copy for each thread
-        P2PKHSingleResultData[] deepCopy = P2PKHSingleResultDataHelper.deepCopy(loadedSearchTemplateData.getValue());
-
-        //TODO: only for testing
-        System.out.println("Creating ThreadSpawnModel");
-        ThreadSpawnModel threadSpawnModel = ThreadSpawnModel.builder()
-                .advancedSearchHelper(advancedSearchHelper)
-                .byteComparisonEnabled(advancedSearchCbxByteComparisonEnable.isSelected())
-                .seed(seed)
-                .disabledWords(disabledWords)
-                .saveLocation(saveLocation)
-                .logSpacing(logSpacing)
-                .deepDataCopy(deepCopy)
-                .totalLoopsRequested(numberOfLoops)
-                .remainingLoops(numberOfLoops)
-                .pointThresholdForNotify(soundNotificationTolerance)
-                //seed mutation (optional)
-                .seedMutationConfigs(seedMutationConfigs)
-                //only for random-related modes
-                .prefix(randomRelatedMode ? randomWordPrefix : null)
-                .prefixMutationConfig(randomRelatedMode ? modeSpecificConfigs : null)
-                .build();
-
-        //TODO: splash screen with confirmation loading progress (because loading exact check items might take some time)
-
-        //confirm user choice
-        if (!confirmUserChoiceForNewSearchThread(threadSpawnModel.makeLabelListForUserNotification((t,u,v) -> advancedSearchAccessProxy.buildMutatedSeed(t, u, v)))) {
-            if (advancedSearchAccessProxy.isVerboseMode()) {
-                String msg = "User did not accept the search parameters. Search will not proceed";
-                System.out.println(msg);
-                advancedSearchAccessProxy.logToUi(msg, Color.DARKORANGE, LogTextTypeEnum.GENERAL);
-            }
+        if (!configs.isPresent()) {
             advancedBtnSearch.setDisable(false);
-            return;
+            return false;
         }
 
-        //init caches if possible
-        // Object o = ModifierType.STRING; ewfewf
-        // initializeTemplateCaches(deepCopy, Objects.requireNonNull(advancedSearchHelper).getScaleFactor(), ModifierType.STRING);
+        modelBuilder.seedMutationConfigs(configs.get());
 
+        return true;
+    }
+
+    private boolean addModeSpecificConfigs(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        if (!SearchModeEnum.isPrefixSupported(currentSearchMode)) {
+            modelBuilder.prefix(null);
+            modelBuilder.prefixMutationConfig(null);
+            removeMessage();
+            return true;
+        }
+
+        PrefixedModeConfigsWrapper prefixedModeConfigsWrapper = gatherModeSpecificConfigs();
+        if (!prefixedModeConfigsWrapper.hasValidConfig()) {
+            showErrorMessage(prefixedModeConfigsWrapper.getError());
+            advancedBtnSearch.setDisable(false);
+            return false;
+        }
+
+        modelBuilder.prefix(prefixedModeConfigsWrapper.getPrefix());
+        modelBuilder.prefixMutationConfig(prefixedModeConfigsWrapper.getModeSpecificConfigs());
+
+        removeMessage();
+        return true;
+    }
+
+    private boolean addSoundNotificationTolerance(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        if (!advancedSearchCbxEnableSoundNotifications.isSelected()) {
+            modelBuilder.pointThresholdForNotify(0);    //default value
+            return true;
+        }
+
+        NotificationConfigsWrapper notificationConfigsWrapper = gatherNotificationConfigs();
+        if (!notificationConfigsWrapper.hasValidConfig()) {
+            showErrorMessage(notificationConfigsWrapper.getError());
+            advancedBtnSearch.setDisable(false);
+            return false;
+        }
+
+        modelBuilder.pointThresholdForNotify(notificationConfigsWrapper.getNotificationTolerance());
+        removeMessage();
+        return true;
+    }
+
+    private void addActiveSearchTemplate(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder) {
+        //need to make a proper copy for each thread
+        modelBuilder.deepDataCopy(P2PKHSingleResultDataHelper.deepCopy(loadedSearchTemplateData.getValue()));
+    }
+
+    private boolean acceptUserConfirmationModal(ThreadSpawnModel threadSpawnModel) {
+        if (confirmUserChoiceForNewSearchThread(threadSpawnModel.makeLabelListForUserNotification((t,u,v) -> advancedSearchAccessProxy.buildMutatedSeed(t, u, v)))) {
+            return true;
+        }
+
+        if (advancedSearchAccessProxy.isVerboseMode()) {
+            String msg = "User did not accept the search parameters. Search will not proceed";
+            System.out.println(msg);
+            advancedSearchAccessProxy.logToUi(msg, Color.DARKORANGE, LogTextTypeEnum.GENERAL);
+        }
+
+        advancedBtnSearch.setDisable(false);
+        return false;
+    }
+
+    private void launchBackgroundSearch(@NonNull ThreadSpawnModel threadSpawnModel) {
         //TODO: only for testing
         System.out.println("Will now be spawning background search thread");
 
@@ -463,16 +579,13 @@ public class AdvancedSubTabSearchController {
                     }
                     advancedSearchAccessProxy.switchToChildTabX(2); //switch to 'Progress' tab
                 });
-
-        advancedBtnSearch.setDisable(false);
     }
 
     private boolean isInitialConditionsValid() {
-        InitialConditionsValidatorWrapper initialConditionsValidatorWrapper = validateInitialConditions();
-        return initialConditionsValidatorWrapper.isValid();
+        return gatherValidatorErrors().isValid();
     }
 
-    private InitialConditionsValidatorWrapper validateInitialConditions() {
+    private InitialConditionsValidatorWrapper gatherValidatorErrors() {
         InitialConditionsValidatorWrapper.InitialConditionsValidatorWrapperBuilder result = InitialConditionsValidatorWrapper.builder();
         String error;
         if (!advancedSearchAccessProxy.isTaskCreationAllowed(this)) {
@@ -504,24 +617,6 @@ public class AdvancedSubTabSearchController {
 
         return result.build();
     }
-
-    // private void initializeTemplateCaches(P2PKHSingleResultData[] deepCopy, ScaleFactorEnum scaleFactor, ModifierType cacheType) {
-    //     if (deepCopy.length <= Config.MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE) {
-    //         P2PKHSingleResultDataHelper.initializeCaches(deepCopy, ScaleFactorEnum.toJsonScaleFactorEnum(scaleFactor), cacheType);
-    //         if (advancedSearchAccessProxy.isVerboseMode()) {
-    //             String cachedSuccessfully = rb.getString("info.allTemplatesCached");
-    //             LOG.info(cachedSuccessfully);
-    //             advancedSearchAccessProxy.logToUi(cachedSuccessfully, Color.GREEN, LogTextTypeEnum.START_OF_SEARCH);
-    //         }
-    //         return;
-    //     }
-    //
-    //     if (advancedSearchAccessProxy.isVerboseMode()) {
-    //         String templatesCannotBeCached = rb.getString("info.proceedingWithUncached");
-    //         LOG.info(templatesCannotBeCached);
-    //         advancedSearchAccessProxy.logToUi(templatesCannotBeCached, Color.DARKORANGE, LogTextTypeEnum.START_OF_SEARCH);
-    //     }
-    // }
 
     @NonNull
     private NotificationConfigsWrapper gatherNotificationConfigs() {
@@ -614,15 +709,17 @@ public class AdvancedSubTabSearchController {
     }
 
     private Optional<Map<SeedMutationTypeEnum, Object>> buildSeedMutationConfigs() {
+        if (SearchModeEnum.isRandomRelatedMode(currentSearchMode)) {
+            return Optional.empty();
+        }
+
         Map<SeedMutationTypeEnum, Object> optionalSeedMutationConfigs = new LinkedHashMap<>();
 
         ValidatorResponse responseIncDec = validateAndGetIncDecOptions();
         if (OptionalConfigValidationResponseType.ABORT == responseIncDec.getResponseType()) {
             addErrorMessageAndRedBorder(responseIncDec.getErrorMessage(), advancedSearchTextFieldIncDecBy);
-            advancedBtnSearch.setDisable(false);
             return Optional.empty();
         } else if (OptionalConfigValidationResponseType.SILENT_ABORT == responseIncDec.getResponseType()) {
-            advancedBtnSearch.setDisable(false);
             return Optional.empty();
         }
         removeMessage();
@@ -634,10 +731,8 @@ public class AdvancedSubTabSearchController {
         ValidatorResponse responseHRot = validateAndGetHRotationOptions();
         if (OptionalConfigValidationResponseType.ABORT == responseHRot.getResponseType()) {
             addErrorMessageAndRedBorder(responseHRot.getErrorMessage(), advancedTextFieldRotateHorizontallyBy);
-            advancedBtnSearch.setDisable(false);
             return Optional.empty();
         } else if (OptionalConfigValidationResponseType.SILENT_ABORT == responseHRot.getResponseType()) {
-            advancedBtnSearch.setDisable(false);
             return Optional.empty();
         }
         removeMessage();
@@ -650,10 +745,8 @@ public class AdvancedSubTabSearchController {
         ValidatorResponse responseVRot = validateAndGetVRotationOptions();
         if (OptionalConfigValidationResponseType.ABORT == responseVRot.getResponseType()) {
             addErrorMessageAndRedBorder(responseVRot.getErrorMessage(), responseVRot.getErrorTargetTextField());
-            advancedBtnSearch.setDisable(false);
             return Optional.empty();
         } else if (OptionalConfigValidationResponseType.SILENT_ABORT == responseVRot.getResponseType()) {
-            advancedBtnSearch.setDisable(false);
             return Optional.empty();
         }
         removeMessage();
@@ -968,7 +1061,7 @@ public class AdvancedSubTabSearchController {
         String iterationsInput = advancedSearchTextFieldIterations.getText();
         int validatedIterations;
 
-        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX9.matcher(iterationsInput).matches()) {
+        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX10.matcher(iterationsInput).matches()) {
             advancedSearchTextFieldIterations.setText(String.valueOf(max));
             validatedIterations = max;
         } else {

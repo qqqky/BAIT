@@ -32,13 +32,6 @@ public class HeatVisualizerHelper {
     private final byte[] ALL_BYTES_MIN = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2};
     private final byte[] ALL_BYTES_MAX = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -70, -82, -36, -26, -81, 72, -96, 59, -65, -46, 94, -116, -48, 54, 65, 64};
 
-    // public String getPubKeyHashCompressed(String key, boolean trustInput) {
-    //     if (!trustInput && !isValidKey(key)) {
-    //         return null;
-    //     }
-    //     return bytesToHexString(ECKey.fromPrivate(hexToByteData(key), true).getPubKeyHash());
-    // }
-
     public String getPubKeyHashCompressed(String key, boolean trustInput) {
         if (!trustInput && !isValidKey(key)) {
             return null;

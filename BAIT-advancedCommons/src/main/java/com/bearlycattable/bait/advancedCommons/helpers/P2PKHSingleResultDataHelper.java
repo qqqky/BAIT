@@ -26,6 +26,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerB;
+import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerBImpl;
 import com.bearlycattable.bait.commons.HeatVisualizerConstants;
 import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
@@ -71,7 +72,7 @@ public class P2PKHSingleResultDataHelper {
      */
     public static void initializeCaches(P2PKHSingleResultData[] dataCollection, JsonResultScaleFactorEnum scaleFactor, AddressGenerationAndComparisonType cacheType) {
         PubComparerS comparerS = new PubComparerS();
-        AdvancedPubComparerB comparerB = new AdvancedPubComparerB();
+        AdvancedPubComparerB comparerB = new AdvancedPubComparerBImpl();
         final boolean cacheForByteVersion = cacheType == AddressGenerationAndComparisonType.BYTE;
 
         System.out.println("Started initializing caches [total: " + dataCollection.length + "]...");
@@ -186,6 +187,7 @@ public class P2PKHSingleResultDataHelper {
             }
         }
 
+        //dev: keys will be from -128 to 127
         return map;
     }
 
@@ -427,5 +429,32 @@ public class P2PKHSingleResultDataHelper {
             count++;
         }
         return convertedByteArray;
+    }
+
+    public static synchronized String toStringPretty(P2PKHSingleResultData[] array) {
+        if (array == null || array.length == 0) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int length = array.length;
+        String newLine = System.lineSeparator();
+
+        sb.append("[").append(newLine);
+        if (array.length == 1) {
+            sb.append(array[0].toStringPretty()).append(newLine).append("]");
+            return sb.toString();
+        }
+
+        for (int i = 0; i < length; i++) {
+            sb.append(array[i].toStringPretty());
+            if (i < (length - 1)) {
+                sb.append(",");
+            }
+            sb.append(newLine);
+        }
+
+        sb.append("]");
+        return sb.toString();
     }
 }
