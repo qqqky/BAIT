@@ -7,18 +7,18 @@
   <parent>
     <groupId>com.bearlycattable</groupId>
     <artifactId>bait</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.55</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>bait-ui</artifactId>
 <!--  Commented out - will inherit from parent-->
-<!--  <version>1.0.5</version>-->
+<!--  <version>1.0.55</version>-->
   <packaging>jar</packaging>
 
   <properties>
     <!--  Version for MSI/exe installer-->
-    <client.version>${project.version}009</client.version>
+    <client.version>${project.version}001</client.version>
     <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
   </properties>
 
