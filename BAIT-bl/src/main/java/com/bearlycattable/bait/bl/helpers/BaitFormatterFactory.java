@@ -1,13 +1,13 @@
 package com.bearlycattable.bait.bl.helpers;
 
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.BaitConstants;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 
-public class HeatVisualizerFormatterFactory {
+public class BaitFormatterFactory {
 
     public static TextFormatter<String> getDefaultWordInputFieldFormatter() {
         return constructHexInputFieldFormatter(8, true);
@@ -39,7 +39,7 @@ public class HeatVisualizerFormatterFactory {
                 return changeObject;
             }
 
-            String result = HeatVisualizerHelper.removeNonHexCharacters(changeObject.getText(), uppercaseOutput);
+            String result = BaitHelper.removeNonHexCharacters(changeObject.getText(), uppercaseOutput);
 
             //TODO: this will need some testing (copy/paste into fields)
             if (result.length() > maxLength) {
@@ -87,7 +87,7 @@ public class HeatVisualizerFormatterFactory {
                 return changeObject;
             }
 
-            String result = HeatVisualizerHelper.removeNonBase58Characters(changeObject.getText());
+            String result = BaitHelper.removeNonBase58Characters(changeObject.getText());
 
             //TODO: this will need some testing (copy/paste into fields)
             if (result.length() > maxLength) {
@@ -127,7 +127,7 @@ public class HeatVisualizerFormatterFactory {
 
     private static TextFormatter<String> constructNumericInputFieldFormatter(int minValue, int maxValue) {
         if (maxValue < 0) {
-            throw new IllegalArgumentException("Number cannot be negative at HeatVisualizerFormatterFactory#constructNumericInputFieldFormatter");
+            throw new IllegalArgumentException("Number cannot be negative at BaitFormatterFactory#constructNumericInputFieldFormatter");
         }
 
         int maxLength = Integer.toString(maxValue).length();
@@ -144,10 +144,10 @@ public class HeatVisualizerFormatterFactory {
             // String existingText = ((TextField) changeObject.getControl()).getText();
 
             //current text written/pasted
-            String result = HeatVisualizerHelper.removeNonIntegerCharacters(changeObject.getText());
+            String result = BaitHelper.removeNonIntegerCharacters(changeObject.getText());
 
             if (result.isEmpty()) {
-               changeObject.setText(HeatVisualizerConstants.EMPTY_STRING);
+               changeObject.setText(BaitConstants.EMPTY_STRING);
                return changeObject;
             }
 

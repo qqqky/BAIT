@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.contexts.QuickSearchContext;
 import com.bearlycattable.bait.commons.contexts.QuickSearchResponseModel;
 import com.bearlycattable.bait.commons.contexts.SimpleSearchHelperCreationContext;
@@ -259,10 +259,10 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
 
     public List<Integer> makeEnabledWordsList(List<Integer> disabledWords) {
         if (disabledWords == null || disabledWords.isEmpty()) {
-            return new ArrayList<>(HeatVisualizerConstants.ALL_WORD_NUMBERS);
+            return new ArrayList<>(BaitConstants.ALL_WORD_NUMBERS);
         }
 
-        return HeatVisualizerConstants.ALL_WORD_NUMBERS.stream()
+        return BaitConstants.ALL_WORD_NUMBERS.stream()
                 .filter(currentWordNum -> !disabledWords.contains(currentWordNum))
                 .collect(Collectors.toList());
     }

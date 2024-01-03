@@ -11,15 +11,15 @@ import java.util.ResourceBundle;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.serialization.SerializedSearchResultsReader;
 import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedToolsAccessProxy;
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
+import com.bearlycattable.bait.commons.helpers.BaitResourceSelectionModalHelper;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 import com.bearlycattable.bait.utility.UserInputUtils;
@@ -104,9 +104,9 @@ public class AdvancedSubTabToolsController {
         HBox labelContainer = new HBox();
         labelContainer.setAlignment(Pos.CENTER);
         labelContainer.setPrefHeight(50.0);
-        labelContainer.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        labelContainer.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
         labelContainer.getChildren().add(new Label(rb.getString("label.enterAddressesHere")));
-        labelContainer.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        labelContainer.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
         parent.getChildren().add(labelContainer);
 
         TextArea textArea = new TextArea();
@@ -132,7 +132,7 @@ public class AdvancedSubTabToolsController {
 
         HBox parentContentWrapper = new HBox();
         parentContentWrapper.setAlignment(Pos.CENTER_LEFT);
-        parentContentWrapper.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parentContentWrapper.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
         Label label = new Label(rb.getString("label.selectFile"));
         label.setPrefWidth(96.0);
         label.setPrefHeight(32.0);
@@ -145,7 +145,7 @@ public class AdvancedSubTabToolsController {
         textField.setTooltip(new Tooltip(rb.getString("tooltip.selectYourAddressList")));
         advancedToolsTextFieldPathToPubList = textField;
         parentContentWrapper.getChildren().add(textField);
-        parentContentWrapper.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parentContentWrapper.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         Button button = new Button(rb.getString("label.browse"));
         button.setOnAction(event -> browseAddressListPath(advancedToolsTextFieldPathToPubList));
@@ -161,7 +161,7 @@ public class AdvancedSubTabToolsController {
     }
 
     private void browseAddressListPath(TextInputControl textInputComponent) {
-        Optional<String> absPath = HeatVisualizerModalHelper.selectTxtResourceForOpen(rb.getString("label.openResource"), textInputComponent);
+        Optional<String> absPath = BaitResourceSelectionModalHelper.selectTxtResourceForOpen(rb.getString("label.openResource"), textInputComponent);
         if (absPath.isPresent()) {
             textInputComponent.setText(absPath.get());
             removeRedBorder(textInputComponent);
@@ -172,7 +172,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     private void doBrowseAddressListSavePath() {
-        Optional<String> absPath = HeatVisualizerModalHelper.selectJsonResourceForSave(rb.getString("label.saveTo"), advancedToolsTextFieldTemplateSavePath);
+        Optional<String> absPath = BaitResourceSelectionModalHelper.selectJsonResourceForSave(rb.getString("label.saveTo"), advancedToolsTextFieldTemplateSavePath);
         if (absPath.isPresent()) {
             advancedToolsTextFieldTemplateSavePath.setText(absPath.get());
             removeRedBorder(advancedToolsTextFieldTemplateSavePath);
@@ -237,7 +237,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     private void doBrowseInputPathOne() {
-        Optional<String> absPath = HeatVisualizerModalHelper.selectJsonResourceForOpen(rb.getString("label.openResource"), advancedToolsTextFieldMergeInputFile01);
+        Optional<String> absPath = BaitResourceSelectionModalHelper.selectJsonResourceForOpen(rb.getString("label.openResource"), advancedToolsTextFieldMergeInputFile01);
         if (absPath.isPresent()) {
             advancedToolsTextFieldMergeInputFile01.setText(absPath.get());
             removeRedBorder(advancedToolsTextFieldMergeInputFile01);
@@ -248,7 +248,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     private void doBrowseInputPathTwo() {
-        Optional<String> absPath = HeatVisualizerModalHelper.selectJsonResourceForOpen(rb.getString("label.openResource"), advancedToolsTextFieldMergeInputFile02);
+        Optional<String> absPath = BaitResourceSelectionModalHelper.selectJsonResourceForOpen(rb.getString("label.openResource"), advancedToolsTextFieldMergeInputFile02);
         if (absPath.isPresent()) {
             advancedToolsTextFieldMergeInputFile02.setText(absPath.get());
             removeRedBorder(advancedToolsTextFieldMergeInputFile02);
@@ -259,7 +259,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     private void doBrowseOutputPath() {
-        Optional<String> absPath = HeatVisualizerModalHelper.selectJsonResourceForSave(rb.getString("label.saveTo"), advancedToolsTextFieldMergeOutputFilePath);
+        Optional<String> absPath = BaitResourceSelectionModalHelper.selectJsonResourceForSave(rb.getString("label.saveTo"), advancedToolsTextFieldMergeOutputFilePath);
         if (absPath.isPresent()) {
             advancedToolsTextFieldMergeOutputFilePath.setText(absPath.get());
             removeRedBorder(advancedToolsTextFieldMergeOutputFilePath);
@@ -329,7 +329,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     private void doBrowseMultiSourcePath() {
-        Optional<String> absPath = HeatVisualizerModalHelper.selectTxtResourceForOpen(rb.getString("label.openResource"), advancedToolsTextFieldMultiSource);
+        Optional<String> absPath = BaitResourceSelectionModalHelper.selectTxtResourceForOpen(rb.getString("label.openResource"), advancedToolsTextFieldMultiSource);
         if (absPath.isPresent()) {
             advancedToolsTextFieldMultiSource.setText(absPath.get());
             removeRedBorder(advancedToolsTextFieldMultiSource);
@@ -340,7 +340,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     private void doBrowseMultiTargetPath() {
-        Optional<String> absPath = HeatVisualizerModalHelper.selectTxtResourceForSave(rb.getString("label.saveTo"), advancedToolsTextFieldMultiTarget);
+        Optional<String> absPath = BaitResourceSelectionModalHelper.selectTxtResourceForSave(rb.getString("label.saveTo"), advancedToolsTextFieldMultiTarget);
         if (absPath.isPresent()) {
             advancedToolsTextFieldMultiTarget.setText(absPath.get());
             removeRedBorder(advancedToolsTextFieldMultiTarget);
@@ -351,7 +351,7 @@ public class AdvancedSubTabToolsController {
 
     @FXML
     private void doUnencodeFile(ActionEvent actionEvent) {
-        insertErrorLabel(searchToolsLabelMultiUnencodeResultMessage, rb.getString("error.multiUnencoderDisabled") + HeatVisualizerConstants.CURRENT_VERSION);
+        insertErrorLabel(searchToolsLabelMultiUnencodeResultMessage, rb.getString("error.multiUnencoderDisabled") + BaitConstants.CURRENT_VERSION);
         //TODO: SimpleListFilter will help here
 
         //show error/success at searchToolsLabelMultiUnencodeResultMessage
@@ -365,7 +365,7 @@ public class AdvancedSubTabToolsController {
             return Optional.empty();
         }
 
-        userInput = userInput.replaceAll("[^0123456789abcdefABCDEF\r\n\t ,]+", HeatVisualizerConstants.EMPTY_STRING);
+        userInput = userInput.replaceAll("[^0123456789abcdefABCDEF\r\n\t ,]+", BaitConstants.EMPTY_STRING);
 
         String finalUserInput = userInput;
 
@@ -423,7 +423,7 @@ public class AdvancedSubTabToolsController {
         if ("".equals(delimiter)) {
             //maybe we only have 1 valid key
             String possibleKey = finalUserInput.trim();
-            if (HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(possibleKey).matches()) {
+            if (BaitConstants.PATTERN_SIMPLE_40.matcher(possibleKey).matches()) {
                 inputKeyList.add(possibleKey);
             }
             return inputKeyList;
@@ -433,7 +433,7 @@ public class AdvancedSubTabToolsController {
 
         //allows max 3 valid keys for now
         Arrays.stream(processed.split(delimiter, 4))
-                .filter(str -> str != null && HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(str.trim()).matches())
+                .filter(str -> str != null && BaitConstants.PATTERN_SIMPLE_40.matcher(str.trim()).matches())
                 .map(str -> str.toLowerCase(Locale.ROOT))
                 .map(String::trim)
                 .forEach(inputKeyList::add);
@@ -473,7 +473,7 @@ public class AdvancedSubTabToolsController {
     private void removeLabel(Label component) {
         component.getStyleClass().clear();
         component.getStyleClass().add(CssConstants.ERROR_INFO_MESSAGE_STYLE_CLASS);
-        component.setText(HeatVisualizerConstants.EMPTY_STRING);
+        component.setText(BaitConstants.EMPTY_STRING);
     }
 
     public final boolean isParentValid() {

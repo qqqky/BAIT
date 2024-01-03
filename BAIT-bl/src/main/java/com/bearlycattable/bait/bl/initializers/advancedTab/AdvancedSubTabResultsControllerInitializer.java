@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedSubTabResultsController;
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
@@ -47,11 +47,11 @@ public final class AdvancedSubTabResultsControllerInitializer {
     }
 
     private void addTextFormatterForFilterPubPrefixField() {
-        controller.getAdvancedResultsFilterPubPrefix().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultUnencodedPublicKeyFormatter());
+        controller.getAdvancedResultsFilterPubPrefix().setTextFormatter(BaitFormatterFactory.getDefaultUnencodedPublicKeyFormatter());
     }
 
     private void addTextFormatterForMinAccuracyField() {
-        controller.getAdvancedResultsFilterTextFieldAccuracyMin().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(100));
+        controller.getAdvancedResultsFilterTextFieldAccuracyMin().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(100));
         controller.getAdvancedResultsFilterTextFieldAccuracyMin().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -64,7 +64,7 @@ public final class AdvancedSubTabResultsControllerInitializer {
     }
 
     private void addTextFormatterForMaxResultsField() {
-        controller.getAdvancedResultsFilterTextFieldMaxResults().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(999));
+        controller.getAdvancedResultsFilterTextFieldMaxResults().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(999));
         controller.getAdvancedResultsFilterTextFieldMaxResults().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {

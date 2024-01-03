@@ -3,7 +3,7 @@ package com.bearlycattable.bait.utility.addressModifiers.stringModifiers;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 
 public class HRotatorModifierImpl extends AbstractModifier implements HRotatorModifier {
@@ -18,12 +18,12 @@ public class HRotatorModifierImpl extends AbstractModifier implements HRotatorMo
 
     @Override
     public String rotateAddressLeftBy(String address, int rotateBy, boolean withInternalHeader) {
-        return withInternalHeader ? rotateLeftBy((HeatVisualizerConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateLeftBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
+        return withInternalHeader ? rotateLeftBy((BaitConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateLeftBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
     }
 
     @Override
     public String rotateAddressRightBy(String address, int rotateBy, boolean withInternalHeader) {
-        return withInternalHeader ? rotateRightBy((HeatVisualizerConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateRightBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
+        return withInternalHeader ? rotateRightBy((BaitConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateRightBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
     }
 
     /**
@@ -36,7 +36,7 @@ public class HRotatorModifierImpl extends AbstractModifier implements HRotatorMo
      */
     @Override
     public String rotateAllWordsBy(String address, int rotateBy, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             return null;
         }
 

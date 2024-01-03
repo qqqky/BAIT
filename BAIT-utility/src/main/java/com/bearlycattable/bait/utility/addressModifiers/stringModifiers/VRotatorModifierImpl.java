@@ -3,7 +3,7 @@ package com.bearlycattable.bait.utility.addressModifiers.stringModifiers;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 
 public class VRotatorModifierImpl extends AbstractModifier implements VRotatorModifier {
@@ -26,7 +26,7 @@ public class VRotatorModifierImpl extends AbstractModifier implements VRotatorMo
         sb.append(address);
 
         String incrementedChar = incrementHexCharacter(String.valueOf(address.charAt(selectedIndex))).toUpperCase();
-        if (!HeatVisualizerConstants.PATTERN_HEX_01.matcher(incrementedChar).matches()) {
+        if (!BaitConstants.PATTERN_HEX_01.matcher(incrementedChar).matches()) {
             throw new IllegalStateException("at VRotatorModifier#rotateSelectedIndexVertically. Incremented result was: " + incrementedChar);
         }
         sb.replace(selectedIndex, selectedIndex + 1, incrementedChar);
@@ -72,7 +72,7 @@ public class VRotatorModifierImpl extends AbstractModifier implements VRotatorMo
         }
 
         if ("f".equals(hexChar) || "F".equals(hexChar)) {
-            return HeatVisualizerConstants.ZERO_STRING;
+            return BaitConstants.ZERO_STRING;
         }
         int num = Integer.parseInt(hexChar, 16);
         return Integer.toHexString(++num);
@@ -88,8 +88,8 @@ public class VRotatorModifierImpl extends AbstractModifier implements VRotatorMo
             throw new IllegalArgumentException("Method only accepts a string of length 1 at #decrementHexCharacter [received input: " + hexChar + "]");
         }
 
-        if (HeatVisualizerConstants.ZERO_STRING.equals(hexChar)) {
-            return HeatVisualizerConstants.F_STRING;
+        if (BaitConstants.ZERO_STRING.equals(hexChar)) {
+            return BaitConstants.F_STRING;
         }
         int num = Integer.parseInt(hexChar, 16);
         return Integer.toHexString(--num);

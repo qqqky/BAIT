@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,23 +19,22 @@ import com.bearlycattable.bait.advanced.providers.AdvancedSearchHelperProvider;
 import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
-import com.bearlycattable.bait.advancedCommons.models.MutableThreadSpawnModel;
 import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
 import com.bearlycattable.bait.advancedCommons.serialization.SerializedSearchResultsReader;
 import com.bearlycattable.bait.advancedCommons.validators.OptionalConfigValidationResponseType;
 import com.bearlycattable.bait.advancedCommons.validators.VRotationInputValidator;
 import com.bearlycattable.bait.advancedCommons.validators.ValidatorResponse;
 import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedSearchAccessProxy;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.bl.wrappers.InitialConditionsValidatorWrapper;
 import com.bearlycattable.bait.bl.wrappers.NotificationConfigsWrapper;
 import com.bearlycattable.bait.bl.wrappers.PrefixedModeConfigsWrapper;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.RandomWordPrefixMutationTypeEnum;
@@ -42,13 +42,15 @@ import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.enums.SeedMutationTypeEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
+import com.bearlycattable.bait.commons.helpers.BaitResourceSelectionModalHelper;
+import com.bearlycattable.bait.commons.uiHelpers.LoadingAnimationHelper;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
 import com.bearlycattable.bait.utility.BaitUtils;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 import com.bearlycattable.bait.utility.PathUtils;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -59,7 +61,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -215,7 +216,7 @@ public class AdvancedSubTabSearchController {
 
     @FXML
     private void doBrowseExistingResultsFilePath() {
-        Optional<String> result = HeatVisualizerModalHelper.selectJsonResourceForOpen(rb.getString("label.modalSelectResourceFile"), advancedSearchTextFieldLoadSearchTemplateFromFile);
+        Optional<String> result = BaitResourceSelectionModalHelper.selectJsonResourceForOpen(rb.getString("label.modalSelectResourceFile"), advancedSearchTextFieldLoadSearchTemplateFromFile);
         if (result.isPresent()) {
             String absPath = result.get();
             advancedSearchTextFieldLoadSearchTemplateFromFile.setText(absPath);
@@ -288,7 +289,7 @@ public class AdvancedSubTabSearchController {
 
     @FXML
     private void doSelectSearchSaveTargetPath() {
-        HeatVisualizerModalHelper.selectJsonResourceForSave(rb.getString("label.modalSelectSaveDestination"), advancedSearchTextFieldSaveSearchToFile).ifPresent(absPath -> {
+        BaitResourceSelectionModalHelper.selectJsonResourceForSave(rb.getString("label.modalSelectSaveDestination"), advancedSearchTextFieldSaveSearchToFile).ifPresent(absPath -> {
             advancedSearchTextFieldSaveSearchToFile.setText(absPath);
         });
     }
@@ -297,7 +298,7 @@ public class AdvancedSubTabSearchController {
     private void doImportPriv() {
         String key = advancedSearchAccessProxy.importDataFromCurrentInputFieldInMainTab(this);
 
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
             addRedBorder(advancedSearchTextFieldContinueFromSeed);
             showErrorMessage(rb.getString("error.importFailedInvalidKey"));
             return;
@@ -311,7 +312,7 @@ public class AdvancedSubTabSearchController {
     private void doExportPriv() {
         String key = advancedSearchTextFieldContinueFromSeed.getText();
 
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
             addRedBorder(advancedSearchTextFieldContinueFromSeed);
             showErrorMessage(rb.getString("error.exportFailedInvalidKey"));
             return;
@@ -398,19 +399,9 @@ public class AdvancedSubTabSearchController {
             advancedBtnSearch.setDisable(false);
             return false;
         }
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.initModality(Modality.NONE);
-        a.setTitle("Loading...");
-        a.setResizable(false);
-        ProgressBar pb = new ProgressBar();
-        // pb.progressProperty().bind(modelCreatorTask.progressProperty());
-        a.getDialogPane().setGraphic(pb);
-        a.show();
-
-        enableExactMatchCheckIfEligible(advancedSearchHelper, Config.EXACT_MATCH_ADDRESSES_LIST_PATH);
-
-        a.hide();
         removeMessage();
+
+        showLoadingDialog(advancedSearchHelper); //costly operation for reading and loading
 
         modelBuilder.advancedSearchHelper(advancedSearchHelper);
 
@@ -420,6 +411,25 @@ public class AdvancedSubTabSearchController {
 
         currentSearchMode = advancedSearchHelper.getSearchMode();
         return true;
+    }
+
+    private void showLoadingDialog(AdvancedSearchHelper advancedSearchHelper) {
+        if (!advancedSearchHelper.isExactMatchCheckEnabled()) {
+            LOG.info("'exact match check' option is disabled for this AdvancedSearchHelper. Will proceed without");
+            return;
+        }
+
+        Alert loadingAnimationAlert = LoadingAnimationHelper.createLoadingAlert(advancedBtnSearch.getScene().getWindow());
+
+        Thread thread = new Thread(() -> {
+            enableExactMatchCheckIfEligible(advancedSearchHelper, Config.EXACT_MATCH_ADDRESSES_LIST_PATH);
+
+            //when work is over, close the loading animation dialog
+            Platform.runLater(loadingAnimationAlert::close);
+        });
+
+        loadingAnimationAlert.setOnShowing(dialogEvent -> thread.start());
+        loadingAnimationAlert.showAndWait();
     }
 
     private boolean addSeed(ThreadSpawnModel.ThreadSpawnModelBuilder modelBuilder, AdvancedSearchHelper advancedSearchHelper) {
@@ -669,7 +679,7 @@ public class AdvancedSubTabSearchController {
             return result.build();
         }
 
-        if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(randomWordPrefix).matches()) {
+        if (!BaitConstants.PATTERN_HEX_01_TO_08.matcher(randomWordPrefix).matches()) {
             String error = rb.getString("error.randomWordPrefixInvalid");
             advancedBtnSearch.setDisable(false);
             addErrorMessageAndRedBorder(error, advancedSearchTextFieldRandomWordPrefix);
@@ -702,7 +712,7 @@ public class AdvancedSubTabSearchController {
             return Stream.generate(() -> "0").limit(64).collect(Collectors.joining());
         }
         String seed = advancedSearchTextFieldContinueFromSeed.getText();
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
             return "";
         }
         return seed;
@@ -767,7 +777,7 @@ public class AdvancedSubTabSearchController {
 
         String value = advancedSearchTextFieldNotificationPointTolerance.getText();
 
-        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX4.matcher(value).matches()) {
+        if (!BaitConstants.DIGITS_ONLY_MAX4.matcher(value).matches()) {
             return Optional.empty();
         }
 
@@ -780,7 +790,7 @@ public class AdvancedSubTabSearchController {
             retrieveIncOrDecTypeForOptionalConfigs().ifPresent(selectedIncDecMutationType -> {
                 String incDecBy = advancedSearchTextFieldIncDecBy.getText();
 
-                if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(incDecBy).matches()) {
+                if (!BaitConstants.PATTERN_HEX_01_TO_08.matcher(incDecBy).matches()) {
                     incDecResponse.setResponseType(OptionalConfigValidationResponseType.ABORT);
                     incDecResponse.setErrorMessage(rb.getString("error.incDecMustBe8HexOrLess"));
                     return;
@@ -802,7 +812,7 @@ public class AdvancedSubTabSearchController {
 
                 String rotateHBy = advancedTextFieldRotateHorizontallyBy.getText();
 
-                if (!HeatVisualizerConstants.DIGITS_ONLY_MAX3.matcher(rotateHBy).matches()) {
+                if (!BaitConstants.DIGITS_ONLY_MAX3.matcher(rotateHBy).matches()) {
                     hRotResponse.setResponseType(OptionalConfigValidationResponseType.ABORT);
                     hRotResponse.setErrorMessage(rb.getString("error.rotHMustNotExceed3"));
                     return;
@@ -956,12 +966,8 @@ public class AdvancedSubTabSearchController {
     }
 
     private void enableExactMatchCheckIfEligible(AdvancedSearchHelper advancedSearchHelper, String pathToUnencodedAddressList) {
-        if (!advancedSearchHelper.isExactMatchCheckEnabled()) {
-            LOG.info("'exact match check' option is disabled for this AdvancedSearchHelper. Will proceed without");
-            return;
-        }
-
-        advancedSearchHelperProvider.updateTargetForExactMatchCheck(advancedSearchAccessProxy.readUnencodedPubsListIntoSet(pathToUnencodedAddressList), advancedSearchHelper);
+        Set<String> pubs = advancedSearchAccessProxy.readUnencodedPubsListIntoSet(pathToUnencodedAddressList);
+        advancedSearchHelperProvider.updateTargetForExactMatchCheck(pubs, advancedSearchHelper);
     }
 
     private List<Integer> readDisabledWordsFromUi() {
@@ -996,7 +1002,7 @@ public class AdvancedSubTabSearchController {
     void removeMessage() {
         advancedSearchErrorLabel.getStyleClass().clear();
         advancedSearchErrorLabel.getStyleClass().add(CssConstants.ERROR_INFO_MESSAGE_STYLE_CLASS);
-        advancedSearchErrorLabel.setText(HeatVisualizerConstants.EMPTY_STRING);
+        advancedSearchErrorLabel.setText(BaitConstants.EMPTY_STRING);
     }
 
     private void addErrorMessageAndRedBorder(String message, Control component) {
@@ -1061,7 +1067,7 @@ public class AdvancedSubTabSearchController {
         String iterationsInput = advancedSearchTextFieldIterations.getText();
         int validatedIterations;
 
-        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX10.matcher(iterationsInput).matches()) {
+        if (!BaitConstants.DIGITS_ONLY_MAX10.matcher(iterationsInput).matches()) {
             advancedSearchTextFieldIterations.setText(String.valueOf(max));
             validatedIterations = max;
         } else {
@@ -1083,7 +1089,7 @@ public class AdvancedSubTabSearchController {
     private int getNumberOfLoopsFromUi(int max) {
         String loops = advancedSearchTextFieldNumberOfLoops.getText();
 
-        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX3.matcher(loops).matches()) {
+        if (!BaitConstants.DIGITS_ONLY_MAX3.matcher(loops).matches()) {
             addErrorMessageAndRedBorder(rb.getString("error.loopsNumberInvalid"), advancedSearchTextFieldNumberOfLoops);
             return -1;
         }
@@ -1092,7 +1098,7 @@ public class AdvancedSubTabSearchController {
     }
 
     private boolean isValidSeedInUi() {
-        return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(advancedSearchTextFieldContinueFromSeed.getText()).matches();
+        return BaitConstants.PATTERN_SIMPLE_64.matcher(advancedSearchTextFieldContinueFromSeed.getText()).matches();
     }
 
     public void modifyAccessToSeedComponent(boolean enabled) {
@@ -1107,18 +1113,18 @@ public class AdvancedSubTabSearchController {
         }
 
         HBox hbox = new HBox();
-        Label specialLabelTooltip = HeatVisualizerComponentHelper.createPrettyLabelWithTooltip(rb.getString("tooltip.special.notificationToleranceExplanation"));
+        Label specialLabelTooltip = BaitComponentHelper.createPrettyLabelWithTooltip(rb.getString("tooltip.special.notificationToleranceExplanation"));
         hbox.getChildren().add(specialLabelTooltip);
-        hbox.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        hbox.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
         Label label = new Label(rb.getString("label.notificationTolerance"));
         label.setPrefHeight(32.0);
         hbox.getChildren().add(label);
-        hbox.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        hbox.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
         TextField tf = new TextField();
         tf.setAlignment(Pos.CENTER);
         tf.setPrefWidth(52.0);
         tf.setText("0");
-        tf.setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_SOUND_NOTIFICATION_POINT_BARRIER));
+        tf.setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_SOUND_NOTIFICATION_POINT_BARRIER));
         advancedSearchTextFieldNotificationPointTolerance = tf;
         hbox.getChildren().add(tf);
 
@@ -1145,7 +1151,7 @@ public class AdvancedSubTabSearchController {
             default:
                 HBox parent = new HBox();
                 parent.setAlignment(Pos.CENTER);
-                parent.getChildren().add(HeatVisualizerComponentHelper.createLabel(rb.getString("label.additionalOptionsUnavailable"), 16, false));
+                parent.getChildren().add(BaitComponentHelper.createLabel(rb.getString("label.additionalOptionsUnavailable"), 16, false));
                 if (advancedSearchAccessProxy != null) {
                     DarkModeHelper.toggleDarkModeForComponent(advancedSearchAccessProxy.isDarkModeEnabled(), parent);
                 }
@@ -1161,24 +1167,24 @@ public class AdvancedSubTabSearchController {
         lbl1.setAlignment(Pos.CENTER_RIGHT);
 
         parent.getChildren().add(lbl1);
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         TextField textField = new TextField();
         textField.setAlignment(Pos.CENTER);
         textField.setPrefWidth(104.0);
         textField.getStyleClass().add("wordPKInput"); //TODO: should depend on font metrics
         textField.setTooltip(new Tooltip(rb.getString("tooltip.randomWordPrefixExplanation")));
-        textField.setTextFormatter(HeatVisualizerFormatterFactory.getDefaultWordInputFieldFormatter());
+        textField.setTextFormatter(BaitFormatterFactory.getDefaultWordInputFieldFormatter());
         advancedSearchTextFieldRandomWordPrefix = textField;
         parent.getChildren().add(textField);
 
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         CheckBox cbx = new CheckBox(rb.getString("label.cbxMutatePrefixQ"));
         parent.getChildren().add(cbx);
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
-        parent.getChildren().add(HeatVisualizerComponentHelper.createPrettyLabelWithTooltip(rb.getString("tooltip.special.prefixMutationExplanation")));
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createPrettyLabelWithTooltip(rb.getString("tooltip.special.prefixMutationExplanation")));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         HBox incDecPrefixWrapper = new HBox();
         incDecPrefixWrapper.setAlignment(Pos.CENTER);
@@ -1198,17 +1204,17 @@ public class AdvancedSubTabSearchController {
         advancedSearchRadioRandomWordPrefixDec = decrement;
 
         incDecPrefixWrapper.getChildren().add(increment);
-        incDecPrefixWrapper.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        incDecPrefixWrapper.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
         incDecPrefixWrapper.getChildren().add(decrement);
-        incDecPrefixWrapper.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(36, false));
+        incDecPrefixWrapper.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(36, false));
         incDecPrefixWrapper.getChildren().add(new Label("by"));
-        incDecPrefixWrapper.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        incDecPrefixWrapper.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         TextField incDecBy = new TextField();
         incDecBy.setAlignment(Pos.CENTER);
         incDecBy.setPrefWidth(104.0);
         incDecBy.getStyleClass().add("wordPKInput"); //TODO: should depend on font metrics
-        incDecBy.setTextFormatter(HeatVisualizerFormatterFactory.getDefaultWordInputFieldFormatter());
+        incDecBy.setTextFormatter(BaitFormatterFactory.getDefaultWordInputFieldFormatter());
         advancedSearchTextFieldRandomWordPrefixIncDecBy = incDecBy;
         incDecBy.setTooltip(new Tooltip(rb.getString("tooltip.randomWordPrefixIncDec")));
 

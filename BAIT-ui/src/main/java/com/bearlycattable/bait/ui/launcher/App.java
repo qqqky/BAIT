@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import com.bearlycattable.bait.bl.controllers.RootController;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 
@@ -72,6 +72,7 @@ public class App extends Application {
             alert.setTitle("Exiting BAIT");
             alert.getDialogPane().setHeaderText("Are you sure you want to quit BAIT?");
             alert.getDialogPane().setContentText("If any searches are still running, the progress will be lost");
+            alert.setGraphic(null);
 
             boolean darkModeEnabled = loader.<RootController>getController().isDarkModeEnabled();
             if (darkModeEnabled) {
@@ -86,7 +87,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception  {
-        primaryStage.setTitle("BAIT " + HeatVisualizerConstants.CURRENT_VERSION);
+        primaryStage.setTitle("BAIT " + BaitConstants.CURRENT_VERSION);
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/logo/icon.png"))));
         primaryStage.setOnCloseRequest(handler);
 

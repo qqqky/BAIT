@@ -8,7 +8,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import javafx.scene.control.Control;
 import javafx.stage.FileChooser;
 
-public class HeatVisualizerModalHelper {
+public class BaitResourceSelectionModalHelper {
 
     public static synchronized Optional<String> selectJsonResourceForOpen(@NonNull String title, @NonNull Control component) {
         FileChooser fileChooser = new FileChooser();

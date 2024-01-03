@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 
 import javafx.util.Pair;
@@ -32,7 +32,7 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
      */
     @Override
     public String incrementAllWords(String address, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             return null;
         }
 
@@ -54,7 +54,7 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
 
     @Override
     public String incrementWordsBy(String address, long incrementBy, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             return null;
         }
 
@@ -85,19 +85,19 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
             throw new IllegalArgumentException("Hex word must be of exactly 8 characters");
         }
 
-        if (incrementBy > HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX) {
-            incrementBy = incrementBy % HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
+        if (incrementBy > BaitConstants.OVERFLOW_REFERENCE_8_HEX) {
+            incrementBy = incrementBy % BaitConstants.OVERFLOW_REFERENCE_8_HEX;
         }
 
         long item = Long.parseLong(hexWord, 16);
         long finalNum = item + incrementBy;
 
-        if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX > finalNum) {
+        if (BaitConstants.OVERFLOW_REFERENCE_8_HEX > finalNum) {
             item = finalNum;
-        } else if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX < finalNum) {
-            item = finalNum - HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
+        } else if (BaitConstants.OVERFLOW_REFERENCE_8_HEX < finalNum) {
+            item = finalNum - BaitConstants.OVERFLOW_REFERENCE_8_HEX;
         } else {
-            item = HeatVisualizerConstants.ZERO_LONG;
+            item = BaitConstants.ZERO_LONG;
         }
 
         return helper.padToX(Long.toHexString(item), 8, uppercase);
@@ -109,14 +109,14 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
      * @return
      */
     private String incrementWord(String hexWord) {
-        if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+        if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
             throw new IllegalArgumentException("Method only accepts 8-hex-character string at #incrementWord [received input: " + hexWord + "]");
         }
 
         long item = Long.parseLong(hexWord, 16);
 
-        if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX <= ++item) {
-            item = HeatVisualizerConstants.ZERO_LONG;
+        if (BaitConstants.OVERFLOW_REFERENCE_8_HEX <= ++item) {
+            item = BaitConstants.ZERO_LONG;
         }
 
         return helper.padToX(Long.toHexString(item), 8, uppercase);
@@ -200,7 +200,7 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
         } else if (overflowReference < finalNum) {
             initialResult = finalNum - overflowReference;
         } else {
-            initialResult = HeatVisualizerConstants.ZERO_LONG;
+            initialResult = BaitConstants.ZERO_LONG;
         }
 
         String result = conversionF.apply(initialResult);
@@ -227,7 +227,7 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
 
     @Override
     public String incrementPrivAbsolute(String address, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             return null;
         }
 
@@ -274,10 +274,10 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
      */
     @Override
     public String incrementPrivAbsoluteBy(String seed, long incrementBy, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
             throw new IllegalArgumentException("Seed not valid at #incrementPrivAbsoluteBy (must be 64 hex characters), [received=" + seed + "]");
         }
-        if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX <= incrementBy || incrementBy < 0) {
+        if (BaitConstants.OVERFLOW_REFERENCE_8_HEX <= incrementBy || incrementBy < 0) {
             throw new IllegalArgumentException("Method only accepts increment requests for values from '0' to 'FFFFFFFF' [received=" + Long.toHexString(incrementBy) + "]");
         }
 
@@ -325,11 +325,11 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
      * @return - num of overflows and result
      */
     private Pair<Long, String> incrementWordByHelper(String hexWord, String incrementBy) {
-        if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+        if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
             throw new IllegalArgumentException("Input must be 8 hex word at #incrementWordByHelper");
         }
 
-        if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(incrementBy).matches()) {
+        if (!BaitConstants.PATTERN_HEX_01_TO_08.matcher(incrementBy).matches()) {
             throw new IllegalArgumentException("Increment request must be from '0' to 'FFFFFFFF' at #incrementWordByHelper");
         }
 
@@ -338,12 +338,12 @@ public class IncrementModifierImpl extends AbstractModifier implements Increment
 
         long result = start + incRequest;
 
-        if (result < HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX) {
+        if (result < BaitConstants.OVERFLOW_REFERENCE_8_HEX) {
             return new Pair<>(0L, helper.padToX(Long.toHexString(result), 8, true));
         }
 
-        if (result > HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX) {
-            return new Pair<>(1L, helper.padToX(Long.toHexString(result - HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX), 8, true));
+        if (result > BaitConstants.OVERFLOW_REFERENCE_8_HEX) {
+            return new Pair<>(1L, helper.padToX(Long.toHexString(result - BaitConstants.OVERFLOW_REFERENCE_8_HEX), 8, true));
         }
 
         return new Pair<>(1L, "00000000");

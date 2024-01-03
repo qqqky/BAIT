@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
 import com.bearlycattable.bait.bl.controllers.RootController;
 import com.bearlycattable.bait.bl.controllers.constructionTab.ConstructionTabController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,10 +28,10 @@ import javafx.scene.layout.VBox;
 
 public final class ConstructionTabControllerInitializer {
 
-    private static final List<String> HEX_ALPHABET = Collections.unmodifiableList(Arrays.stream(HeatVisualizerConstants.HEX_ALPHABET).sequential().collect(Collectors.toList()));
+    private static final List<String> HEX_ALPHABET = Collections.unmodifiableList(Arrays.stream(BaitConstants.HEX_ALPHABET).sequential().collect(Collectors.toList()));
 
     private final ConstructionTabController controller;
-    private final HeatVisualizerComponentHelper componentHelper = new HeatVisualizerComponentHelper();
+    private final BaitComponentHelper componentHelper = new BaitComponentHelper();
 
     private final EventHandler<ActionEvent> checkBoxWordConstructionEventHandler;
     private final ChangeListener<String> privInputFieldChangeListener;
@@ -160,11 +160,11 @@ public final class ConstructionTabControllerInitializer {
 
     private void addTextFormattersToInputFields(Map<Integer, TextField> inputFieldWordMappings) {
         inputFieldWordMappings.keySet()
-                .forEach(key -> inputFieldWordMappings.get(key).setTextFormatter(HeatVisualizerFormatterFactory.getDefaultWordInputFieldFormatter()));
+                .forEach(key -> inputFieldWordMappings.get(key).setTextFormatter(BaitFormatterFactory.getDefaultWordInputFieldFormatter()));
     }
 
     private void addTextFormatterToRandomWordPrefixTextField() {
-        controller.getConstructionTextFieldRandomWordPrefix().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultWordInputFieldFormatter());
+        controller.getConstructionTextFieldRandomWordPrefix().setTextFormatter(BaitFormatterFactory.getDefaultWordInputFieldFormatter());
     }
 
     private void initializeTextFieldLengthListeners() {

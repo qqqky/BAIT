@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 
 public class CombinationUtils {
 
@@ -39,7 +39,7 @@ public class CombinationUtils {
 
     public static synchronized List<List<Integer>> generateAllPermutationsToList() {
         List<List<Integer>> result = new ArrayList<>();
-        addWordPermutations(HeatVisualizerConstants.ALL_WORD_NUMBERS.stream().mapToInt(i -> i).toArray(), result);
+        addWordPermutations(BaitConstants.ALL_WORD_NUMBERS.stream().mapToInt(i -> i).toArray(), result);
 
         return result;
     }

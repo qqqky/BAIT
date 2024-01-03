@@ -31,7 +31,7 @@ import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubCompa
 import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparisonResultB;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
 import com.bearlycattable.bait.commons.Config;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
@@ -41,7 +41,7 @@ import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.functions.TriConsumer;
 import com.bearlycattable.bait.commons.helpers.AbstractGeneralSearchHelper;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 import com.bearlycattable.bait.commons.interfaces.CustomKeyGenerator;
 import com.bearlycattable.bait.commons.interfaces.IndexRotatorHorizontal;
 import com.bearlycattable.bait.commons.interfaces.IndexRotatorVertical;
@@ -64,7 +64,7 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
     private static final Logger LOG = Logger.getLogger(AbstractAdvancedSearchHelper.class.getName());
 
     @Getter
-    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final BaitHelper helper = new BaitHelper();
     private final AdvancedPubComparerSImpl advancedPubComparerS = new AdvancedPubComparerSImpl();
     private final AdvancedPubComparerBImpl advancedPubComparerB = new AdvancedPubComparerBImpl();
 
@@ -146,13 +146,13 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
             private final TriConsumer<String, Color, LogTextTypeEnum> logConsumer = Objects.requireNonNull(context.getLogConsumer());
             private final SearchModeEnum searchMode = Objects.requireNonNull(context.getSearchMode());
             private final String prefix = context.getWordPrefix();
-            private final boolean prefixed = prefix != null && HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(prefix).matches();
+            private final boolean prefixed = prefix != null && BaitConstants.PATTERN_HEX_01_TO_08.matcher(prefix).matches();
             private final int iterations = SearchHelperIterationsValidator.validateAndGet(searchMode, getIterations());
             // private final Function<String, String> buildNextPrivFunction = Objects.requireNonNull(context.getNextPrivFunction());
             private final boolean exactMatchCheckOnly = false; //TODO: cbx 'exact match check only'
             private final boolean exactMatchCheckEnabled = AbstractAdvancedSearchHelper.this.exactMatchCheckEnabled;
             private final boolean verbose = context.isVerbose();
-            private final Map<String, String> LOWERCASE_HEX_ALPHABET = HeatVisualizerHelper.newLowercaseHexMap();
+            private final Map<String, String> LOWERCASE_HEX_ALPHABET = BaitHelper.newLowercaseHexMap();
 
             @Override
             public P2PKHSingleResultData[] call() {
@@ -372,7 +372,7 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
             private final TriConsumer<String, Color, LogTextTypeEnum> logConsumer = Objects.requireNonNull(context.getLogConsumer());
             private final SearchModeEnum searchMode = Objects.requireNonNull(context.getSearchMode());
             private final String prefix = context.getWordPrefix();
-            private final boolean prefixed = prefix != null && HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(prefix).matches();
+            private final boolean prefixed = prefix != null && BaitConstants.PATTERN_HEX_01_TO_08.matcher(prefix).matches();
             private final int iterations = SearchHelperIterationsValidator.validateAndGet(searchMode, getIterations());
             private final boolean exactMatchCheckOnly = false; //TODO: cbx 'exact match check only'
             private final boolean exactMatchCheckEnabled = AbstractAdvancedSearchHelper.this.exactMatchCheckEnabled;
@@ -721,7 +721,7 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
         LOG.info("Initializing PKHs for 'exact check option'...");
 
         List<String> validPKHs = unencodedAddresses.stream()
-                .filter(key -> HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches())
+                .filter(key -> BaitConstants.PATTERN_SIMPLE_40.matcher(key).matches())
                 .map(key -> key.toLowerCase(Locale.ROOT))
                 .collect(Collectors.toList());
 
@@ -739,7 +739,7 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
         LOG.info("Converting PKHs (byte version) for 'exact match check' option...");
 
         List<ByteBuffer> validPKHs = unknownPKHs.stream()
-                .filter(key -> HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches())
+                .filter(key -> BaitConstants.PATTERN_SIMPLE_40.matcher(key).matches())
                 .map(key -> ByteBuffer.wrap(helper.hexToByteData(key)).asReadOnlyBuffer())
                 .collect(Collectors.toList());
 

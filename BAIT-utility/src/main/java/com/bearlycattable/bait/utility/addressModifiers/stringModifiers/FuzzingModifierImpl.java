@@ -3,7 +3,7 @@ package com.bearlycattable.bait.utility.addressModifiers.stringModifiers;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 
 public class FuzzingModifierImpl extends AbstractModifier implements FuzzingModifier {
@@ -18,7 +18,7 @@ public class FuzzingModifierImpl extends AbstractModifier implements FuzzingModi
 
     @Override
     public String fuzzSelectedWords(String address, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             return null;
         }
 

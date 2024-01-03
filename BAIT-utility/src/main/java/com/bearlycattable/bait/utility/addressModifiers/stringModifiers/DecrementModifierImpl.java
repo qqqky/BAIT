@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
 
 import javafx.util.Pair;
@@ -31,7 +31,7 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
      */
     @Override
     public String decrementAllWords(String address, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             return null;
         }
 
@@ -57,7 +57,7 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
 
     @Override
     public String decrementWordsBy(String address, long decrementBy, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             return null;
         }
 
@@ -97,8 +97,8 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
         long item = Long.parseLong(hexWord, 16);
         long finalNum = item - decrementBy; //0009 - 000A
 
-        if (HeatVisualizerConstants.ZERO_LONG > finalNum) {
-            item = HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX - finalNum;
+        if (BaitConstants.ZERO_LONG > finalNum) {
+            item = BaitConstants.OVERFLOW_REFERENCE_8_HEX - finalNum;
         } else {
             item = finalNum;
         }
@@ -108,7 +108,7 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
 
     @Override
     public String decrementPrivAbsolute(String address, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
             throw new IllegalArgumentException("Address passed was not of length 64 at DecrementModifier#decrementPrivAbsolute");
         }
 
@@ -155,10 +155,10 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
      */
     @Override
     public String decrementPrivAbsoluteBy(String seed, long decrementBy, List<Integer> disabledWords) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
             throw new IllegalArgumentException("Seed not valid at #decrementPrivAbsoluteBy (must be 64 hex characters), [received=" + seed + "]");
         }
-        if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX <= decrementBy || decrementBy < 0) {
+        if (BaitConstants.OVERFLOW_REFERENCE_8_HEX <= decrementBy || decrementBy < 0) {
             throw new IllegalArgumentException("Method only accepts decrement requests for values from '0' to 'FFFFFFFF' [received=" + Long.toHexString(decrementBy) + "]");
         }
 
@@ -227,7 +227,7 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
         } else if (overflowReference > finalNum) {
             initialResult = maxValueLong + finalNum; //finalNum is negative
         } else {
-            initialResult = HeatVisualizerConstants.ZERO_LONG;
+            initialResult = BaitConstants.ZERO_LONG;
         }
 
         String result = Long.toHexString(initialResult);
@@ -257,25 +257,25 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
      * @return
      */
     private String decrementWord(String hexWord) {
-        if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+        if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
             throw new IllegalArgumentException("Method only accepts 8-hex-character string at #decrementWord [received input: " + hexWord + "]");
         }
 
         long item = Long.parseLong(hexWord, 16);
 
-        if (HeatVisualizerConstants.ZERO_LONG > --item) {
-            item = HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX - 1;
+        if (BaitConstants.ZERO_LONG > --item) {
+            item = BaitConstants.OVERFLOW_REFERENCE_8_HEX - 1;
         }
 
         return helper.padToX(Long.toHexString(item), 8, uppercase);
     }
 
     private Pair<Long, String> decrementWordByHelper(String hexWord, String decrementBy) {
-        if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+        if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
             throw new IllegalArgumentException("Input must be 8 hex word at #decrementWordByHelper");
         }
 
-        if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(decrementBy).matches()) {
+        if (!BaitConstants.PATTERN_HEX_01_TO_08.matcher(decrementBy).matches()) {
             throw new IllegalArgumentException("Increment request must be from '0' to 'FFFFFFFF' at #decrementWordByHelper");
         }
 
@@ -292,7 +292,7 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
         long numOverflows = 0;
         while (result < 0L) {
             numOverflows++;
-            result = result + HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
+            result = result + BaitConstants.OVERFLOW_REFERENCE_8_HEX;
         }
 
         return new Pair<>(numOverflows, helper.padToX(Long.toHexString(result), 8, true));

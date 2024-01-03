@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 
 /*
  *
@@ -116,7 +116,7 @@ public class RandomAddressGenerator {
             return false;
         }
 
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(currentKeyHex).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(currentKeyHex).matches()) {
             return false;
         }
 
@@ -218,7 +218,7 @@ public class RandomAddressGenerator {
         clearBuilder(helperBuilder);
 
         if (hexLength <= 0) {
-            return HeatVisualizerConstants.EMPTY_STRING;
+            return BaitConstants.EMPTY_STRING;
         }
 
         while (helperBuilder.length() != hexLength) {

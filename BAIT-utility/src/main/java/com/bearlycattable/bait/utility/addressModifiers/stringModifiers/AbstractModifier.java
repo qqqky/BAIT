@@ -6,13 +6,13 @@ import java.util.stream.Stream;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 import com.bearlycattable.bait.utility.RandomAddressGenerator;
 
 public abstract class AbstractModifier {
 
     protected final RandomAddressGenerator generator = RandomAddressGenerator.getSecureGenerator(64);
-    protected final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    protected final BaitHelper helper = new BaitHelper();
 
     protected boolean isValidIndex(int inputLength, int index) {
         return index >= 0 && index <= inputLength;

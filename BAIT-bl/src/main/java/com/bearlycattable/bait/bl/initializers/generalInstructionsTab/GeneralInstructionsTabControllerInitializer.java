@@ -2,7 +2,7 @@ package com.bearlycattable.bait.bl.initializers.generalInstructionsTab;
 
 import com.bearlycattable.bait.bl.controllers.generalInstructionsTab.GeneralInstructionsTabController;
 import com.bearlycattable.bait.bl.controllers.RootController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerNumberedListHelper;
+import com.bearlycattable.bait.bl.helpers.BaitNumberedListHelper;
 
 import javafx.scene.layout.VBox;
 
@@ -35,7 +35,7 @@ public final class GeneralInstructionsTabControllerInitializer {
 
     private void init() {
         String resource = "com.bearlycattable.bait.ui.txts/generalInstructions.txt";
-        VBox content = HeatVisualizerNumberedListHelper.readFileAndInsertListToParentComponent(resource, new VBox());
+        VBox content = BaitNumberedListHelper.readFileAndInsertListToParentComponent(resource, new VBox());
 
         controller.getInstructionsScrollPaneParent().setContent(content);
     }

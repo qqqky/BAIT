@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
 import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedResultsAccessProxy;
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
 import com.bearlycattable.bait.commons.enums.LogTextTypeEnum;
 import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
+import com.bearlycattable.bait.commons.helpers.BaitResourceSelectionModalHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelper;
 import com.bearlycattable.bait.advancedCommons.serialization.SerializedSearchResultsReader;
 import com.bearlycattable.bait.utility.BundleUtils;
@@ -308,7 +308,7 @@ public class AdvancedSubTabResultsController {
             return true;
         }
 
-        return HeatVisualizerConstants.PATTERN_SIMPLE_UP_TO_40.matcher(startingPrefix).matches();
+        return BaitConstants.PATTERN_SIMPLE_UP_TO_40.matcher(startingPrefix).matches();
     }
 
     private Map<String, Map<JsonResultTypeEnum, Map<JsonResultScaleFactorEnum, Pair<String, Integer>>>> filterHelper(
@@ -359,7 +359,7 @@ public class AdvancedSubTabResultsController {
     private void removeErrorLabel() {
         advancedResultsLabelFilterMessage.getStyleClass().clear();
         advancedResultsLabelFilterMessage.getStyleClass().add(CssConstants.ERROR_INFO_MESSAGE_STYLE_CLASS);
-        advancedResultsLabelFilterMessage.setText(HeatVisualizerConstants.EMPTY_STRING);
+        advancedResultsLabelFilterMessage.setText(BaitConstants.EMPTY_STRING);
     }
 
     private void showResultsForSelectedHash() {
@@ -404,7 +404,7 @@ public class AdvancedSubTabResultsController {
 
     @FXML
     private void doBrowseForSearchResultFilePath() {
-        HeatVisualizerModalHelper.selectJsonResourceForOpen(rb.getString("label.selectLoadTarget"), advancedResultsTextFieldSelectAndLoadFromFile).ifPresent(absPath -> {
+        BaitResourceSelectionModalHelper.selectJsonResourceForOpen(rb.getString("label.selectLoadTarget"), advancedResultsTextFieldSelectAndLoadFromFile).ifPresent(absPath -> {
             advancedResultsTextFieldSelectAndLoadFromFile.setText(absPath);
             advancedResultsBtnDoLoadSearchResults.setDisable(false);
         });

@@ -9,14 +9,14 @@ import com.bearlycattable.bait.advanced.providers.AdvancedSearchHelperProvider;
 import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchHelperCreationContext;
 import com.bearlycattable.bait.advanced.searchHelper.factory.AdvancedSearchHelperFactory;
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedSearchHelper;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 
 public class AdvancedSearchHelperProviderImpl implements AdvancedSearchHelperProvider {
 
     @Override
     public Optional<AdvancedSearchHelper> findAdvancedSearchHelper(SearchModeEnum searchMode, @NonNull AdvancedSearchHelperCreationContext creationContext) {
-        return AdvancedSearchHelperFactory.findRequestedSearchHelper(searchMode, creationContext, HeatVisualizerConstants.MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM);
+        return AdvancedSearchHelperFactory.findRequestedSearchHelper(searchMode, creationContext, BaitConstants.MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM);
     }
 
     @Override

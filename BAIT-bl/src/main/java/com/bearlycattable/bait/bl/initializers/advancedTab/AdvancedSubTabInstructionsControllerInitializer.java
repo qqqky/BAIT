@@ -2,7 +2,7 @@ package com.bearlycattable.bait.bl.initializers.advancedTab;
 
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedSubTabInstructionsController;
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerNumberedListHelper;
+import com.bearlycattable.bait.bl.helpers.BaitNumberedListHelper;
 
 import javafx.scene.layout.VBox;
 
@@ -35,7 +35,7 @@ public final class AdvancedSubTabInstructionsControllerInitializer {
 
     private void init() {
         String resource = "com.bearlycattable.bait.ui.txts/advancedInstructions.txt";
-        VBox content = HeatVisualizerNumberedListHelper.readFileAndInsertListToParentComponent(resource, new VBox());
+        VBox content = BaitNumberedListHelper.readFileAndInsertListToParentComponent(resource, new VBox());
 
         controller.getAdvancedInstructionsScrollPaneParent().setContent(content);
     }

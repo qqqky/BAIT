@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
 import com.bearlycattable.bait.bl.controllers.heatComparisonTab.HeatComparisonTabController;
 import com.bearlycattable.bait.bl.controllers.RootController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.enums.NumberFormatTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
@@ -22,7 +22,7 @@ public final class HeatComparisonTabControllerInitializer {
     private static final List<NumberFormatTypeEnum> NUMBER_FORMATS = Collections.unmodifiableList(Arrays.asList(NumberFormatTypeEnum.DECIMAL, NumberFormatTypeEnum.HEX));
     private static final List<ScaleFactorEnum> SUPPORTED_SCALE_FACTORS = Collections.unmodifiableList(
             Arrays.asList(ScaleFactorEnum.DISABLED, ScaleFactorEnum.MEDIUM, ScaleFactorEnum.HIGH, ScaleFactorEnum.HIGHEST));
-    private final HeatVisualizerComponentHelper componentHelper = new HeatVisualizerComponentHelper();
+    private final BaitComponentHelper componentHelper = new BaitComponentHelper();
     private final HeatComparisonTabController controller;
 
     private HeatComparisonTabControllerInitializer() {
@@ -63,7 +63,7 @@ public final class HeatComparisonTabControllerInitializer {
 
         initializeScaleFactorComboBox();
 
-        controller.getComparisonTextFieldCurrentKey().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPrivateKeyFormatter());
+        controller.getComparisonTextFieldCurrentKey().setTextFormatter(BaitFormatterFactory.getDefaultPrivateKeyFormatter());
         controller.getComparisonTextFieldCurrentKey().textProperty().addListener(listener -> controller.getComparisonLabelLengthCurrentKey().setText(Integer.toString(controller.getComparisonTextFieldCurrentKey().getLength())));
     }
 

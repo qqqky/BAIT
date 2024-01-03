@@ -531,6 +531,24 @@
     -fx-font-size: 15;
 }
 
+/*special loading alert styles*/
+.alertLoading.dialog-pane {
+    -fx-background-color: transparent;
+}
+
+.alertLoading.dialog-pane .content {
+    -fx-background-color: transparent;
+}
+
+.alertLoading.dialog-pane .button-bar {
+    -fx-background-color: transparent;
+}
+
+.alertLoading.dialog-pane .button-bar .container {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
 .errorInfoMessage {
     -fx-background-color: transparent;
     -fx-font-weight: bold;

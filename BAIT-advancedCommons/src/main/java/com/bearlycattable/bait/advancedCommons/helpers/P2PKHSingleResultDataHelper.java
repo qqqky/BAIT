@@ -27,13 +27,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
 import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerB;
 import com.bearlycattable.bait.advancedCommons.pubKeyComparison.AdvancedPubComparerBImpl;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
 import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 import com.bearlycattable.bait.commons.pubKeyComparison.PubComparerS;
 import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -43,9 +43,9 @@ import javafx.util.Pair;
 
 public class P2PKHSingleResultDataHelper {
 
-    private static final int OVERFLOW_REFERENCE = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
+    private static final int OVERFLOW_REFERENCE = BaitConstants.OVERFLOW_REFERENCE_1_HEX;
     private static final Map<Integer, BigDecimal> similarityMappings = initializeSimilarityMappings();
-    private static final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private static final BaitHelper helper = new BaitHelper();
     private static final PubComparerS pubComparerS = new PubComparerS();
     private static final Logger LOG = Logger.getLogger(P2PKHSingleResultDataHelper.class.getName());
 
@@ -54,7 +54,7 @@ public class P2PKHSingleResultDataHelper {
         Map<Integer, BigDecimal> mappings = new HashMap<>();
         int max = 16 * 40;
         for (int i = 0; i <= max; i++) {
-            mappings.put(i, HeatVisualizerConstants.SINGLE_POINT_VALUE.multiply(new BigDecimal(i)));
+            mappings.put(i, BaitConstants.SINGLE_POINT_VALUE.multiply(new BigDecimal(i)));
         }
         return mappings;
     }
@@ -153,9 +153,9 @@ public class P2PKHSingleResultDataHelper {
         int difference;
 
         for (int i = 0; i < 16; i++) {
-            difference = calculateDifferenceForHexChars(HeatVisualizerConstants.HEX_ALPHABET[i], referenceCharacter);
+            difference = calculateDifferenceForHexChars(BaitConstants.HEX_ALPHABET[i], referenceCharacter);
 
-            map.put(HeatVisualizerConstants.HEX_ALPHABET[i].toLowerCase(Locale.ROOT),
+            map.put(BaitConstants.HEX_ALPHABET[i].toLowerCase(Locale.ROOT),
                     comparer.cacheHelperS(difference, OVERFLOW_REFERENCE, pointsMultiplier, heatType));
         }
 
@@ -379,7 +379,7 @@ public class P2PKHSingleResultDataHelper {
                     finalResult.get(resultType).put(scaleFactor, pairOne);
                     return;
                 } else if (keyOne.isEmpty()) { //0,0 - both empty
-                    finalResult.get(resultType).put(scaleFactor, new Pair<>(HeatVisualizerConstants.EMPTY_STRING, 0));
+                    finalResult.get(resultType).put(scaleFactor, new Pair<>(BaitConstants.EMPTY_STRING, 0));
                     return;
                 }
 

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedSubTabSearchController;
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
@@ -87,10 +87,10 @@ public final class AdvancedSubTabSearchControllerInitializer {
 
     private void initializeSeedMutationTextFieldFormatters() {
         //incDec
-        controller.getAdvancedSearchTextFieldIncDecBy().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultWordInputFieldFormatter());
+        controller.getAdvancedSearchTextFieldIncDecBy().setTextFormatter(BaitFormatterFactory.getDefaultWordInputFieldFormatter());
 
         //horizontal rotation
-        controller.getAdvancedTextFieldRotateHorizontallyBy().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(128));
+        controller.getAdvancedTextFieldRotateHorizontallyBy().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(128));
         controller.getAdvancedTextFieldRotateHorizontallyBy().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -107,7 +107,7 @@ public final class AdvancedSubTabSearchControllerInitializer {
         });
 
         //vertical rotation
-        controller.getAdvancedTextFieldRotateVerticallyBy().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(16));
+        controller.getAdvancedTextFieldRotateVerticallyBy().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(16));
         controller.getAdvancedTextFieldRotateVerticallyBy().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -141,7 +141,7 @@ public final class AdvancedSubTabSearchControllerInitializer {
     }
 
     private void initializeLogComponent() {
-        controller.getAdvancedSearchTextFieldLogKeyEveryXIterations().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_LOG_SPACING_ADVANCED_SEARCH));
+        controller.getAdvancedSearchTextFieldLogKeyEveryXIterations().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_LOG_SPACING_ADVANCED_SEARCH));
         controller.getAdvancedSearchTextFieldLogKeyEveryXIterations().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -154,7 +154,7 @@ public final class AdvancedSubTabSearchControllerInitializer {
     }
 
     private void initializeIterationsField() {
-        controller.getAdvancedSearchTextFieldIterations().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_ITERATIONS_ADVANCED_SEARCH));
+        controller.getAdvancedSearchTextFieldIterations().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_ITERATIONS_ADVANCED_SEARCH));
         controller.getAdvancedSearchTextFieldIterations().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -190,7 +190,7 @@ public final class AdvancedSubTabSearchControllerInitializer {
     }
 
     private void initializeLoopComponent(int maxLoops) {
-        controller.getAdvancedSearchTextFieldNumberOfLoops().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(maxLoops));
+        controller.getAdvancedSearchTextFieldNumberOfLoops().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(maxLoops));
         controller.getAdvancedSearchTextFieldNumberOfLoops().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -203,7 +203,7 @@ public final class AdvancedSubTabSearchControllerInitializer {
     }
 
     private void initializeSeedComponent() {
-        controller.getAdvancedSearchTextFieldContinueFromSeed().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPrivateKeyFormatter());
+        controller.getAdvancedSearchTextFieldContinueFromSeed().setTextFormatter(BaitFormatterFactory.getDefaultPrivateKeyFormatter());
         controller.getAdvancedSearchTextFieldContinueFromSeed().textProperty().addListener(listener -> controller.getAdvancedSearchLabelLengthSeed().setText(Integer.toString(controller.getAdvancedSearchTextFieldContinueFromSeed().getText().length())));
     }
 

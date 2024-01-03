@@ -6,8 +6,8 @@ import java.util.logging.Logger;
 
 import com.bearlycattable.bait.advancedCommons.interfaces.DarkModeControl;
 import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedConfigAccessProxy;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
+import com.bearlycattable.bait.commons.BaitConstants;
+import com.bearlycattable.bait.commons.helpers.BaitResourceSelectionModalHelper;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 
@@ -54,13 +54,13 @@ public class AdvancedSubTabConfigController implements DarkModeControl {
             return;
         }
 
-        HeatVisualizerModalHelper.selectTxtResourceForOpen(rb.getString("label.openResource"), advancedConfigTextFieldExactMatchPath)
+        BaitResourceSelectionModalHelper.selectTxtResourceForOpen(rb.getString("label.openResource"), advancedConfigTextFieldExactMatchPath)
                 .ifPresent(absPath -> advancedConfigTextFieldExactMatchPath.setText(absPath));
     }
 
     @FXML
     private void doSaveConfigChanges() {
-        System.out.println("Saving of config is not implemented in current version [" + HeatVisualizerConstants.CURRENT_VERSION + "]");
+        System.out.println("Saving of config is not implemented in current version [" + BaitConstants.CURRENT_VERSION + "]");
     }
 
     public final boolean isParentValid() {

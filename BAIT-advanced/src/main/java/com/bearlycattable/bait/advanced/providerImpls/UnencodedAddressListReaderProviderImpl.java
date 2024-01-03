@@ -21,7 +21,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advanced.providers.UnencodedAddressListReaderProvider;
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 
 public class UnencodedAddressListReaderProviderImpl implements UnencodedAddressListReaderProvider {
 
@@ -67,7 +67,7 @@ public class UnencodedAddressListReaderProviderImpl implements UnencodedAddressL
         unencodedAddresses.stream()
                 .filter(Objects::nonNull)
                 .map(String::trim)
-                .filter(trimmed -> HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(trimmed).matches())
+                .filter(trimmed -> BaitConstants.PATTERN_SIMPLE_40.matcher(trimmed).matches())
                 .limit(max)
                 .forEach(address -> list.add(P2PKHSingleResultData.createEmptyBackbone(address)));
 
@@ -118,7 +118,7 @@ public class UnencodedAddressListReaderProviderImpl implements UnencodedAddressL
         try (BufferedReader reader = new BufferedReader(new FileReader(pathToUnencodedAddresses))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(line.trim()).matches()) {
+                if (BaitConstants.PATTERN_SIMPLE_40.matcher(line.trim()).matches()) {
                     count++;
                 }
             }

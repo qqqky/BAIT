@@ -9,9 +9,9 @@
 // import java.util.stream.Collectors;
 // import java.util.stream.Stream;
 //
-// import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+// import com.bearlycattable.bait.commons.BaitConstants;
 // import com.bearlycattable.bait.commons.enums.OutputCaseEnum;
-// import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+// import com.bearlycattable.bait.commons.helpers.BaitHelper;
 //
 // import javafx.util.Pair;
 //
@@ -22,7 +22,7 @@
 //     private final StringBuilder sb = new StringBuilder();
 //     private final RandomAddressGenerator generator = RandomAddressGenerator.getSecureGenerator(64);
 //
-//     private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+//     private final BaitHelper helper = new BaitHelper();
 //     private final boolean uppercase;
 //
 //     public AddressModifier(OutputCaseEnum letterCase) {
@@ -54,11 +54,11 @@
 //     // }
 //     //
 //     // public String rotateAddressLeftBy(String address, int rotateBy, boolean withInternalPrefix) {
-//     //     return withInternalPrefix ? rotateLeftBy((HeatVisualizerConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateLeftBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
+//     //     return withInternalPrefix ? rotateLeftBy((BaitConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateLeftBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
 //     // }
 //     //
 //     // public String rotateAddressRightBy(String address, int rotateBy, boolean withInternalPrefix) {
-//     //     return withInternalPrefix ? rotateRightBy((HeatVisualizerConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateRightBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
+//     //     return withInternalPrefix ? rotateRightBy((BaitConstants.PRIV_HEADER + address), rotateBy > 128 ? rotateBy % 128 : rotateBy).substring(64) : rotateRightBy(address, rotateBy > 64 ? rotateBy % 64 : rotateBy);
 //     // }
 //     //
 //     // /**
@@ -70,7 +70,7 @@
 //     //  * @return resulting 64-hex address after word rotation
 //     //  */
 //     // public String rotateAllWordsBy(String address, int rotateBy, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         return null;
 //     //     }
 //     //
@@ -104,7 +104,7 @@
 //     //  * @return
 //     //  */
 //     // public String incrementAllWords(String address, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         return null;
 //     //     }
 //     //
@@ -125,7 +125,7 @@
 //     // }
 //     //
 //     // public String incrementWordsBy(String address, long incrementBy, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         return null;
 //     //     }
 //     //
@@ -146,7 +146,7 @@
 //     // }
 //
 //     // public String decrementWordsBy(String address, long decrementBy, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         return null;
 //     //     }
 //     //
@@ -173,7 +173,7 @@
 //     //  * @return
 //     //  */
 //     // public String decrementAllWords(String address, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         return null;
 //     //     }
 //     //
@@ -198,7 +198,7 @@
 //     // }
 //
 //     // public String incrementPrivAbsolute(String address, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         return null;
 //     //     }
 //     //
@@ -240,7 +240,7 @@
 //     // }
 //
 //     // public String decrementPrivAbsolute(String address, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         throw new IllegalArgumentException("Address passed was not of length 64 at AddressModifier#decrementPrivAbsolute");
 //     //     }
 //     //
@@ -302,7 +302,7 @@
 //     //     sb.append(address);
 //     //
 //     //     String incrementedChar = incrementHexCharacter(String.valueOf(address.charAt(selectedIndex))).toUpperCase();
-//     //     if (!HeatVisualizerConstants.PATTERN_HEX_01.matcher(incrementedChar).matches()) {
+//     //     if (!BaitConstants.PATTERN_HEX_01.matcher(incrementedChar).matches()) {
 //     //         throw new IllegalStateException("at AddressModifier#rotateSelectedIndexVertically. Incremented result was: " + incrementedChar);
 //     //     }
 //     //     sb.replace(selectedIndex, selectedIndex + 1, incrementedChar);
@@ -322,7 +322,7 @@
 //     // }
 //
 //     // public String fuzzSelectedWords(String address, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(address).matches()) {
 //     //         return null;
 //     //     }
 //     //
@@ -344,14 +344,14 @@
 //     //  * @return
 //     //  */
 //     // private String incrementWord(String hexWord) {
-//     //     if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+//     //     if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
 //     //         throw new IllegalArgumentException("Method only accepts 8-hex-character string at #incrementWord [received input: " + hexWord + "]");
 //     //     }
 //     //
 //     //     long item = Long.parseLong(hexWord, 16);
 //     //
-//     //     if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX <= ++item) {
-//     //         item = HeatVisualizerConstants.ZERO_LONG;
+//     //     if (BaitConstants.OVERFLOW_REFERENCE_8_HEX <= ++item) {
+//     //         item = BaitConstants.ZERO_LONG;
 //     //     }
 //     //
 //     //     return helper.padToX(Long.toHexString(item), 8, uppercase);
@@ -368,19 +368,19 @@
 //     //         throw new IllegalArgumentException("Hex word must be of exactly 8 characters");
 //     //     }
 //     //
-//     //     if (incrementBy > HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX) {
-//     //         incrementBy = incrementBy % HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
+//     //     if (incrementBy > BaitConstants.OVERFLOW_REFERENCE_8_HEX) {
+//     //         incrementBy = incrementBy % BaitConstants.OVERFLOW_REFERENCE_8_HEX;
 //     //     }
 //     //
 //     //     long item = Long.parseLong(hexWord, 16);
 //     //     long finalNum = item + incrementBy;
 //     //
-//     //     if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX > finalNum) {
+//     //     if (BaitConstants.OVERFLOW_REFERENCE_8_HEX > finalNum) {
 //     //         item = finalNum;
-//     //     } else if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX < finalNum) {
-//     //         item = finalNum - HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
+//     //     } else if (BaitConstants.OVERFLOW_REFERENCE_8_HEX < finalNum) {
+//     //         item = finalNum - BaitConstants.OVERFLOW_REFERENCE_8_HEX;
 //     //     } else {
-//     //         item = HeatVisualizerConstants.ZERO_LONG;
+//     //         item = BaitConstants.ZERO_LONG;
 //     //     }
 //     //
 //     //     return helper.padToX(Long.toHexString(item), 8, uppercase);
@@ -406,8 +406,8 @@
 //     //     long item = Long.parseLong(hexWord, 16);
 //     //     long finalNum = item - decrementBy; //0009 - 000A
 //     //
-//     //     if (HeatVisualizerConstants.ZERO_LONG > finalNum) {
-//     //         item = HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX - finalNum;
+//     //     if (BaitConstants.ZERO_LONG > finalNum) {
+//     //         item = BaitConstants.OVERFLOW_REFERENCE_8_HEX - finalNum;
 //     //     } else {
 //     //         item = finalNum;
 //     //     }
@@ -490,7 +490,7 @@
 //     //     } else if (overflowReference < finalNum) {
 //     //         initialResult = finalNum - overflowReference;
 //     //     } else {
-//     //         initialResult = HeatVisualizerConstants.ZERO_LONG;
+//     //         initialResult = BaitConstants.ZERO_LONG;
 //     //     }
 //     //
 //     //     String result = conversionF.apply(initialResult);
@@ -524,10 +524,10 @@
 //     //  * @return
 //     //  */
 //     // public String incrementPrivAbsoluteBy(String seed, long incrementBy, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
 //     //         throw new IllegalArgumentException("Seed not valid at #incrementPrivAbsoluteBy (must be 64 hex characters), [received=" + seed + "]");
 //     //     }
-//     //     if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX <= incrementBy || incrementBy < 0) {
+//     //     if (BaitConstants.OVERFLOW_REFERENCE_8_HEX <= incrementBy || incrementBy < 0) {
 //     //         throw new IllegalArgumentException("Method only accepts increment requests for values from '0' to 'FFFFFFFF' [received=" + Long.toHexString(incrementBy) + "]");
 //     //     }
 //     //
@@ -595,7 +595,7 @@
 //     //     } else if (overflowReference > finalNum) {
 //     //         initialResult = maxValueLong + finalNum; //finalNum is negative
 //     //     } else {
-//     //         initialResult = HeatVisualizerConstants.ZERO_LONG;
+//     //         initialResult = BaitConstants.ZERO_LONG;
 //     //     }
 //     //
 //     //     String result = Long.toHexString(initialResult);
@@ -625,14 +625,14 @@
 //     //  * @return
 //     //  */
 //     // private String decrementWord(String hexWord) {
-//     //     if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+//     //     if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
 //     //         throw new IllegalArgumentException("Method only accepts 8-hex-character string at #decrementWord [received input: " + hexWord + "]");
 //     //     }
 //     //
 //     //     long item = Long.parseLong(hexWord, 16);
 //     //
-//     //     if (HeatVisualizerConstants.ZERO_LONG > --item) {
-//     //         item = HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX - 1;
+//     //     if (BaitConstants.ZERO_LONG > --item) {
+//     //         item = BaitConstants.OVERFLOW_REFERENCE_8_HEX - 1;
 //     //     }
 //     //
 //     //     return helper.padToX(Long.toHexString(item), 8, uppercase);
@@ -646,11 +646,11 @@
 //     //  * @return - num of overflows and result
 //     //  */
 //     // private Pair<Long, String> incrementWordByHelper(String hexWord, String incrementBy) {
-//     //     if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+//     //     if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
 //     //         throw new IllegalArgumentException("Input must be 8 hex word at #incrementWordByHelper");
 //     //     }
 //     //
-//     //     if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(incrementBy).matches()) {
+//     //     if (!BaitConstants.PATTERN_HEX_01_TO_08.matcher(incrementBy).matches()) {
 //     //         throw new IllegalArgumentException("Increment request must be from '0' to 'FFFFFFFF' at #incrementWordByHelper");
 //     //     }
 //     //
@@ -659,12 +659,12 @@
 //     //
 //     //     long result = start + incRequest;
 //     //
-//     //     if (result < HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX) {
+//     //     if (result < BaitConstants.OVERFLOW_REFERENCE_8_HEX) {
 //     //         return new Pair<>(0L, helper.padToX(Long.toHexString(result), 8, true));
 //     //     }
 //     //
-//     //     if (result > HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX) {
-//     //         return new Pair<>(1L, helper.padToX(Long.toHexString(result - HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX), 8, true));
+//     //     if (result > BaitConstants.OVERFLOW_REFERENCE_8_HEX) {
+//     //         return new Pair<>(1L, helper.padToX(Long.toHexString(result - BaitConstants.OVERFLOW_REFERENCE_8_HEX), 8, true));
 //     //     }
 //     //
 //     //     return new Pair<>(1L, "00000000");
@@ -681,7 +681,7 @@
 //     //     }
 //     //
 //     //     if ("f".equals(hexChar) || "F".equals(hexChar)) {
-//     //         return HeatVisualizerConstants.ZERO_STRING;
+//     //         return BaitConstants.ZERO_STRING;
 //     //     }
 //     //     int num = Integer.parseInt(hexChar, 16);
 //     //     return Integer.toHexString(++num);
@@ -697,8 +697,8 @@
 //     //         throw new IllegalArgumentException("Method only accepts a string of length 1 at #decrementHexCharacter [received input: " + hexChar + "]");
 //     //     }
 //     //
-//     //     if (HeatVisualizerConstants.ZERO_STRING.equals(hexChar)) {
-//     //         return HeatVisualizerConstants.F_STRING;
+//     //     if (BaitConstants.ZERO_STRING.equals(hexChar)) {
+//     //         return BaitConstants.F_STRING;
 //     //     }
 //     //     int num = Integer.parseInt(hexChar, 16);
 //     //     return Integer.toHexString(--num);
@@ -731,10 +731,10 @@
 //     //  * @return
 //     //  */
 //     // public String decrementPrivAbsoluteBy(String seed, long decrementBy, List<Integer> disabledWords) {
-//     //     if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
+//     //     if (!BaitConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
 //     //         throw new IllegalArgumentException("Seed not valid at #decrementPrivAbsoluteBy (must be 64 hex characters), [received=" + seed + "]");
 //     //     }
-//     //     if (HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX <= decrementBy || decrementBy < 0) {
+//     //     if (BaitConstants.OVERFLOW_REFERENCE_8_HEX <= decrementBy || decrementBy < 0) {
 //     //         throw new IllegalArgumentException("Method only accepts decrement requests for values from '0' to 'FFFFFFFF' [received=" + Long.toHexString(decrementBy) + "]");
 //     //     }
 //     //
@@ -775,11 +775,11 @@
 //     // }
 //
 //     // private Pair<Long, String> decrementWordByHelper(String hexWord, String decrementBy) {
-//     //     if (!HeatVisualizerConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
+//     //     if (!BaitConstants.PATTERN_HEX_08.matcher(hexWord).matches()) {
 //     //         throw new IllegalArgumentException("Input must be 8 hex word at #decrementWordByHelper");
 //     //     }
 //     //
-//     //     if (!HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(decrementBy).matches()) {
+//     //     if (!BaitConstants.PATTERN_HEX_01_TO_08.matcher(decrementBy).matches()) {
 //     //         throw new IllegalArgumentException("Increment request must be from '0' to 'FFFFFFFF' at #decrementWordByHelper");
 //     //     }
 //     //
@@ -796,7 +796,7 @@
 //     //     long numOverflows = 0;
 //     //     while (result < 0L) {
 //     //         numOverflows++;
-//     //         result = result + HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
+//     //         result = result + BaitConstants.OVERFLOW_REFERENCE_8_HEX;
 //     //     }
 //     //
 //     //     return new Pair<>(numOverflows, helper.padToX(Long.toHexString(result), 8, true));

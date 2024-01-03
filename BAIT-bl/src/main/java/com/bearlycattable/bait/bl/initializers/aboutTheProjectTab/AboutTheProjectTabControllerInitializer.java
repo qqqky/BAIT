@@ -2,7 +2,7 @@ package com.bearlycattable.bait.bl.initializers.aboutTheProjectTab;
 
 import com.bearlycattable.bait.bl.controllers.aboutTheProjectTab.AboutTheProjectTabController;
 import com.bearlycattable.bait.bl.controllers.RootController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerNumberedListHelper;
+import com.bearlycattable.bait.bl.helpers.BaitNumberedListHelper;
 
 public final class AboutTheProjectTabControllerInitializer {
 
@@ -33,7 +33,7 @@ public final class AboutTheProjectTabControllerInitializer {
 
     private void init() {
         String resource = "com.bearlycattable.bait.ui.txts/aboutTheProject.txt";
-        HeatVisualizerNumberedListHelper.readFileAndInsertListToParentComponent(resource, controller.getAboutTheProjectVBoxListParent());
+        BaitNumberedListHelper.readFileAndInsertListToParentComponent(resource, controller.getAboutTheProjectVBoxListParent());
     }
 
 }

@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 
 import com.bearlycattable.bait.bl.controllers.ConverterTabAccessProxy;
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
@@ -22,7 +22,7 @@ import lombok.Getter;
 
 public class ConverterTabController {
 
-    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final BaitHelper helper = new BaitHelper();
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "ConverterTab", LocaleUtils.APP_LANGUAGE);
     private ConverterTabAccessProxy converterTabAccessProxy;
 
@@ -122,11 +122,11 @@ public class ConverterTabController {
     }
 
     private void removeErrorLabelWIF() {
-        converterLabelSuccessErrorResultForWIF.setText(HeatVisualizerConstants.EMPTY_STRING);
+        converterLabelSuccessErrorResultForWIF.setText(BaitConstants.EMPTY_STRING);
     }
 
     private void removeErrorLabelEncoding() {
-       converterLabelSuccessErrorResultForEncoding.setText(HeatVisualizerConstants.EMPTY_STRING);
+       converterLabelSuccessErrorResultForEncoding.setText(BaitConstants.EMPTY_STRING);
     }
 
     private void addErrorMessageForWIFAndRedBorder(String message, TextInputControl component) {
@@ -181,7 +181,7 @@ public class ConverterTabController {
         private static final Pattern ENCODED_PUB_PATTERN = Pattern.compile("[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{26,34}");
 
         public static boolean isValidUnencodedPubKey(String key) {
-            return HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches();
+            return BaitConstants.PATTERN_SIMPLE_40.matcher(key).matches();
         }
 
         public static boolean isValidEncodedPubKey(String key) {

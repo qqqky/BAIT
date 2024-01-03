@@ -1,6 +1,6 @@
 package com.bearlycattable.bait.bl.searchHelper;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.contexts.QuickSearchContext;
 
 public class SearchHelperUtils {
@@ -14,7 +14,7 @@ public class SearchHelperUtils {
                     return context.getTargetPriv();
                 }
 
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
+                if (!BaitConstants.PATTERN_SIMPLE_64.matcher(seed).matches()) {
                     System.out.println("Invalid seed. Will use targetPriv as seed: " + context.getTargetPriv());
                     return context.getTargetPriv();
                 }

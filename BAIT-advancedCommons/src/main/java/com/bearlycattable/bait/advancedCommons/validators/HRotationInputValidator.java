@@ -5,7 +5,7 @@ public class HRotationInputValidator {
     // public static ValidatorResponse validateInputForHRotValue(String rotateHBy) {
     //     String rotateHBy = advancedTextFieldRotateHorizontallyBy.getText();
     //
-    //     if (!HeatVisualizerConstants.DIGITS_ONLY_MAX3.matcher(rotateHBy).matches()) {
+    //     if (!BaitConstants.DIGITS_ONLY_MAX3.matcher(rotateHBy).matches()) {
     //         hRotResponse.setResponseType(OptionalConfigValidationResponseType.ABORT);
     //         hRotResponse.setErrorMessage("Input for horizontal rotation must not exceed 3 integers");
     //         return;

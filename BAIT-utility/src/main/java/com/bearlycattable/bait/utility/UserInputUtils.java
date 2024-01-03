@@ -2,7 +2,7 @@ package com.bearlycattable.bait.utility;
 
 import java.util.Optional;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 
 public class UserInputUtils {
 
@@ -34,15 +34,15 @@ public class UserInputUtils {
             case "":
                 return userInput;
             case "\r\n" :
-                return userInput.replaceAll("[\t ,]", HeatVisualizerConstants.EMPTY_STRING);
+                return userInput.replaceAll("[\t ,]", BaitConstants.EMPTY_STRING);
             case "\n":
-                return userInput.replaceAll("[\r\t ,]", HeatVisualizerConstants.EMPTY_STRING);
+                return userInput.replaceAll("[\r\t ,]", BaitConstants.EMPTY_STRING);
             case ",":
-                return userInput.replaceAll("[\r\n\t ]", HeatVisualizerConstants.EMPTY_STRING);
+                return userInput.replaceAll("[\r\n\t ]", BaitConstants.EMPTY_STRING);
             case "\t":
-                return userInput.replaceAll("[\r\n ,]", HeatVisualizerConstants.EMPTY_STRING);
+                return userInput.replaceAll("[\r\n ,]", BaitConstants.EMPTY_STRING);
             case " ":
-                return userInput.replaceAll("[\r\n\t,]", HeatVisualizerConstants.EMPTY_STRING);
+                return userInput.replaceAll("[\r\n\t,]", BaitConstants.EMPTY_STRING);
             default:
                 throw new IllegalArgumentException("Delimiter not legal at AdvancedTabPageController#cleanUserInput");
         }

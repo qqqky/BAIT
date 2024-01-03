@@ -13,7 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-public class HeatVisualizerComponentHelper {
+public class BaitComponentHelper {
 
     private static final String specialLabelTooltipNormal = "specialLabelTooltipNormal";
     private static final String specialLabelTooltipDark = "specialLabelTooltipDark";

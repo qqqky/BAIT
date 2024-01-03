@@ -11,7 +11,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.serialization.P2PKHSingleResultDataDeserializerCustom;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
 import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
@@ -69,7 +69,7 @@ public class P2PKHSingleResultData {
         Arrays.stream(JsonResultTypeEnum.values()).sequential().forEach(resultType -> {
             Map<JsonResultScaleFactorEnum, Pair<String, Integer>> internalMap = new LinkedHashMap<>();
             Arrays.stream(JsonResultScaleFactorEnum.values()).sequential().forEach(scaleFactor -> {
-                internalMap.put(scaleFactor, new Pair<>(HeatVisualizerConstants.EMPTY_STRING, 0));
+                internalMap.put(scaleFactor, new Pair<>(BaitConstants.EMPTY_STRING, 0));
             });
             dataMap.put(resultType, internalMap);
         });

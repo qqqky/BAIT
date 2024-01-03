@@ -12,16 +12,16 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.bearlycattable.bait.commons.Config;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
 import com.bearlycattable.bait.commons.enums.PubTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 
 public class PubComparerS {
 
     private static final Logger LOG = Logger.getLogger(PubComparerS.class.getName());
-    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final BaitHelper helper = new BaitHelper();
     private static final Map<BigDecimal, Map<Integer, BigDecimal>> SCALED_MULTIPLIER_MAPPINGS = initScaledMultiplierMappings();
     private static final Map<Integer, Map<BigDecimal, Integer>> FINAL_POINTS_MAPPINGS = initFinalPointsMappings();
     private static final int IGNORED_HEAT_DIFFERENCE = 2; //eg.: '2' means that when heat difference <2, scale factor will be ignored
@@ -106,7 +106,7 @@ public class PubComparerS {
         String currentItem;
         String referenceItem;
         int difference;
-        int overflow_reference = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
+        int overflow_reference = BaitConstants.OVERFLOW_REFERENCE_1_HEX;
 
         for (int i = 0; i < referencePKH.length(); i++) {
             currentItem = String.valueOf(currentPKH.charAt(i));
@@ -189,7 +189,7 @@ public class PubComparerS {
         PubComparisonResultS resultCompressed = getCurrentResultForCompressed(currentPrivKey, referencePKHCompressed, scaleFactor).orElse(null);
 
         if (resultUncompressed == null || resultCompressed == null) {
-            return HeatVisualizerConstants.EMPTY_RESULT_WRAPPER;
+            return BaitConstants.EMPTY_RESULT_WRAPPER;
         }
 
         return PubComparisonResultSWrapper.builder()

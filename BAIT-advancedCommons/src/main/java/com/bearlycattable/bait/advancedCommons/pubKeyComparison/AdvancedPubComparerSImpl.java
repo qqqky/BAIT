@@ -3,7 +3,7 @@ package com.bearlycattable.bait.advancedCommons.pubKeyComparison;
 import java.util.Optional;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.AddressGenerationAndComparisonType;
 import com.bearlycattable.bait.commons.enums.PubTypeEnum;
@@ -54,7 +54,7 @@ public class AdvancedPubComparerSImpl implements AdvancedPubComparerS {
         PubComparisonResultS resultCompressed = getCurrentResultForCompressedCached(currentPrivKey, CPKHArray, data).orElse(null);
 
         if (resultUncompressed == null || resultCompressed == null) {
-            return HeatVisualizerConstants.EMPTY_RESULT_WRAPPER;
+            return BaitConstants.EMPTY_RESULT_WRAPPER;
         }
 
         return PubComparisonResultSWrapper.builder()

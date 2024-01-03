@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 
 public class VRotationInputValidator {
 
@@ -110,7 +110,7 @@ public class VRotationInputValidator {
 
     public static ValidatorResponse validateInputForVRotValue(String rotateVBy) {
         ValidatorResponse response = ValidatorResponse.builder().build();
-        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX2.matcher(rotateVBy).matches()) {
+        if (!BaitConstants.DIGITS_ONLY_MAX2.matcher(rotateVBy).matches()) {
             response.setResponseType(OptionalConfigValidationResponseType.ABORT);
             response.setErrorMessage("Input for vertical rotation must not exceed 2 integers");
             return response;

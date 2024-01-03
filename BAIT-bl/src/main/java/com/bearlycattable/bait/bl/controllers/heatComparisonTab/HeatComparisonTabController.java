@@ -14,13 +14,13 @@ import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
 import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
 import com.bearlycattable.bait.bl.controllers.HeatComparisonTabAccessProxy;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
 import com.bearlycattable.bait.commons.enums.NumberFormatTypeEnum;
 import com.bearlycattable.bait.commons.enums.PrivKeyTargetTypeEnum;
@@ -28,7 +28,7 @@ import com.bearlycattable.bait.commons.enums.PubTypeEnum;
 import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 import com.bearlycattable.bait.commons.pubKeyComparison.PubComparerS;
 import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultS;
 import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
@@ -60,7 +60,7 @@ public class HeatComparisonTabController {
 
     private static final Logger LOG = Logger.getLogger(HeatComparisonTabController.class.getName());
     private final ResourceBundle rb = ResourceBundle.getBundle(BundleUtils.GLOBAL_BASE_NAME + "HeatComparisonTab", LocaleUtils.APP_LANGUAGE);
-    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final BaitHelper helper = new BaitHelper();
     private final PubComparerS pubComparer = new PubComparerS();
     private final Map<Integer, BigDecimal> similarityMappings = Collections.unmodifiableMap(BaitUtils.buildSimilarityMappings());
     private final Map<Integer, String> colorMappings = Collections.unmodifiableMap(BaitUtils.buildColorMappings());
@@ -212,24 +212,24 @@ public class HeatComparisonTabController {
         HBox parent = new HBox();
         parent.setAlignment(Pos.CENTER);
 
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         Label label = new Label(rb.getString("label.referenceKey"));
         label.setPrefWidth(110.0);
         parent.getChildren().add(label);
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(56, false));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(56, false));
 
         TextField textField = new TextField();
         textField.getStyleClass().add("fullPKInput");
         textField.setPrefWidth(694.0); //TODO: width should depend on current font metrics...
-        textField.setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPrivateKeyFormatter());
+        textField.setTextFormatter(BaitFormatterFactory.getDefaultPrivateKeyFormatter());
         comparisonTextFieldReferenceKey = textField;
         parent.getChildren().add(textField);
 
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         String lengthLabelId = "referenceKeyLength";
-        HBox lengthLabelContainer = HeatVisualizerComponentHelper.createHBoxWithLengthLabel(lengthLabelId);
+        HBox lengthLabelContainer = BaitComponentHelper.createHBoxWithLengthLabel(lengthLabelId);
         lengthLabelContainer.getChildren().stream()
                 .map(node -> Label.class.isAssignableFrom(node.getClass()) ? (Label)node : null)
                 .filter(Objects::nonNull)
@@ -238,13 +238,13 @@ public class HeatComparisonTabController {
                 .ifPresent(lengthLabel -> textField.textProperty().addListener(event -> lengthLabel.setText(Integer.toString(textField.getLength()))));
 
         parent.getChildren().add(lengthLabelContainer);
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         Button btn = new Button(rb.getString("label.importFromConstruction"));
         btn.setTooltip(new Tooltip(rb.getString("tooltip.importFromConstruction")));
         btn.setOnAction(event -> {
             String key = heatComparisonTabAccessProxy.getCurrentInput();
-            if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
+            if (!BaitConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
                 showErrorMessage(rb.getString("error.keyNotValidInConstructionTab"));
                 return;
             }
@@ -252,7 +252,7 @@ public class HeatComparisonTabController {
             textField.setText(key);
         });
         parent.getChildren().add(btn);
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(56, false));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(56, false));
 
         if (heatComparisonTabAccessProxy != null) {
             DarkModeHelper.toggleDarkModeForComponent(heatComparisonTabAccessProxy.isDarkModeEnabled(), parent);
@@ -269,14 +269,14 @@ public class HeatComparisonTabController {
         switch (type) {
             case COLLISION:
                 comparisonRadioReferenceKeyTypePK.fire();
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(input).matches()) {
+                if (!BaitConstants.PATTERN_SIMPLE_64.matcher(input).matches()) {
                     showErrorMessage(rb.getString("error.invalidReferenceKey64"));
                     return;
                 }
                 break;
             case BLIND:
                 comparisonRadioReferenceKeyTypePKH.fire();
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(input).matches()) {
+                if (!BaitConstants.PATTERN_SIMPLE_40.matcher(input).matches()) {
                     showErrorMessage(rb.getString("error.invalidReferenceKey40"));
                     return;
                 }
@@ -289,7 +289,7 @@ public class HeatComparisonTabController {
     }
 
     public void setCurrentKey(String input) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(input).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(input).matches()) {
             showErrorMessage(rb.getString("error.invalidCurrentKey64"));
             return;
         }
@@ -303,24 +303,24 @@ public class HeatComparisonTabController {
         HBox parent = new HBox();
         parent.setAlignment(Pos.CENTER);
 
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         Label label = new Label(rb.getString("label.publicKey"));
         parent.getChildren().add(label);
 
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(80, false));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(80, false));
 
         TextField textField = new TextField();
         textField.setPrefWidth(440.0);
         textField.getStyleClass().add("fullPKHInput"); //TODO: width should depend on font metrics
-        textField.setTextFormatter(HeatVisualizerFormatterFactory.getDefaultUnencodedPublicKeyFormatter());
+        textField.setTextFormatter(BaitFormatterFactory.getDefaultUnencodedPublicKeyFormatter());
         comparisonTextFieldReferenceKey = textField;
         parent.getChildren().add(textField);
 
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         String lengthLabelId = "referenceKeyLength";
-        HBox lengthLabelContainer = HeatVisualizerComponentHelper.createHBoxWithLengthLabel(lengthLabelId);
+        HBox lengthLabelContainer = BaitComponentHelper.createHBoxWithLengthLabel(lengthLabelId);
         lengthLabelContainer.getChildren().stream()
                 .map(node -> Label.class.isAssignableFrom(node.getClass()) ? (Label)node : null)
                 .filter(Objects::nonNull)
@@ -329,13 +329,13 @@ public class HeatComparisonTabController {
                 .ifPresent(lengthLabel -> textField.textProperty().addListener(event -> lengthLabel.setText(Integer.toString(textField.getLength()))));
 
         parent.getChildren().add(lengthLabelContainer);
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         Button btn = new Button(rb.getString("label.importFromConverter"));
         btn.setTooltip(new Tooltip(rb.getString("tooltip.importFromConverter")));
         btn.setOnAction(event -> {
             String PKH = heatComparisonTabAccessProxy.getUnencodedPubFromConverterTab();
-            if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(PKH).matches()) {
+            if (!BaitConstants.PATTERN_SIMPLE_40.matcher(PKH).matches()) {
                 showErrorMessage(rb.getString("error.pkhNotValidInConverterTab"));
                 return;
             }
@@ -344,13 +344,13 @@ public class HeatComparisonTabController {
         });
         parent.getChildren().add(btn);
 
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         Button btn2 = new Button(rb.getString("label.exportToConverter"));
         btn2.setTooltip(new Tooltip(rb.getString("tooltip.exportToConverter")));
         btn2.setOnAction(event -> {
             String PKH = textField.getText();
-            if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(PKH).matches()) {
+            if (!BaitConstants.PATTERN_SIMPLE_40.matcher(PKH).matches()) {
                 showErrorMessage(rb.getString("error.invalidPkhCannotExport"));
                 return;
             }
@@ -358,7 +358,7 @@ public class HeatComparisonTabController {
             heatComparisonTabAccessProxy.setUnencodedPubInConverterTab(PKH);
         });
         parent.getChildren().add(btn2);
-        parent.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(80, false));
+        parent.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(80, false));
 
         if (heatComparisonTabAccessProxy != null) {
             DarkModeHelper.toggleDarkModeForComponent(heatComparisonTabAccessProxy.isDarkModeEnabled(), parent);
@@ -450,7 +450,7 @@ public class HeatComparisonTabController {
 
             int reference = Integer.parseInt(String.valueOf(referenceUPKH.charAt(i)), 16);
             int target = Integer.parseInt(currentValue, 16);
-            int overflow_reference = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
+            int overflow_reference = BaitConstants.OVERFLOW_REFERENCE_1_HEX;
 
             PubHeatResultWrapper resultWrapper = helper.calculatePubHeatResults(reference, target, overflow_reference);
             insertPubColorStylesToUi(i, pubPositiveHeatMappings, pubNegativeHeatMappings, resultWrapper);
@@ -505,7 +505,7 @@ public class HeatComparisonTabController {
     }
 
     private Optional<String> validateTargetPK(@NonNull String targetPK) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(targetPK).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(targetPK).matches()) {
             return Optional.of(rb.getString("error.invalidCurrentKey64"));
         }
 
@@ -523,7 +523,7 @@ public class HeatComparisonTabController {
 
         switch (comparisonType) {
             case COLLISION:
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(referenceKey).matches()) {
+                if (!BaitConstants.PATTERN_SIMPLE_64.matcher(referenceKey).matches()) {
                     return Optional.of(rb.getString("error.invalidReferenceKey64"));
                 }
 
@@ -532,7 +532,7 @@ public class HeatComparisonTabController {
                 }
                 break;
             case BLIND:
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(referenceKey).matches()) {
+                if (!BaitConstants.PATTERN_SIMPLE_40.matcher(referenceKey).matches()) {
                     return Optional.of(rb.getString("error.invalidReferenceKey40"));
                 }
                 break;
@@ -579,13 +579,13 @@ public class HeatComparisonTabController {
 
     private void removePrivStats() {
         for (int i = 0; i < 64; i++) {
-            privHeatPositiveAbsoluteIndexes.get(i).setText(HeatVisualizerConstants.EMPTY_STRING);
-            privHeatNegativeAbsoluteIndexes.get(i).setText(HeatVisualizerConstants.EMPTY_STRING);
+            privHeatPositiveAbsoluteIndexes.get(i).setText(BaitConstants.EMPTY_STRING);
+            privHeatNegativeAbsoluteIndexes.get(i).setText(BaitConstants.EMPTY_STRING);
         }
 
         for (int i = 1; i <= 8; i++) {
-            privHeatPositiveNumericLabels.get(i).setText(HeatVisualizerConstants.EMPTY_STRING);
-            privHeatNegativeNumericLabels.get(i).setText(HeatVisualizerConstants.EMPTY_STRING);
+            privHeatPositiveNumericLabels.get(i).setText(BaitConstants.EMPTY_STRING);
+            privHeatNegativeNumericLabels.get(i).setText(BaitConstants.EMPTY_STRING);
             privHeatPositiveContainerMappings.get(i).getStyleClass().clear();
             privHeatNegativeContainerMappings.get(i).getStyleClass().clear();
         }
@@ -621,7 +621,7 @@ public class HeatComparisonTabController {
     }
 
     private void removeErrorOrInfoMessage() {
-        comparisonLabelPubErrorSuccessResult.setText(HeatVisualizerConstants.EMPTY_STRING);
+        comparisonLabelPubErrorSuccessResult.setText(BaitConstants.EMPTY_STRING);
     }
 
     void showInfoMessage(String message) {
@@ -639,7 +639,7 @@ public class HeatComparisonTabController {
     void removeCurrentScaleFactorMessage() {
         comparisonLabelResultForScaleFactor.getStyleClass().clear();
         comparisonLabelResultForScaleFactor.getStyleClass().add(CssConstants.ERROR_INFO_MESSAGE_STYLE_CLASS);
-        comparisonLabelResultForScaleFactor.setText(HeatVisualizerConstants.EMPTY_STRING);
+        comparisonLabelResultForScaleFactor.setText(BaitConstants.EMPTY_STRING);
     }
 
     void showErrorMessage(String message) {
@@ -660,7 +660,7 @@ public class HeatComparisonTabController {
     }
 
     private void setReferencePKHForCompressed(String CPKH) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(CPKH).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_40.matcher(CPKH).matches()) {
             showErrorMessage(rb.getString("error.invalidReferenceCPKH"));
             return;
         }
@@ -672,7 +672,7 @@ public class HeatComparisonTabController {
     }
 
     private void setReferencePKHForUncompressed(String UPKH) {
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(UPKH).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_40.matcher(UPKH).matches()) {
             showErrorMessage(rb.getString("error.invalidReferenceUPKH"));
             return;
         }
@@ -794,14 +794,14 @@ public class HeatComparisonTabController {
     //             .limit(8)
     //             .map(index -> (String) privHeatPositiveContainerMappings.get(index).getUserData())
     //             .filter(Objects::nonNull)
-    //             .collect(Collectors.joining(HeatVisualizerConstants.EMPTY_STRING));
+    //             .collect(Collectors.joining(BaitConstants.EMPTY_STRING));
     // }
 
     @FXML
     //TODO: HEX numbers should be prefixed with 0x
     private void doChangeHeatResultFormat(ActionEvent actionEvent) {
         String currentPriv = comparisonTextFieldCurrentKey.getText();
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(currentPriv).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(currentPriv).matches()) {
             currentNumberFormatType = comparisonChoiceBoxNumberFormatType.getSelectionModel().getSelectedItem();
             return;
         }
@@ -859,7 +859,7 @@ public class HeatComparisonTabController {
     private Optional<PrivHeatResultWrapper> getPrivHeat(String referencePKWord, String targetPKWord, @NonNull NumberFormatTypeEnum type) {
         Long reference = Long.parseLong(referencePKWord, 16);
         Long current = Long.parseLong(targetPKWord, 16);
-        Long overflow_reference = HeatVisualizerConstants.OVERFLOW_REFERENCE_8_HEX;
+        Long overflow_reference = BaitConstants.OVERFLOW_REFERENCE_8_HEX;
 
         return helper.calculatePrivHeatResults(reference, current, overflow_reference, type);
     }
@@ -923,7 +923,7 @@ public class HeatComparisonTabController {
     @FXML
     private void doImportPriv() {
         String currentInput = heatComparisonTabAccessProxy.getCurrentInput();
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(currentInput).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(currentInput).matches()) {
             showErrorMessage(rb.getString("error.keyNotValidInConstructionTab"));
             return;
         }

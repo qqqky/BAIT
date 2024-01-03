@@ -17,10 +17,10 @@ import com.bearlycattable.bait.advancedCommons.dataAccessors.ThreadComponentData
 import com.bearlycattable.bait.advancedCommons.helpers.AdvancedSubTabProgressComponentHelper;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.controllers.advancedTab.proxyInterfaces.AdvancedProgressAccessProxy;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.BackgroundColorEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerModalHelper;
+import com.bearlycattable.bait.commons.helpers.BaitResourceSelectionModalHelper;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
 import com.bearlycattable.bait.utility.RandomAddressGenerator;
@@ -95,7 +95,7 @@ public class AdvancedSubTabProgressController {
             return;
         }
 
-        HeatVisualizerModalHelper.selectJsonResourceForSave(rb.getString("label.saveTo"), advancedProgressTextFieldAutomergePath).ifPresent(absPath -> {
+        BaitResourceSelectionModalHelper.selectJsonResourceForSave(rb.getString("label.saveTo"), advancedProgressTextFieldAutomergePath).ifPresent(absPath -> {
             advancedProgressTextFieldAutomergePath.setText(absPath);
         });
     }
@@ -133,7 +133,7 @@ public class AdvancedSubTabProgressController {
                     return;
                 }
                 removeThreadProgressChildContainer(parentThreadNum, childThreadNum); //remove child
-                advancedProgressLabelMessageForShowInfo.setText(HeatVisualizerConstants.EMPTY_STRING); //remove message
+                advancedProgressLabelMessageForShowInfo.setText(BaitConstants.EMPTY_STRING); //remove message
             });
         });
 
@@ -154,7 +154,7 @@ public class AdvancedSubTabProgressController {
                 return;
             }
             removeThreadProgressChildContainer(parentThreadNum, parentThreadNum); //remove parent
-            advancedProgressLabelMessageForShowInfo.setText(HeatVisualizerConstants.EMPTY_STRING); //remove message
+            advancedProgressLabelMessageForShowInfo.setText(BaitConstants.EMPTY_STRING); //remove message
         });
 
         if (isAccordionPresent()) {

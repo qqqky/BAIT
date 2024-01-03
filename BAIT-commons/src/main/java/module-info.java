@@ -24,4 +24,5 @@ module bait.commons {
     exports com.bearlycattable.bait.commons.wrappers to bait.advanced, bait.advancedCommons, bait.bl;
 
     exports com.bearlycattable.bait.commons.extern.guavaExtern;
+    exports com.bearlycattable.bait.commons.uiHelpers to bait.ui, bait.bl;
 }

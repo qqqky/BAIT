@@ -9,14 +9,14 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.contexts.P2PKHSingleResultData;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.HeatOverflowTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 
 public class AdvancedPubComparerBImpl implements AdvancedPubComparerB {
 
     private static final int IGNORED_HEAT_DIFFERENCE = 2;
-    private static final int OVERFLOW_REFERENCE = HeatVisualizerConstants.OVERFLOW_REFERENCE_1_HEX;
+    private static final int OVERFLOW_REFERENCE = BaitConstants.OVERFLOW_REFERENCE_1_HEX;
     private static final Map<BigDecimal, Map<Integer, BigDecimal>> SCALED_MULTIPLIER_MAPPINGS = initScaledMultiplierMappings();
     private static final Map<Integer, Map<BigDecimal, Integer>> FINAL_POINTS_MAPPINGS = initFinalPointsMappings();
 

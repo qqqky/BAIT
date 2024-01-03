@@ -16,7 +16,7 @@ import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrap
 
 public abstract class AbstractBaseQuickSearchHelper extends AbstractGeneralSearchHelper {
     private boolean dynamicAccuracy;
-    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final BaitHelper helper = new BaitHelper();
     private final PubComparerS pubComparer = new PubComparerS();
 
     protected AbstractBaseQuickSearchHelper() {

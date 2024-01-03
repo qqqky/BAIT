@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
 import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
 import com.bearlycattable.bait.bl.controllers.QuickSearchTabAccessProxy;
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.bl.helpers.QuickSearchTaskHelper;
 import com.bearlycattable.bait.commons.CssConstants;
 import com.bearlycattable.bait.commons.validators.SearchHelperIterationsValidator;
@@ -25,12 +25,12 @@ import com.bearlycattable.bait.bl.searchHelper.context.QuickSearchThreadContext;
 import com.bearlycattable.bait.commons.contexts.SimpleSearchHelperCreationContext;
 import com.bearlycattable.bait.bl.searchHelper.factory.SimpleSearchHelperFactory;
 import com.bearlycattable.bait.commons.Config;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.QuickSearchComparisonType;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 import com.bearlycattable.bait.commons.contexts.QuickSearchContext;
 import com.bearlycattable.bait.commons.interfaces.QuickSearchHelper;
 import com.bearlycattable.bait.commons.pubKeyComparison.PubComparisonResultSWrapper;
@@ -108,7 +108,7 @@ public class QuickSearchTabController {
     @FXML
     private CheckBox quickSearchCbxMoveToHeatComparisonWhenSearchDone;
 
-    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final BaitHelper helper = new BaitHelper();
     private final RandomAddressGenerator generator = RandomAddressGenerator.getSecureGenerator(64);
     private final QuickSearchTaskHelper quickSearchTaskHelper = new QuickSearchTaskHelper();
     @Getter
@@ -170,32 +170,32 @@ public class QuickSearchTabController {
 
         //children
         ObservableList<Node> children = parent.getChildren();
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(65, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(65, false));
 
         Label label01 = new Label(rb.getString("label.publicKeyOfUnknownType"));
         label01.setAlignment(Pos.CENTER_LEFT);
         children.add(label01);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
-        TextField textField = createTextFieldForTargetKey(440.0, HeatVisualizerFormatterFactory.getDefaultUnencodedPublicKeyFormatter());
+        TextField textField = createTextFieldForTargetKey(440.0, BaitFormatterFactory.getDefaultUnencodedPublicKeyFormatter());
         quickSearchTextFieldTargetKey = textField;
         textField.textProperty().addListener(listener -> quickSearchLabelTargetLength.setText(Integer.toString(quickSearchTextFieldTargetKey.getText().length())));
         children.add(textField);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
-        HBox labelLengthContainer = HeatVisualizerComponentHelper.createHBoxWithLengthLabel("quickSearchLabelTargetLength");
+        HBox labelLengthContainer = BaitComponentHelper.createHBoxWithLengthLabel("quickSearchLabelTargetLength");
         quickSearchLabelTargetLength = labelLengthContainer.getChildren().stream()
                 .filter(node -> "quickSearchLabelTargetLength".equals(node.getId()))
                 .map(Label.class::cast)
                 .findAny().orElse(null);
         children.add(labelLengthContainer);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
         Button importPriv = new Button(rb.getString("label.importFromConverter"));
         importPriv.setOnAction(event -> importPubUnencodedFromConverterTab());
         importPriv.setTooltip(new Tooltip(rb.getString("tooltip.importFromConverterExplanation")));
         children.add(importPriv);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
         Button exportPriv = new Button(rb.getString("label.exportToConverter"));
         exportPriv.setOnAction(event -> exportPubUnencodedToConverterTab());
@@ -216,7 +216,7 @@ public class QuickSearchTabController {
             insertErrorMessage("Nothing to export");
         }
 
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_40.matcher(key).matches()) {
             insertInfoMessage("Key has been exported, but it is not valid", TextColorEnum.GREEN);
         } else {
             insertInfoMessage("Key: " + key + " has been exported to 'Converter' tab", TextColorEnum.GREEN);
@@ -247,34 +247,34 @@ public class QuickSearchTabController {
 
         //children
         ObservableList<Node> children = parent.getChildren();
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
         Label label01 = new Label(rb.getString("label.privateKey"));
         label01.setPrefWidth(120.0);
         label01.setAlignment(Pos.CENTER_LEFT);
         children.add(label01);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
-        TextField textField = createTextFieldForTargetKey(694.0, HeatVisualizerFormatterFactory.getDefaultPrivateKeyFormatter());
+        TextField textField = createTextFieldForTargetKey(694.0, BaitFormatterFactory.getDefaultPrivateKeyFormatter());
         quickSearchTextFieldTargetKey = textField;
         textField.textProperty().addListener(listener -> quickSearchLabelTargetLength.setText(Integer.toString(quickSearchTextFieldTargetKey.getText().length())));
 
         children.add(textField);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
-        HBox labelLengthContainer = HeatVisualizerComponentHelper.createHBoxWithLengthLabel("quickSearchLabelTargetLength");
+        HBox labelLengthContainer = BaitComponentHelper.createHBoxWithLengthLabel("quickSearchLabelTargetLength");
         quickSearchLabelTargetLength = labelLengthContainer.getChildren().stream()
                 .filter(node -> "quickSearchLabelTargetLength".equals(node.getId()))
                 .map(Label.class::cast)
                 .findAny().orElse(null);
         children.add(labelLengthContainer);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
         Button importPriv = new Button(rb.getString("label.importFromConstruction"));
         importPriv.setTooltip(new Tooltip(rb.getString("tooltip.importFromConstructionExplanation")));
         importPriv.setOnAction(event -> importPKFromKeyConstructionTab(quickSearchTextFieldTargetKey));
         children.add(importPriv);
-        children.add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        children.add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
         if (quickSearchTabAccessProxy != null) {
             DarkModeHelper.toggleDarkModeForComponent(quickSearchTabAccessProxy.isDarkModeEnabled(), parent);
@@ -297,7 +297,7 @@ public class QuickSearchTabController {
     public void importPKFromKeyConstructionTab(TextInputControl component) {
         String key = importPrivFromMainTab();
 
-        if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
+        if (!BaitConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
            insertErrorMessageAndRedBorder(rb.getString("error.importFailedInvalidKey"), component);
            return;
         }
@@ -353,7 +353,7 @@ public class QuickSearchTabController {
                 .scaleFactor(getPubAccuracyScaleFactorFromUi())
                 .build();
 
-        QuickSearchHelper quickSearchHelper = SimpleSearchHelperFactory.findRequestedSearchHelper(searchMode, context, HeatVisualizerConstants.MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM);
+        QuickSearchHelper quickSearchHelper = SimpleSearchHelperFactory.findRequestedSearchHelper(searchMode, context, BaitConstants.MIXED_SEARCH_SEQUENCE_WITHOUT_RANDOM);
 
         performSearchParallel(quickSearchHelper, accuracy);
     }
@@ -400,14 +400,14 @@ public class QuickSearchTabController {
             case ROTATION_WORDS:
             case FUZZING:
                 if (!quickSearchCbxSelfSeed.isSelected() || quickSearchCbxSelfSeed.isDisabled()) {
-                    return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(quickSearchTextFieldSeedPriv.getText()).matches();
+                    return BaitConstants.PATTERN_SIMPLE_64.matcher(quickSearchTextFieldSeedPriv.getText()).matches();
                 }
 
                 QuickSearchComparisonType searchType = getQuickSearchTypeFromUi();
                 if (QuickSearchComparisonType.COLLISION != searchType) {
                     throw new IllegalStateException("Self seeding is not allowed here.");
                 }
-                return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(quickSearchTextFieldTargetKey.getText()).matches();
+                return BaitConstants.PATTERN_SIMPLE_64.matcher(quickSearchTextFieldTargetKey.getText()).matches();
             default:
                 throw new IllegalArgumentException("Selected search mode is not yet supported [searchMode="+searchMode+"]");
         }
@@ -440,9 +440,9 @@ public class QuickSearchTabController {
         String key = quickSearchTextFieldTargetKey.getText();
         switch (searchType) {
             case COLLISION:
-                return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches();
+                return BaitConstants.PATTERN_SIMPLE_64.matcher(key).matches();
             case BLIND:
-                return HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(key).matches();
+                return BaitConstants.PATTERN_SIMPLE_40.matcher(key).matches();
             default:
                 throw new IllegalArgumentException("This search type is not supported [searchType=" + searchType + "]");
         }
@@ -481,7 +481,7 @@ public class QuickSearchTabController {
     private void removeErrorMessage() {
         quickSearchLabelErrorSuccessMessage.getStyleClass().clear();
         quickSearchLabelErrorSuccessMessage.getStyleClass().add(CssConstants.ERROR_INFO_MESSAGE_STYLE_CLASS);
-        quickSearchLabelErrorSuccessMessage.setText(HeatVisualizerConstants.EMPTY_STRING);
+        quickSearchLabelErrorSuccessMessage.setText(BaitConstants.EMPTY_STRING);
     }
 
     private QuickSearchComparisonType getQuickSearchTypeFromUi() {
@@ -551,13 +551,13 @@ public class QuickSearchTabController {
     private boolean isTargetKeyIsValidForType(@NonNull String targetKey, @NonNull QuickSearchComparisonType type) {
         switch (type) {
             case COLLISION:
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(targetKey).matches()) {
+                if (!BaitConstants.PATTERN_SIMPLE_64.matcher(targetKey).matches()) {
                     insertErrorMessage(rb.getString("error.invalidTargetPkForThisSearchType") + QuickSearchComparisonType.COLLISION);
                     return false;
                 }
                 break;
             case BLIND:
-                if (!HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(targetKey).matches()) {
+                if (!BaitConstants.PATTERN_SIMPLE_40.matcher(targetKey).matches()) {
                     insertErrorMessage(rb.getString("error.invalidTargetPkhForThisSearchType") + QuickSearchComparisonType.BLIND);
                     return false;
                 }
@@ -624,7 +624,7 @@ public class QuickSearchTabController {
     }
 
     private int validateAndGetOrDefault(String requiredAccuracy) {
-        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX3.matcher(requiredAccuracy).matches()) {
+        if (!BaitConstants.DIGITS_ONLY_MAX3.matcher(requiredAccuracy).matches()) {
             insertErrorMessage(rb.getString("error.invalidAccuracyUseDefault") + Config.DEFAULT_ACCURACY_QUICK_SEARCH);
             return Config.DEFAULT_ACCURACY_QUICK_SEARCH;
         }
@@ -641,7 +641,7 @@ public class QuickSearchTabController {
 
     int getIterationsFieldFromUi(int max) {
         String iterationsInput = quickSearchTextFieldIterations.getText();
-        if (!HeatVisualizerConstants.DIGITS_ONLY_MAX6.matcher(iterationsInput).matches()) {
+        if (!BaitConstants.DIGITS_ONLY_MAX6.matcher(iterationsInput).matches()) {
             quickSearchTextFieldIterations.setText(String.valueOf(max));
             return max;
         }

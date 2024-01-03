@@ -61,7 +61,7 @@ public class AdvancedSubTabProgressComponentHelper {
         threadNameLabel.setText(THREAD_IDENTIFIER + currentThreadNum);
 
         progressBarHbox.getChildren().add(threadNameLabel);
-        progressBarHbox.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+        progressBarHbox.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
         ProgressBar progressBar = new ProgressBar();
         progressBar.setProgress(0);
@@ -91,7 +91,7 @@ public class AdvancedSubTabProgressComponentHelper {
         threadProgressHBox.getChildren().add(btnShowHideInfo);
 
         //spacer HBox
-        threadProgressHBox.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        threadProgressHBox.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
         //create a child button (StopThread). Listener is set later when thread starts work
         Button btnStopThread = new Button();
@@ -102,7 +102,7 @@ public class AdvancedSubTabProgressComponentHelper {
         threadProgressHBox.getChildren().add(btnStopThread);
 
         //spacer HBox
-        threadProgressHBox.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, false));
+        threadProgressHBox.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, false));
 
         //create a child button (Remove). Listener is set later when thread starts work
         Button btnRemove = new Button();

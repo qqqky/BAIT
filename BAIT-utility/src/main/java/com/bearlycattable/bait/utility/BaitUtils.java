@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 
 public class BaitUtils {
 
@@ -13,7 +13,7 @@ public class BaitUtils {
         Map<Integer, BigDecimal> map = new HashMap<>();
         int max = 16 * 40;
         for (int i = 0; i <= max; i++) {
-            map.put(i, HeatVisualizerConstants.SINGLE_POINT_VALUE.multiply(new BigDecimal(i)));
+            map.put(i, BaitConstants.SINGLE_POINT_VALUE.multiply(new BigDecimal(i)));
         }
 
         return map;

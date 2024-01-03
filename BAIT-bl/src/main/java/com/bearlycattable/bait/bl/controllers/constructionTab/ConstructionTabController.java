@@ -11,9 +11,9 @@ import java.util.stream.Stream;
 
 import com.bearlycattable.bait.bl.controllers.ConstructionTabAccessProxy;
 import com.bearlycattable.bait.commons.CssConstants;
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.TextColorEnum;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 import com.bearlycattable.bait.commons.validators.PrivKeyValidator;
 import com.bearlycattable.bait.utility.BundleUtils;
 import com.bearlycattable.bait.utility.LocaleUtils;
@@ -50,7 +50,7 @@ public class ConstructionTabController {
     private final Map<Integer, ComboBox> privCompleteComboBoxMappings = new HashMap<>();
     private final List<Integer> disabledWords = new ArrayList<>();
 
-    private final HeatVisualizerHelper helper = new HeatVisualizerHelper();
+    private final BaitHelper helper = new BaitHelper();
     private final RandomAddressGenerator generator = RandomAddressGenerator.getSecureGenerator(64);
 
     private ConstructionTabAccessProxy constructionTabAccessProxy;
@@ -213,7 +213,7 @@ public class ConstructionTabController {
     private void removeErrorMessageAndRedBorder() {
         constructionLabelErrorSuccessMessage.getStyleClass().clear();
         constructionLabelErrorSuccessMessage.getStyleClass().add(CssConstants.ERROR_INFO_MESSAGE_STYLE_CLASS);
-        constructionLabelErrorSuccessMessage.setText(HeatVisualizerConstants.EMPTY_STRING);
+        constructionLabelErrorSuccessMessage.setText(BaitConstants.EMPTY_STRING);
     }
 
     void setCurrentInput(String priv) {
@@ -263,7 +263,7 @@ public class ConstructionTabController {
                 .map(validKey -> privCompleteComboBoxMappings.get(validKey).getSelectionModel().getSelectedItem())
                 // .filter(Objects::nonNull)
                 .map(String.class::cast)
-                .collect(Collectors.joining(HeatVisualizerConstants.EMPTY_STRING));
+                .collect(Collectors.joining(BaitConstants.EMPTY_STRING));
     }
 
     @SuppressWarnings("unchecked")
@@ -304,7 +304,7 @@ public class ConstructionTabController {
                     }
                     return word;
                 })
-                .collect(Collectors.joining(HeatVisualizerConstants.EMPTY_STRING));
+                .collect(Collectors.joining(BaitConstants.EMPTY_STRING));
     }
 
     /**
@@ -315,7 +315,7 @@ public class ConstructionTabController {
     public String getCurrentInputForced() {
         return inputFieldWordMappings.keySet().stream()
                 .map(k -> inputFieldWordMappings.get(k).getText())
-                .collect(Collectors.joining(HeatVisualizerConstants.EMPTY_STRING));
+                .collect(Collectors.joining(BaitConstants.EMPTY_STRING));
     }
 
     public synchronized final void setProgrammaticChange(boolean programmaticChange) {
@@ -341,7 +341,7 @@ public class ConstructionTabController {
         Object plainText = Clipboard.getSystemClipboard().getContent(DataFormat.PLAIN_TEXT);
         if (plainText != null && String.class.isAssignableFrom(plainText.getClass())) {
             String key = (String) plainText;
-            if (HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
+            if (BaitConstants.PATTERN_SIMPLE_64.matcher(key).matches()) {
                 setCurrentInputForced(key);
                 return;
             }
@@ -369,7 +369,7 @@ public class ConstructionTabController {
                 .limit(to - from)
                 .map(index -> privCompleteComboBoxMappings.get(index).getSelectionModel().getSelectedItem())
                 .map(String.class::cast)
-                .allMatch(str -> str != null && HeatVisualizerConstants.PATTERN_HEX_01.matcher(str).matches());
+                .allMatch(str -> str != null && BaitConstants.PATTERN_HEX_01.matcher(str).matches());
     }
 
     public void modifyWordComboBoxAndTextFieldAccess(int wordNum, boolean isChecked) {
@@ -394,11 +394,11 @@ public class ConstructionTabController {
     }
 
     private boolean isValidPrivPattern(String priv) {
-        return priv != null && HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(priv).matches();
+        return priv != null && BaitConstants.PATTERN_SIMPLE_64.matcher(priv).matches();
     }
 
     private boolean isValidPubPattern(String pub) {
-        return pub != null && HeatVisualizerConstants.PATTERN_SIMPLE_40.matcher(pub).matches();
+        return pub != null && BaitConstants.PATTERN_SIMPLE_40.matcher(pub).matches();
     }
     
     public final boolean isParentValid() {

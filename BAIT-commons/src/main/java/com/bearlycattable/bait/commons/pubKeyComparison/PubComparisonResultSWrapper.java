@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.JsonResultTypeEnum;
 import com.bearlycattable.bait.commons.enums.PubTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
@@ -32,7 +32,7 @@ public class PubComparisonResultSWrapper {
     }
 
     public boolean equalsEmpty() {
-        return resultStream().anyMatch(currentResult -> HeatVisualizerConstants.EMPTY_RESULT_WRAPPER.resultStream()
+        return resultStream().anyMatch(currentResult -> BaitConstants.EMPTY_RESULT_WRAPPER.resultStream()
                 .anyMatch(emptyItem -> emptyItem.equals(currentResult)));
     }
 

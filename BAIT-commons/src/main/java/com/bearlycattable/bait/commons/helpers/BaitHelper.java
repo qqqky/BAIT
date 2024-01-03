@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import com.bearlycattable.bait.commons.HeatVisualizerConstants;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.enums.NumberFormatTypeEnum;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.extern.bitcoinjExtern.ECKeyLite;
@@ -26,7 +26,7 @@ import com.bearlycattable.bait.commons.wrappers.PubHeatResultWrapper;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ChoiceBox;
 
-public class HeatVisualizerHelper {
+public class BaitHelper {
 
     private final Base58 base58 = new Base58();
     private final byte[] ALL_BYTES_MIN = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2};
@@ -153,7 +153,7 @@ public class HeatVisualizerHelper {
     }
 
     private boolean isValidKey(String key) {
-        return HeatVisualizerConstants.PATTERN_SIMPLE_64.matcher(key).matches();
+        return BaitConstants.PATTERN_SIMPLE_64.matcher(key).matches();
     }
 
     private boolean isValidKey(byte[] bytes) {
@@ -223,7 +223,7 @@ public class HeatVisualizerHelper {
         if (padTo < 1 || padTo > 8) {
             throw new IllegalArgumentException("Length of requested padding must be between 1 and 8");
         }
-        if (hexInput == null || !HeatVisualizerConstants.PATTERN_HEX_01_TO_08.matcher(hexInput).matches()) {
+        if (hexInput == null || !BaitConstants.PATTERN_HEX_01_TO_08.matcher(hexInput).matches()) {
             return null;
         }
 
@@ -256,8 +256,8 @@ public class HeatVisualizerHelper {
             resultPositive = overflow_reference - locked + current;
             resultNegative = locked - current;
         } else {
-            resultPositive = HeatVisualizerConstants.ZERO_LONG;
-            resultNegative = HeatVisualizerConstants.ZERO_LONG;
+            resultPositive = BaitConstants.ZERO_LONG;
+            resultNegative = BaitConstants.ZERO_LONG;
         }
 
         if (requestedType == null) {
@@ -279,8 +279,8 @@ public class HeatVisualizerHelper {
             resultPositive = overflow_reference - reference + current;
             resultNegative = reference - current;
         } else {
-            resultPositive = HeatVisualizerConstants.ZERO_INT;
-            resultNegative = HeatVisualizerConstants.ZERO_INT;
+            resultPositive = BaitConstants.ZERO_INT;
+            resultNegative = BaitConstants.ZERO_INT;
         }
 
         return buildHeatResultsFromCalculatedValues(resultPositive, resultNegative);
@@ -329,7 +329,7 @@ public class HeatVisualizerHelper {
             return currentIndex;
         }
 
-        if (hexData.charAt(currentIndex) == HeatVisualizerConstants.ZERO_CHARACTER) {
+        if (hexData.charAt(currentIndex) == BaitConstants.ZERO_CHARACTER) {
             return recursive(hexData, ++currentIndex, privAccuracyResolution);
         }
 
@@ -355,10 +355,10 @@ public class HeatVisualizerHelper {
         }
 
         if (scaleFactor.getMaxPoints().intValue() == totalPoints) {
-            return HeatVisualizerConstants.MAX_SIMILARITY_MAP_INDEX.intValue();
+            return BaitConstants.MAX_SIMILARITY_MAP_INDEX.intValue();
         }
 
-        return HeatVisualizerConstants.MAX_SIMILARITY_MAP_INDEX
+        return BaitConstants.MAX_SIMILARITY_MAP_INDEX
                 .divide(scaleFactor.getMaxPoints(), 10, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal(totalPoints)).setScale(0, RoundingMode.HALF_UP).intValue();
     }

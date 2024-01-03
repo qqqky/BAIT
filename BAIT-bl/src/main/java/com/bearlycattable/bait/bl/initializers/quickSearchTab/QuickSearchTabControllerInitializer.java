@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.bearlycattable.bait.bl.controllers.RootController;
 import com.bearlycattable.bait.bl.controllers.quickSearchTab.QuickSearchTabController;
-import com.bearlycattable.bait.bl.helpers.HeatVisualizerFormatterFactory;
+import com.bearlycattable.bait.bl.helpers.BaitFormatterFactory;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.enums.ScaleFactorEnum;
 import com.bearlycattable.bait.commons.enums.SearchModeEnum;
@@ -47,7 +47,7 @@ public final class QuickSearchTabControllerInitializer {
     }
 
     private void addTextFormatters() {
-        controller.getQuickSearchTextFieldSimilarityPercent().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(100));
+        controller.getQuickSearchTextFieldSimilarityPercent().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(100));
         controller.getQuickSearchTextFieldSimilarityPercent().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -57,7 +57,7 @@ public final class QuickSearchTabControllerInitializer {
                 }
             }
         });
-        controller.getQuickSearchTextFieldIterations().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_ITERATIONS_QUICK_SEARCH));
+        controller.getQuickSearchTextFieldIterations().setTextFormatter(BaitFormatterFactory.getDefaultPositiveNumberFormatter(Config.MAX_ITERATIONS_QUICK_SEARCH));
         controller.getQuickSearchTextFieldIterations().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
@@ -86,7 +86,7 @@ public final class QuickSearchTabControllerInitializer {
         controller.getQuickSearchComboBoxScaleFactor().getSelectionModel().select(1);
 
         //initialize seed component
-        controller.getQuickSearchTextFieldSeedPriv().setTextFormatter(HeatVisualizerFormatterFactory.getDefaultPrivateKeyFormatter());
+        controller.getQuickSearchTextFieldSeedPriv().setTextFormatter(BaitFormatterFactory.getDefaultPrivateKeyFormatter());
         controller.getQuickSearchTextFieldSeedPriv().textProperty().addListener(listener -> controller.getQuickSearchLabelLengthSeed().setText(Integer.toString(controller.getQuickSearchTextFieldSeedPriv().getText().length())));
         controller.getQuickSearchBtnImportSeedPriv().setOnAction(event -> controller.importPKFromKeyConstructionTab(controller.getQuickSearchTextFieldSeedPriv()));
 

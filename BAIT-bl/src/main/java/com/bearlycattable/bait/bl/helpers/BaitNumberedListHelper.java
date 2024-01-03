@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.bearlycattable.bait.advancedCommons.helpers.HeatVisualizerComponentHelper;
-import com.bearlycattable.bait.commons.helpers.HeatVisualizerHelper;
+import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
+import com.bearlycattable.bait.commons.helpers.BaitHelper;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class HeatVisualizerNumberedListHelper {
+public class BaitNumberedListHelper {
 
     private static final String specialLabelTooltipNormal = "specialLabelTooltipNormal";
     private static final String specialLabelTooltipDark = "specialLabelTooltipDark";
@@ -43,7 +43,7 @@ public class HeatVisualizerNumberedListHelper {
     private static void readLocalInfoFile(String resource) {
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
         if (is == null) {
-            is = HeatVisualizerNumberedListHelper.class.getClassLoader().getResourceAsStream(resource);
+            is = BaitNumberedListHelper.class.getClassLoader().getResourceAsStream(resource);
         }
         if (is == null) {
             throw new RuntimeException("Resource not found: " + resource);
@@ -52,7 +52,7 @@ public class HeatVisualizerNumberedListHelper {
         Pattern regex = Pattern.compile("//\\[[\\d]{1,2}]\\\\\\\\[.]"); //matches //[nn]\\. where nn is 'one or two' digits
         int tooltipCount = 0;
         boolean tooltipOpened = false;
-        HeatVisualizerHelper helper = new HeatVisualizerHelper();
+        BaitHelper helper = new BaitHelper();
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line;
@@ -148,10 +148,10 @@ public class HeatVisualizerNumberedListHelper {
             String labelText = listNumber + ". " + NUMBERED_LIST_TEXT.get(listNumber);
 
             HBox placeholder = new HBox();
-            placeholder.getChildren().add(HeatVisualizerComponentHelper.createEmptyHBoxSpacer(5, true));
+            placeholder.getChildren().add(BaitComponentHelper.createEmptyHBoxSpacer(5, true));
 
             if (SPECIAL_TOOLTIPS.isEmpty() || SPECIAL_TOOLTIPS.keySet().stream().noneMatch(labelText::contains)) {
-                placeholder.getChildren().add(HeatVisualizerComponentHelper.createLabel(labelText, 18, true));
+                placeholder.getChildren().add(BaitComponentHelper.createLabel(labelText, 18, true));
             } else {
                 List<String> labels = new ArrayList<>();
                 labels.add(labelText);
@@ -185,12 +185,12 @@ public class HeatVisualizerNumberedListHelper {
                         return;
                     }
                     if (SPECIAL_TOOLTIPS.keySet().stream().noneMatch(label::equals)) {
-                        placeholder.getChildren().add(HeatVisualizerComponentHelper.createLabel(label, 18, true));
+                        placeholder.getChildren().add(BaitComponentHelper.createLabel(label, 18, true));
                         return;
                     }
                     SPECIAL_TOOLTIPS.keySet().stream().filter(label::equals).findFirst().ifPresent(kk -> {
                         String tooltipText = SPECIAL_TOOLTIPS.get(kk);
-                        placeholder.getChildren().add(HeatVisualizerComponentHelper.createPrettyLabelWithTooltip(tooltipText));
+                        placeholder.getChildren().add(BaitComponentHelper.createPrettyLabelWithTooltip(tooltipText));
                     });
 
                 });
