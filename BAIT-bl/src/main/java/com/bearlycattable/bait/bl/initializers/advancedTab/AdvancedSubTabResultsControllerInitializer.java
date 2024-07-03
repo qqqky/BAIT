@@ -68,9 +68,9 @@ public final class AdvancedSubTabResultsControllerInitializer {
         controller.getAdvancedResultsFilterTextFieldMaxResults().focusedProperty().addListener((obs, oldVal, newVal) -> {
             //when unfocused, check if max value is not breached
             if (!newVal) {
-                String current = controller.getAdvancedResultsFilterTextFieldAccuracyMin().getText();
+                String current = controller.getAdvancedResultsFilterTextFieldMaxResults().getText();
                 if (!current.isEmpty() && Integer.parseInt(current) > 999) {
-                    controller.getAdvancedResultsFilterTextFieldAccuracyMin().setText(Integer.toString(999));
+                    controller.getAdvancedResultsFilterTextFieldMaxResults().setText(Integer.toString(999));
                 }
             }
         });

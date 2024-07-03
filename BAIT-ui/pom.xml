@@ -7,13 +7,13 @@
   <parent>
     <groupId>com.bearlycattable</groupId>
     <artifactId>bait</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.71</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>bait-ui</artifactId>
 <!--  Commented out - will inherit from parent-->
-<!--  <version>1.0.7</version>-->
+<!--  <version>1.0.71</version>-->
   <packaging>jar</packaging>
 
   <properties>
@@ -23,7 +23,7 @@
 <!--     Therefore, if version.parent has 2 ending digits, version.installer should only have 2 digits-->
 <!--     Eg.:  if version.parent = 1.0.5, then version.installer should be 3-digit - such as 001,-->
 <!--           if version.parent = 1.0.55, then version.installer should be 2-digit - such as 01-->
-    <client.version>${project.version}003</client.version>
+    <client.version>${project.version}01</client.version>
     <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
   </properties>
 

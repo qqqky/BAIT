@@ -7,7 +7,7 @@
 
   <groupId>com.bearlycattable</groupId>
   <artifactId>bait</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.71</version>
   <name>BAIT</name>
   <description>Bitcoin Address Integrity Tester</description>
   <packaging>pom</packaging>
@@ -23,8 +23,8 @@
   </modules>
 
   <properties>
-    <project.version>1.0.7</project.version>
-    <bait-ui.version>1.0.7</bait-ui.version>
+    <project.version>1.0.71</project.version>
+    <bait-ui.version>1.0.71</bait-ui.version>
     <bait-bl.version>1.0.6</bait-bl.version>
     <bait-commons.version>1.0.2</bait-commons.version>
     <bait-utility.version>1.0.5</bait-utility.version>
