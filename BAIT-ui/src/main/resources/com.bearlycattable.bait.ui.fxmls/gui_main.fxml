@@ -41,9 +41,6 @@
             <fx:include fx:id="advancedTabMain" source="tabAdvanced.fxml"/>
           </content>
         </Tab>
-        <Tab fx:id="tabAboutTheProject" text="%label.tab.about" styleClass="mainTabPaneTabNormal">
-          <fx:include fx:id="aboutTheProjectTab" source="tabAboutTheProject.fxml" />
-        </Tab>
       </tabs>
     </TabPane>
   </children>

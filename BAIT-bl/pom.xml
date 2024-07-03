@@ -7,12 +7,12 @@
   <parent>
     <groupId>com.bearlycattable</groupId>
     <artifactId>bait</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>bait-bl</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -26,11 +26,6 @@
       <groupId>com.bearlycattable</groupId>
       <artifactId>bait-advancedCommons</artifactId>
       <version>${bait-advancedCommons.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.bearlycattable</groupId>
-      <artifactId>bait-advancedRestricted</artifactId>
-      <version>${bait-advancedRestricted.version}</version>
     </dependency>
     <dependency>
       <groupId>com.bearlycattable</groupId>

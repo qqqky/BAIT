@@ -267,12 +267,6 @@ public class AdvancedSubTabProgressController {
     private Optional<ThreadComponentDataAccessor> createNewThreadProgressContainer(boolean isParentThread) {
         int totalContainersInUi = countThreadProgressContainersInUi();
 
-        //num of total parent thread containers
-        if (totalContainersInUi > Runtime.getRuntime().availableProcessors() - 1) {
-            showErrorLabel(rb.getString("error.maxContainerLimitReached") + (Runtime.getRuntime().availableProcessors() - 1) + ". Please clean up the UI and try again.");
-            return Optional.empty();
-        }
-
         String currentThreadNum = generator.generateHexString(8).toLowerCase(Locale.ROOT);
         ThreadComponentDataAccessor accessor = AdvancedSubTabProgressComponentHelper.createDefaultThreadProgressContainer(currentThreadNum);
 

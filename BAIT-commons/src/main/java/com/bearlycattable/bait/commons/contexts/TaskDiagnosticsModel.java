@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Holds various messages and diagnostics about the searcher thread
+ * Holds various messages and metrics about the searcher thread
  */
 @Builder
 @Getter
@@ -28,19 +28,4 @@ public class TaskDiagnosticsModel {
       return builder().build();
    }
 
-   // public void addEmptySingleLoopModel(@NonNull String childThreadId) {
-   //    if (dataMap == null) {
-   //       dataMap = new HashMap<>();
-   //    }
-   //
-   //    dataMap.putIfAbsent(childThreadId, new SingleLoopDataModel());
-   // }
-
-   // public void addToTotalNumOfResults(int resultsFoundInCurrentLoop) {
-   //    totalNumOfResultsFound += resultsFoundInCurrentLoop;
-   // }
-
-   // public void setLoopCompletionMessage(@NonNull String childThreadId, String message) {
-   //    dataMap.get(childThreadId).setCompletionMessage(message);
-   // }
 }

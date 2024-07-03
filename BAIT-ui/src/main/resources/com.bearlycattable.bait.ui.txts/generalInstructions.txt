@@ -2,62 +2,104 @@
 # GENERAL INSTRUCTIONS #
 #
 
-//[0]\\. Keep in mind this program only supports 'legacy' addresses (P2PKH).
-        These are the addresses that start with "1" and are of 34 hex characters length or less.
+//[1]\\. Anywhere on the app, try hovering your mouse over these type of icons to find out more detailed information ---> [[[tooltip: Example tooltip with text]]]
+
+//[2]\\. Keep in mind this program only supports 'legacy' Bitcoin addresses (P2PKH).
+
+        If you are wondering, these are the addresses that start with "1" and are of 34 hex characters length or less.
+
         For example:
-                   Legacy (P2PKH) address:                             When unencoded:
-            1Ag6RNLpupCW27fxBDT7iTfcYbj3rFjryw <======> 6a1de10a811cf4257627e5bc3694b8b19a713075
-//[1]\\. Abbreviations used:
-    General abbreviations:
-    PK - Private Key, 64-hex digits (for example: F6CD3D8552EEEEEE0EE25EE77707F3A5CD8C3E13A4B7B1A6F8701C4EC523DAEF)
-        we can consider every private key as having EIGHT equal parts, each consisting of 8-hex digits (8*8=64).
-        Here, these 8-hex digit parts are called WORDS and are arbitrarily numbered from 1 to 8 (not from zero!)
+                Legacy (P2PKH) address ('Public Address'/'pub'):      1Ag6RNLpupCW27fxBDT7iTfcYbj3rFjryw
+                When unencoded becomes ('unencoded PKH'):       6a1de10a811cf4257627e5bc3694b8b19a713075
+
+
+//[3]\\. Abbreviations used:
+    PK - Private Key, 64-hex digits (for example: F6CD3D8552EEEEEE0EE25EE77707F3A5CD8C3E13A4B7B1A6F8701C4EC523DAEF).
+
+    word - we can consider every private key as having EIGHT equal parts, each consisting of 8-hex digits (8*8=64). Here, these 8-hex digit parts are called WORDS and are arbitrarily numbered from 1 to 8 (not from zero!).
+
         Taken as a whole, PK has 64 indexes, numbered from 0 to 63.
-        For example:    '1st word' would mean 'characters from index 0 to 7'
-                        '8th word' would mean 'characters from index 56 to 63'
-    PKH - Public Key Hash (here, it usually refers to 'unencoded PKH' unless stated otherwise)
-            1 PK can yield 2 PKHs (an UPKH and a CPKH, see below).
-    unencoded PKH - 40-character hex string which, upon further encoding, would result in a normal legacy address.
-        for example: 6a1de10a811cf4257627e5bc3694b8b19a713075
-    encoded PKH (usually simply called 'address') - base-58 format encoded PKH. If such address starts by "1"
-        and has length of 26-34 characters (some sources state it's up to 35), it is a 'legacy'/'P2PKH type' address,
-        for example: 1Ag6RNLpupCW27fxBDT7iTfcYbj3rFjryw
+        For example:
+            '1st word' would mean 'characters from index 0 to 7'
+            '8th word' would mean 'characters from index 56 to 63'
+
+    PKH - Public Key Hash (here, it usually refers to 'unencoded PKH' unless stated otherwise) 1 PK can yield 2 PKHs (an UPKH and a CPKH, see below).
+
+    unencoded PKH - 40-character hex string which, upon further encoding, would result in a normal legacy address. Not to be confused with UPKH, which has another meaning (see below).
+        Example of unencoded PKH: 6a1de10a811cf4257627e5bc3694b8b19a713075
+
+    encoded PKH (usually simply called 'address') - base-58 format encoded PKH. If such address starts by "1" and has length of 26-34 characters (some sources state it's up to 35), it is a 'legacy'/'P2PKH type' address,
+        Example of encoded PKH: 1Ag6RNLpupCW27fxBDT7iTfcYbj3rFjryw
+
     UPKH - shorthand for 'Uncompressed PKH' - unencoded PKH that was derived from UNCOMPRESSED public key.
-    CPKH - shorthand for 'Compressed PKH' - unencoded PKH that was derived from COMPRESSED public key.
-            Note that both UPKH and CPKH are 40-character hex strings.
-            We cannot tell which is which unless we also know the PK that was used to derive these.
-    priv - shorthand for 'Private Key' = refers to PK
-    pub - shorthand for 'Public Address' = refers to 'encoded PKH'
 
-//[2]\\. Search types (not to be confused with 'Search modes'[3]!)
+    CPKH - shorthand for 'Compressed PKH' - unencoded PKH that was derived from COMPRESSED public key. Both UPKH and CPKH are 40-character hex strings. Note that we cannot tell which is which unless we also know the PK that was used to derive it.
+
+    priv - shorthand for 'Private Key' - also referred to as 'PK'
+
+    pub - shorthand for 'Public Address'/'Public Key' - refers to 'encoded PKH'
+
+
+//[4]\\. Search types (not to be confused with 'Search modes'[3]!)
+
     There are only 2 search types. They are based on whether PK is already known or not:
-        1. When PK is already known (called 'Collision(known priv) search' here)
-        2. When only PKH is known, but we don't know if is an UPKH or CPKH
-            (this search type is called 'Blind (unknown priv) search' here)
+        1. 'Collision(known priv) search' - when PK is already known. This type is not available in Advanced Search!
+        2. 'Blind (unknown priv) search' - when only PKH is known, but we don't know if it's an UPKH or a CPKH
 
-//[3]\\. Search modes.
-    There are quite a few search modes in the current version of the program.
-    Here is the list with short explanations about most of them.
+//[5]\\. Search modes.
+
+    There are quite a few search modes in the current version of the program. If you are wondering what is 'a word', please see bullet points #3 and #6.
+
+    5.1. Random-related modes:
+
     RANDOM - completely randomized search, all characters in a PK are generated at random.
-    RANDOM_SAME_WORD - every key will consist of identical 8 words, but the word itself will be chosen at random (prefix can be set). Example:
-        without prefix: 652E02A9652E02A9652E02A9652E02A9652E02A9652E02A9652E02A9652E02A9 (all 8 words same)
-        with prefix '0000': 0000DB520000DB520000DB520000DB520000DB520000DB520000DB520000DB52 (all 8 words same, all have the same prefix)
-    INCREMENTAL_ABSOLUTE - seed key keeps getting incremented by 1
-    DECREMENTAL_ABSOLUTE - seed key keeps getting decremented by 1
-    INCREMENTAL_WORDS - all words of the seed key keep getting incremented by 1 (all at once)
-    DECREMENTAL_WORDS - all words of the key keep getting decremented by 1 (all at once)
-    ROTATION_VERTICAL - all indexes of the key are incremented one by one (NOT all at once). If a better result is found at any point,
-                        vertical rotation restarts using the newly found result as the new seed.
+        Locking of words in this mode is only supported in Advanced Search.
+
+    RANDOM_SAME_WORD - every key will consist of 8 identical words, but the word itself will be chosen at random (prefix can be set).
+
+        Example of a random 'same word' key (note all 8 words are 652E02A9):
+            652E02A9652E02A9652E02A9652E02A9652E02A9652E02A9652E02A9652E02A9
+
+        In 'Advanced Search' this mode also supports prefix. Prefix will stay the same between iterations.
+        For example, if we chose prefix '0000', a couple consecutively generated random keys could look something like this:
+            0000DB520000DB520000DB520000DB520000DB520000DB520000DB520000DB52 (all 8 words same (0000DB52), all have the same prefix '0000')
+            0000567800005678000056780000567800005678000056780000567800005678 (all 8 words same (00005678), all have the same prefix '0000')
+
+    RANDOM_PREFIXED_WORD - every word in a key will consist of the same prefix, but all numbers coming after it will be random.
+        This mode is only supported in Advanced Search (locking of words is also supported).
+        For example, if we chose prefix 'ABCDEF', a couple consecutively generated keys could look something like this:
+            ABCDEF00ABCDEFAAABCDEF02ABCDEF80ABCDEFA0ABCDEF85ABCDEF52ABCDEFFD (note the same start, but a different ending in all of 8 words)
+            ABCDEF96ABCDEFA9ABCDEFAAABCDEFFDABCDEFD7ABCDEF00ABCDEF01ABCDEF88 (same)
+
+    5.2. Increment-decrement modes:
+
+    INCREMENTAL_ABSOLUTE - seed key keeps getting incremented by 1 every iteration
+    DECREMENTAL_ABSOLUTE - seed key keeps getting decremented by 1 every iteration
+    INCREMENTAL_WORDS - all words of the seed key keep getting incremented by 1 (all at once) every iteration
+    DECREMENTAL_WORDS - all words of the key keep getting decremented by 1 (all at once) every iteration
+
+    5.3. Rotation modes.
+
+    All rotation modes are only supported in QuickSearch.
+    All rotation modes are finite (that is, iterations set by user will be ignored) - all variations will be checked regardless. There aren't too many of them.
+
+    ROTATION_VERTICAL - all indexes of the key are incremented one by one (NOT all at once). If a better result is found at any point, vertical rotation restarts using the newly found result as the new seed. Thus, often, the final result will have more than 1 index rotated.
+
     ROTATION_FULL_NORMAL - a seed key gets left-rotated by 1 until a full rotation (limited to 64 times, which would return the key to original state)
-    ROTATION_FULL_PREFIXED - a seed key gets left-rotated by 1, but this mode also accounts for the 64-hex digit header*.
-                        after 64 rotations the original key becomes identical to the header.
+
+    ROTATION_FULL_PREFIXED - a seed key gets left-rotated by 1, but this mode also accounts for the 64-hex digit internal header (if you don't know what is a header in this context, you definitely won't need this mode). After 64 rotations the original key becomes identical to the header.
+        It would have been clearer to call this mode 'ROTATION_FULL_PREFIXED_WITH_HEADER', but it hadn't been.
+
     ROTATION_WORDS - all WORDS of a seed key get left-rotated by 1 (all at once). After 8 rotations we are back to original key.
 
-//[4]\\. Program-specific terminology (FAQs).
-    4.1. What is a 'LOCKED WORD'?
-        - By design, all search modes (except for ROTATION_PRIV_FULL_NORMAL and ROTATION_PRIV_FULL_PREFIXED) support the locking of PK words.
+
+//[6]\\. Program-specific terminology (FAQs).
+
+    6.1. What is a 'LOCKED WORD'?
+        - It is 'a word' of PK (8-hex digit string) that will be locked. Read below.
+        - By design, all search modes (except for ROTATION_PRIV_FULL_NORMAL and ROTATION_PRIV_FULL_PREFIXED) support the locking of PK words. Some of them only support locking in QuickSearch, others - only in Advanced Search, and for some - locking is supported in both.
         - Locked words WILL NOT BE MUTATED in any way during a search. Let's consider the following examples:
-            In all cases, we choose our seed PK to be:
+            In all cases below, let's say we chose our seed PK to be:
             0000000100000001000000010000000100000001000000010000000100000001 (every word is the same for the sake of example)
 
             Some of the outcomes could be:
@@ -71,10 +113,12 @@
             The result after 1st iteration will be: 0000000000000001000000000000000000000000000000000000000000000000
             The result after 2nd iteration will be: FFFFFFFF00000001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
-    4.2. I only want to lock certain indexes of PK, not the whole words. How can I do it?
+
+    6.2. I only want to lock certain indexes of PK, not the whole words. How can I do it?
         - Locking by index is not supported.
 
-    4.3. What do terms 'HEAT POSITIVE' and 'HEAT NEGATIVE' mean?
+
+    6.3. What do terms 'HEAT POSITIVE' and 'HEAT NEGATIVE' mean?
         - The idea was to find an objective way to compare any two PKHs and determine their similarity.
             This is called 'heat comparison'.
             Heat comparison shows how similar the reference string is to a target string.
@@ -82,81 +126,78 @@
                - for PKHs it is done by comparing them index-by-index (see 'Comparison' tab)
                - for PKs it is done by comparing them word-by-word (see 'Comparison' tab) and is not too useful
 
-            HEAT POSITIVE - how much each index of current PKH must be INCREMENTED so that all indexes
-                            match with those of reference PKH's.
+            HEAT POSITIVE - how much each index of current PKH must be INCREMENTED in order for all indexes to match those of reference PKH's.
 
-            HEAT NEGATIVE - how much each index of current PKH must be DECREMENTED so that all indexes
-                            match with those of reference PKH's.
+            HEAT NEGATIVE - how much each index of current PKH must be DECREMENTED in order for all indexes to match those of reference PKH's.
 
-            Heat comparison yields points, these points are converted to accuracy/similarity % and, for a
-            more human-friendly approach, given colors:
-            There are, in total, 16 colors used (from GREEN to RED), the most important ones are these:
+            Heat comparison yields points, these points are converted to accuracy/similarity % and, for a more human-friendly approach, given colors. There are in total 16 colors used (from GREEN to RED), the most important ones are these:
+
             GREEN - matched exactly
             LIGHT GREEN - nearly matched (off by 1)
             ...
             YELLOW > ... > ORANGE > ... > LIGHT RED - somewhere in between
             ...
             RED - was as far away as possible (off by 15)
-                let's consider this example:
-                    say our PKH at certain index was hex "0" and the reference PKH at this same index was hex "F".
-                    This would result in RED for HEAT POSITIVE, but LIGHT GREEN(near-match) for HEAT_NEGATIVE
+
+            Let's consider the following example:
+                Say our PKH at certain index was hex "0" and the reference PKH at this same index was hex "F". This would result in RED for HEAT POSITIVE, but LIGHT GREEN(near-match) for HEAT_NEGATIVE
 
         - In general, the following 2 facts apply in all cases:
-            What is bad for HEAT POSITIVE is good for HEAT NEGATIVE and vice-versa.
-            Exact matches, however, are good for both HEAT POSITIVE and HEAT NEGATIVE comparison results.
+            1. What is bad for HEAT POSITIVE is good for HEAT NEGATIVE comparison results and vice-versa.
+            2. Exact matches, however, are good for both HEAT POSITIVE and HEAT NEGATIVE comparison results.
 
-    4.4. What is a 'SCALE FACTOR' (SF)?
-        - This is a term used when doing heat comparison of PKHs.
-        - Normal comparison uses no scale factor (SF0), this means all indexes are compared in a non-discriminative way.
-        - All other scale factors (SF1, SF2, SF3) give exponentially increased preference for more exact index matches.
-            Of which, the highest preference is assigned when indexes are identical.
-        - The default scale factor was arbitrarily chosen to be SF1 (slight discrimination towards exact matches).
 
-    4.5. Which SCALE FACTOR should I use?
-        - Either use the default one (SF1) or disable it altogether (change it to SF0).
+    6.4. What is a 'SCALE FACTOR' (SF)?
+        - This is a term used when doing heat comparison of PKHs. During heat comparison, the key will be assigned points based on its similarity to a reference key. Highest number of points will be assigned for indexes whose values are identical to those of reference key's.
+
+            If scale factor is DISABLED (SF0), it means all indexes are compared in a non-discriminative way.
+            All other scale factors (MEDIUM (SF1), HIGH (SF2), HIGHEST (SF3)) give exponentially higher preference for more similar index-by-index matches.
+        - The default scale factor was arbitrarily chosen to be MEDIUM (SF1) - slightly in favor of more similar index matches.
+        - Here are all scale factors and their numeric values:
+            SF0 - same as DISABLED - numeric value is 1.0
+            SF1 - same as MEDIUM - numeric value is 1.1     //is is the default scale factor
+            SF2 - same as HIGH - numeric value is 1.2
+            SF3 - same as HIGHEST - numeric value is 1.3
+
+
+    6.5. Which SCALE FACTOR should I use?
+        - Either use the default one (MEDIUM/SF1) or disable it altogether (change it to DISABLED/SF0).
         - Once you choose the one factor you like - stick with it.
-        - SF2 and SF3 are not recommended and were mainly made for testing purposes and general curiosity.
-        - Note that for random keys, SF0 will seem to give better accuracy points and SF3 will give the worst
-            of them all. This is only because points are calculated in a different way.
+        - SF2 and SF3 are not recommended and were mainly implemented for testing purposes and general curiosity.
+        - Note that for random keys, SF0 will seem to give better accuracy points and SF3 will give the worst of them all. This is only because points are calculated in a different way.
 
-    4.6. What does "Accuracy" mean?
-        - Firstly, ignore the "Color focus" under private key comparison - it was added just for completeness and
-            works in quite a different way.
-        - Accuracy means "similarity %" and depends on scale factor. After calculating heat points for any comparison,
-            these points are then normalized to give value between 0 and 100, which represents "similarity %"
-            (how similar is current PKH to the reference PKH).
+
+    6.6. What does "Accuracy" mean?
+        - Accuracy (also called "similarity %") is a normalized value of all calculated heat points (which in turn depend on selected scale factor). It represents how similar (in %, and on that particular scale factor) current PKH is in comparison to the reference PKH.
         - Regardless of scale factor, to get an accuracy of 100, all indexes must match exactly.
         - In general, accuracy always depends on scale factor. For example:
-            At scale factor 0 (SF0) - any random key will usually get accuracy of around 50, as, on average,
-                                        every index will be (more or less) at a medium distance from the reference point.
-            At scale factor 3 (SF3) - it would be much more difficult to find a match that has an accuracy of 50, as
-                                        halfway-matches have much less weight here.
-        - For SF0, when doing heat comparison, HEAT POSITIVE and HEAT NEGATIVE results will add up to around 100%.
-            This is not the case for other scale factors, due to points being calculated in a different way.
+            If scale factor is DISABLED (SF0) - any random key will usually get accuracy of around 50, as, on average, every index will be (more or less) at a medium distance from the reference point.
+            If scale factor is HIGHEST (SF3) - it would be much more difficult to find a match that has an accuracy of 50, as halfway-matches have much less weight here.
+        - When scale factor is DISABLED, 'HEAT POSITIVE' and 'HEAT NEGATIVE' accuracy/'similarity %' will add up to roughly 100% (a bit more, actually). This is not the case for other scale factors, due to points being calculated in a different way.
 
 
-//[5]\\. What is 'QuickSearch'?
-    Idea behind QuickSearch was to have a tool that could run a short search with minimal options and then
-    output a best found result into the heat comparison tab.
+//[7]\\. What is 'QuickSearch'?
+    Idea behind QuickSearch was to have a tool that could run a short search with minimal options and then output a best found result into the heat comparison tab.
     It SHOULD NOT BE USED FOR LONG-RUNNING SEARCHES! (use 'Advanced Search' for that)
+    It CANNOT SAVE RESULTS (only output the best found one as a GUI message and also compare it 'Heat Comparison' tab)
 
     Some points to keep in mind about QuickSearch:
         1. QuickSearch will only search against 1 target address.
         2. Just like the advanced search, QuickSearch also runs on a different thread. Only 1 thread is allowed at a time.
         3. Desired "accuracy" can be set (from 0 to 100).
-            If, while running the search, any result matching(or exceeding) the set accuracy is found,
-            the search immediately stops and outputs this result (intended functionality).
-            If no result matching(or exceeding) the set accuracy is found - the search will run through all iterations
-            and output the best found result even if its accuracy is lower than that of desired one.
+            If, while running the search, any result matching (or exceeding) the set accuracy is found, the search immediately stops and outputs this result (intended functionality).
+            If no result matching (or exceeding) the set accuracy is found - the search will run through all iterations set by the user and output the best found result even if its accuracy is lower than that of desired one.
         4. For most searches, locking of words is allowed as long as seed is provided.
         5. Prefix for random word cannot be set in QuickSearch. This functionality is only supported by Advanced Search.
 
     It is advisable to experiment a bit with QuickSearch to make yourself more familiar with modes, accuracy and scale factors.
     Once you are confident enough, move onto Advanced Search.
 
-//[6]\\. What is 'Advanced Search'?
+
+//[8]\\. What is 'Advanced Search'?
     - Go to 'Advanced' -> 'Advanced Instructions' for explanation.
 
-//[7]\\. What is valid range for Bitcoin private keys?
+
+//[9]\\. What range is valid for Bitcoin private keys?
      * BTC max key value is: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140 (inclusive)
-     * BTC min key value is: 0x0000000000000000000000000000000000000000000000000000000000000001 (one) - valid but not supported
+     * BTC min key value is: 0x0000000000000000000000000000000000000000000000000000000000000001 (one) - valid, but not universally supported

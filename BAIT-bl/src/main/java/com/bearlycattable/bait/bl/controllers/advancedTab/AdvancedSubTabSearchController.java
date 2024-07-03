@@ -200,13 +200,16 @@ public class AdvancedSubTabSearchController {
         System.out.println("CREATING (child, advanced): AdvancedSubTabSearchController......");
     }
 
-    void initDevDefaults() {
-        advancedSearchTextFieldLoadSearchTemplateFromFile.setText("D:\\Projects\\TestFiles\\testDelete_first5.json");
-        advancedSearchTextFieldSaveSearchToFile.setText("D:\\Projects\\TestFiles\\zzzz.json");
-        advancedSearchChoiceBoxSearchMode.getSelectionModel().select("Incremental (absolute)");
-        advancedSearchTextFieldIterations.setText("5");
-        advancedSearchTextFieldLogKeyEveryXIterations.setText("1");
-        advancedSearchTextFieldContinueFromSeed.setText("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+    void initDevHook() {
+        //dev hook example:
+        // System.out.println("Initializing DEV defaults on ADVANCED_SEARCH");
+        // advancedSearchTextFieldLoadSearchTemplateFromFile.setText("D:\\Some\\Path\\myTemplate.json");
+        // advancedSearchTextFieldSaveSearchToFile.setText("D:\\Some\\Path\\saveTo.json");
+        // advancedSearchChoiceBoxSearchMode.getSelectionModel().select("Incremental (absolute)");
+        // advancedSearchTextFieldIterations.setText("5");
+        // advancedSearchTextFieldLogKeyEveryXIterations.setText("1");
+        // advancedSearchTextFieldContinueFromSeed.setText("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+
         // System.out.println("Dev defaults are empty!");
     }
 
@@ -378,8 +381,6 @@ public class AdvancedSubTabSearchController {
 
         //9. create model
         ThreadSpawnModel threadSpawnModel = modelBuilder.build();
-
-        //TODO: splash screen with confirmation loading progress (because loading exact check items might take some time)
 
         //10. confirm user choice
         if (!acceptUserConfirmationModal(threadSpawnModel)) {

@@ -14,7 +14,7 @@ public final class BaitConstants {
 
     private BaitConstants() {}
 
-    public static final String CURRENT_VERSION = "v1.0.6";
+    public static final String CURRENT_VERSION = "v1.0.7";
     public static final Locale EN_US = new Locale("en", "US");
 
     public static final String ZERO_STRING = "0";

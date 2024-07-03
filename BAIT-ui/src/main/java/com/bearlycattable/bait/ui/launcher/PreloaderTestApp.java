@@ -72,7 +72,15 @@ public class PreloaderTestApp extends Application
         VBox loadingAnimationContainer = new VBox();
         loadingAnimationContainer.setAlignment(Pos.CENTER);
         HBox animationWrapper = new HBox();
+
+        HBox margin = new HBox();
+        margin.setMinWidth(12);
+        margin.setMaxWidth(12);
+        // margin.setBorder(new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, null, null)));
+
+        // animationWrapper.setBorder(new Border(new BorderStroke(Color.CYAN, BorderStrokeStyle.SOLID, null, null)));
         animationWrapper.setAlignment(Pos.CENTER);
+        animationWrapper.getChildren().add(margin);
         animationWrapper.getChildren().add(createLoadingPane());
 
         loadingAnimationContainer.getChildren().add(animationWrapper);
@@ -96,9 +104,9 @@ public class PreloaderTestApp extends Application
     private Node createLoadingLabel() {
         Label l = new Label("Loading...");
         l.setTextFill(Color.YELLOW);
-        l.setStyle("-fx-font-size: 20; -fx-alignment: center;");
+        l.setStyle("-fx-font-size: 20; -fx-alignment: center; -fx-font-weight: bold");
         l.setTranslateY(26);
-        l.setTranslateX(-1);
+        l.setTranslateX(-4);
 
         return l;
     }
@@ -153,6 +161,7 @@ public class PreloaderTestApp extends Application
         setLinearTransitionFor(startCArcC, arcC, 2000);
         setLinearTransitionFor(startCArcD, arcD, 1250);
 
+        // loadingPane.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, null, null)));
         return loadingPane;
     }
 

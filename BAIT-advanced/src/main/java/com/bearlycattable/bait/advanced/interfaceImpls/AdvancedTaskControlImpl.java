@@ -28,6 +28,7 @@ import com.bearlycattable.bait.advancedCommons.helpers.P2PKHSingleResultDataHelp
 import com.bearlycattable.bait.advancedCommons.interfaces.AdvancedTaskControlAccessProxy;
 import com.bearlycattable.bait.advancedCommons.models.ThreadSpawnModel;
 import com.bearlycattable.bait.advancedCommons.wrappers.AdvancedSearchTaskWrapper;
+import com.bearlycattable.bait.commons.BaitConstants;
 import com.bearlycattable.bait.commons.Config;
 import com.bearlycattable.bait.commons.contexts.TaskDiagnosticsModel;
 import com.bearlycattable.bait.commons.enums.BackgroundColorEnum;
@@ -112,7 +113,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
     private AdvancedTaskControlImpl() {}
 
     @NonNull
-    public Task<P2PKHSingleResultData[]> prepareCurrentTask(TaskPreparationContext context) {
+    public String prepareCurrentTask(TaskPreparationContext context) {
         ThreadComponentDataAccessor accessor = context.getAccessor();
         Task<P2PKHSingleResultData[]> searchTask = context.getSearchTask();
 
@@ -159,7 +160,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
         logTaskPreparedMessage(context);
 
-        return searchTask;
+        return threadNum;
     }
 
     private void logTaskPreparedMessage(TaskPreparationContext context) {
@@ -352,9 +353,13 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         String errorMessage = buildErrorMessageOnFailed(context);
         logErrorMessage(errorMessage);
 
-        //experimental
         if (context.isVerboseMode()) {
-            logErrorMessage(Arrays.stream(self.getException().getStackTrace()).collect(Collectors.toList()).toString());
+            logErrorMessage("------------------------------" + System.lineSeparator() + "EXCEPTION in failed task:" + System.lineSeparator() + "------------------------------");
+            logErrorMessage(self.getException().toString());
+            logErrorMessage("------------------------------" + System.lineSeparator() + "STACK TRACE:" + System.lineSeparator() + "------------------------------");
+            logErrorMessage(Arrays.stream(self.getException().getStackTrace())
+                    .map(StackTraceElement::toString)
+                    .collect(Collectors.joining(System.lineSeparator())));
         }
 
         accessor.getRemoveButton().setDisable(false);
@@ -466,17 +471,18 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
         decrementRemainingLoops(threadSpawnModel);
 
         //create task and preparation context
-        Optional<Task<P2PKHSingleResultData[]>> preparedTask = createNewAdvancedSearchTask(advancedSearchContext, threadSpawnModel)
+        Optional<String> preparedThreadNum = createNewAdvancedSearchTask(advancedSearchContext, threadSpawnModel)
                 .map(taskWrapper -> createTaskPreparationContext(taskWrapper.getTask(), firstLoop, accessor.get(), threadSpawnModel, advancedSearchContext))
                 .map(this::prepareCurrentTask);
 
-        if (!preparedTask.isPresent()) {
+        if (!preparedThreadNum.isPresent()) {
+            logErrorMessage("Failed to create or prepare advanced search task!");
             return Optional.empty();
         }
 
         //Could be using executor service (executorService.submit(searchTask)),
         //but, we launch the prepared task on a separate thread manually:
-        Thread searchThread = new Thread(preparedTask.get());
+        Thread searchThread = new Thread(taskMap.get(preparedThreadNum.get()));
         searchThread.setDaemon(true);
         searchThread.start(); //do not call searchThread.run()
 
@@ -594,7 +600,7 @@ public class AdvancedTaskControlImpl implements AdvancedTaskControl {
 
     @Override
     public synchronized boolean isTaskCreationAllowed() {
-        return taskMap.keySet().size() < (Runtime.getRuntime().availableProcessors() - 1);
+        return Config.OVERRIDE_MAX_THREAD_LIMIT || taskMap.keySet().size() < (Runtime.getRuntime().availableProcessors() - 1);
     }
 
     private synchronized String mutateSeedForType(SeedMutationTypeEnum type, String seed, String value, List<Integer> disabledWords, List<Integer> verticalRotationIndexes) {

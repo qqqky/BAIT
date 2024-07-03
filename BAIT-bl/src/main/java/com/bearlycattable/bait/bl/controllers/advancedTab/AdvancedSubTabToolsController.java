@@ -204,9 +204,13 @@ public class AdvancedSubTabToolsController {
             removeLabel(searchToolsLabelTemplateCreationResult);
 
             template = createPubTemplateFromManualInput();
+            if (!template.isPresent()) {
+                insertErrorLabel(searchToolsLabelTemplateCreationResult, rb.getString("Cannot create template: no valid public keys have been recognized!"));
+                return;
+            }
         } else if (advancedToolsRadioCreateTemplateFromFile.isSelected()) {
             if (advancedToolsTextFieldPathToPubList.getText().isEmpty()) {
-                insertErrorLabelAndRedBorder(searchToolsLabelTemplateCreationResult, advancedToolsTextFieldPathToPubList, "Path is not correct. Cannot create template");
+                insertErrorLabelAndRedBorder(searchToolsLabelTemplateCreationResult, advancedToolsTextFieldPathToPubList, "Address list path is empty. Cannot create template");
                 return;
             }
             //remove red border and error
@@ -214,13 +218,13 @@ public class AdvancedSubTabToolsController {
             removeLabel(searchToolsLabelTemplateCreationResult);
 
             template = createPubTemplateFromFile();
+
+            if (!template.isPresent()) {
+                insertErrorLabel(searchToolsLabelTemplateCreationResult, rb.getString("Cannot create template: input file does not exist or does not contain any recognized public keys!"));
+                return;
+            }
         } else {
             throw new IllegalStateException("None of the radio buttons were checked at #doCreateEmptyResultTemplate");
-        }
-
-        if (!template.isPresent()) {
-            insertErrorLabel(searchToolsLabelTemplateCreationResult, rb.getString("error.cannotCreateTemplate"));
-            return;
         }
 
         //serialize and save

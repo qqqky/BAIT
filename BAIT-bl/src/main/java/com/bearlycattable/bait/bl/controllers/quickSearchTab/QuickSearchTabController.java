@@ -524,7 +524,7 @@ public class QuickSearchTabController {
                 .iterations(quickSearchHelper.getIterations())
                 .accuracy(accuracy)
                 .verbose(quickSearchTabAccessProxy.isVerboseMode())
-                .printSpacing(quickSearchTabAccessProxy.isVerboseMode() ? 1 : 0) //TODO: explain here?
+                .printSpacing(quickSearchTabAccessProxy.isVerboseMode() ? 1 : Integer.MAX_VALUE)
                 .currentHighestResult(PubComparisonResultSWrapper.empty())
                 .build();
 

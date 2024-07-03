@@ -22,7 +22,7 @@
         </Label>
       </children>
     </HBox>
-    <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+    <HBox alignment="CENTER_LEFT" prefHeight="40.0" disable="true">
       <children>
         <HBox prefHeight="40.0" prefWidth="5.0" />
         <CheckBox fx:id="advancedConfigCbxOverrideExactMatchPath" mnemonicParsing="false" text="%label.overrideExactMatchLocation">
@@ -55,7 +55,7 @@
       <children>
         <HBox prefHeight="40.0" prefWidth="5.0" />
         <HBox prefHeight="40.0" prefWidth="5.0" />
-        <Button mnemonicParsing="false" onAction="#doSaveConfigChanges" text="%button.saveConfigChanges" />
+        <Button mnemonicParsing="false" onAction="#doSaveConfigChanges" text="%button.saveConfigChanges" disable="true" />
       </children>
     </HBox>
   </children>

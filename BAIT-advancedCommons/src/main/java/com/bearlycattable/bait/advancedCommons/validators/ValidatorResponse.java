@@ -13,7 +13,7 @@ public class ValidatorResponse {
     String errorMessage;
     Control errorTargetTextField;
     OptionalConfigValidationResponseType responseType;
-    Object responseData;
+    Object responseData; //intentional
     SeedMutationTypeEnum seedMutationType;
 
 }

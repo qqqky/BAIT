@@ -1,6 +1,5 @@
 package com.bearlycattable.bait.advancedCommons.interfaces;
 
-import java.nio.ByteBuffer;
 import java.util.Set;
 
 import com.bearlycattable.bait.advancedCommons.contexts.AdvancedSearchContext;

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import com.bearlycattable.bait.advancedCommons.helpers.BaitComponentHelper;
 import com.bearlycattable.bait.commons.helpers.BaitHelper;
 
+import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -195,6 +196,7 @@ public class BaitNumberedListHelper {
 
                 });
             }
+            placeholder.setPadding(new Insets(0,0,20,0));
             parent.getChildren().add(placeholder);
         });
 

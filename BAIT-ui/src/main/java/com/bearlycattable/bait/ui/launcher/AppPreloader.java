@@ -51,8 +51,15 @@ public class AppPreloader extends Preloader {
 
         VBox loadingAnimationContainer = new VBox();
         loadingAnimationContainer.setAlignment(Pos.CENTER);
+
         HBox animationWrapper = new HBox();
         animationWrapper.setAlignment(Pos.CENTER);
+
+        HBox margin = new HBox();
+        margin.setMinWidth(12);
+        margin.setMaxWidth(12);
+
+        animationWrapper.getChildren().add(margin);
         animationWrapper.getChildren().add(LoadingAnimationHelper.createLoadingAnimationPane(Color.TRANSPARENT));
 
         loadingAnimationContainer.getChildren().add(animationWrapper);
@@ -83,6 +90,7 @@ public class AppPreloader extends Preloader {
         closeBtn.setMinSize(50,20);
         closeBtn.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, null, null)));
         closeBtn.setVisible(true);
+        // closeBtn.setAlignment(Pos.CENTER);
         closeBtn.setOnAction(event -> Platform.exit());
 
         return closeBtn;

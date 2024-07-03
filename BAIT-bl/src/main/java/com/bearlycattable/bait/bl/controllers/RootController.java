@@ -2,21 +2,18 @@ package com.bearlycattable.bait.bl.controllers;
 
 
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.util.logging.Logger;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import com.bearlycattable.bait.advancedCommons.helpers.DarkModeHelper;
 import com.bearlycattable.bait.bl.contexts.HeatComparisonContext;
-import com.bearlycattable.bait.bl.controllers.aboutTheProjectTab.AboutTheProjectTabController;
 import com.bearlycattable.bait.bl.controllers.advancedTab.AdvancedTabMainController;
 import com.bearlycattable.bait.bl.controllers.constructionTab.ConstructionTabController;
 import com.bearlycattable.bait.bl.controllers.converterTab.ConverterTabController;
 import com.bearlycattable.bait.bl.controllers.generalInstructionsTab.GeneralInstructionsTabController;
 import com.bearlycattable.bait.bl.controllers.heatComparisonTab.HeatComparisonTabController;
 import com.bearlycattable.bait.bl.controllers.quickSearchTab.QuickSearchTabController;
-import com.bearlycattable.bait.bl.initializers.aboutTheProjectTab.AboutTheProjectTabControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.advancedTab.AdvancedTabMainControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.constructionTab.ConstructionTabControllerInitializer;
 import com.bearlycattable.bait.bl.initializers.converterTab.ConverterTabControllerInitializer;
@@ -34,7 +31,7 @@ import javafx.stage.Screen;
 import lombok.Getter;
 import lombok.Setter;
 
-public class RootController implements ConstructionTabAccessProxy, HeatComparisonTabAccessProxy, QuickSearchTabAccessProxy, ConverterTabAccessProxy, AdvancedTabAccessProxy, GeneralInstructionsTabAccessProxy, AboutTheProjectTabAccessProxy {
+public class RootController implements ConstructionTabAccessProxy, HeatComparisonTabAccessProxy, QuickSearchTabAccessProxy, ConverterTabAccessProxy, AdvancedTabAccessProxy, GeneralInstructionsTabAccessProxy {
 
     private static final Logger LOG = Logger.getLogger(RootController.class.getName());
     @Getter @Setter
@@ -57,8 +54,6 @@ public class RootController implements ConstructionTabAccessProxy, HeatCompariso
     private GeneralInstructionsTabController generalInstructionsTabController;
     @FXML
     private AdvancedTabMainController advancedTabMainController;
-    @FXML
-    private AboutTheProjectTabController aboutTheProjectTabController;
 
     //the parent tab pane
     @FXML
@@ -69,29 +64,29 @@ public class RootController implements ConstructionTabAccessProxy, HeatCompariso
     @FXML
     private void initialize() {
         System.out.println("CREATING (root): RootController......");
-        System.out.println("Original requested dimensions of the Scene: 1280x728");
-        System.out.println("Monitor scaling is at " + (int) (GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
-                .getDefaultTransform().getScaleX() * 100) + "%");
-        System.out.println("Current screen resolution (scaled) is: " + Screen.getPrimary().getBounds());
-        System.out.println("Screen pixels are: " + Toolkit.getDefaultToolkit().getScreenSize());
+
+        if (verboseMode) {
+            System.out.println("Original requested dimensions of the Scene: 1280x728");
+            System.out.println("Monitor scaling is at " + (int) (GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+                    .getDefaultTransform().getScaleX() * 100) + "%");
+            System.out.println("Current screen resolution (scaled) is: " + Screen.getPrimary().getBounds());
+            // System.out.println("Screen pixels are: " + Toolkit.getDefaultToolkit().getScreenSize());
+        }
 
         ConstructionTabControllerInitializer.initialize(constructionTabController, this);
         HeatComparisonTabControllerInitializer.initialize(heatComparisonTabController, this);
         QuickSearchTabControllerInitializer.initialize(quickSearchTabController, this);
         GeneralInstructionsTabControllerInitializer.initialize(generalInstructionsTabController, this);
         AdvancedTabMainControllerInitializer.initialize(advancedTabMainController, this);
-        AboutTheProjectTabControllerInitializer.initialize(aboutTheProjectTabController, this);
         ConverterTabControllerInitializer.initialize(converterTabController, this);
 
         System.out.println("App language set to: " + LocaleUtils.APP_LANGUAGE);
 
-        //dev //TODO: this is only for dev testing, delete after
-        System.out.println("Initializing DEV defaults on ADVANCED_SEARCH");
-        advancedTabMainController.initDevDefaults();
+        advancedTabMainController.initDevHook();
 
         defaultToDarkMode(); //TODO: later this should be read from config file
 
-        System.out.println("ROOT controller has been initialized successfully......");
+        System.out.println("ROOT controller has been initialized successfully!");
     }
 
     private void defaultToDarkMode() {

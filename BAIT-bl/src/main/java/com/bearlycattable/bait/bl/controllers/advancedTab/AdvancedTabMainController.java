@@ -249,8 +249,8 @@ public class AdvancedTabMainController implements AdvancedToolsAccessProxy, Adva
         advancedSubTabLogController.log(message, color, 0, FontWeight.BOLD, type);
     }
 
-    public void initDevDefaults() {
-        advancedSubTabSearchController.initDevDefaults();
+    public void initDevHook() {
+        advancedSubTabSearchController.initDevHook();
     }
 
     @Override

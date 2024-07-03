@@ -119,9 +119,9 @@ public class LoadingAnimationHelper {
     private static Node createLoadingLabel() {
         Label loadingLabel = new Label("Loading...");
         loadingLabel.setTextFill(Color.YELLOW);
-        loadingLabel.setStyle("-fx-font-size: 20; -fx-alignment: center;");
+        loadingLabel.setStyle("-fx-font-size: 20; -fx-alignment: center; -fx-font-weight: bold");
         loadingLabel.setTranslateY(26);
-        // loadingLabel.setTranslateX(-1);
+        loadingLabel.setTranslateX(-4);
 
         return loadingLabel;
     }

@@ -23,9 +23,7 @@ import javafx.stage.WindowEvent;
 
 public class App extends Application {
 
-    private boolean verbose;
     private Parent root;
-    // private FXMLLoader loader;
     private EventHandler<WindowEvent> handler;
 
     @Override
@@ -39,12 +37,14 @@ public class App extends Application {
         String bundleBaseName = BundleUtils.GLOBAL_BASE_NAME;
 
         if (bundleBaseName == null) {
-            System.out.println("Could not locate or access required bundles. BAIT will now shut down.");
+            System.err.println("Could not locate or access required bundles. BAIT will now shut down.");
             Platform.exit();
             return;
         }
 
-        System.out.println("BaseName has been derived for further bundle acquisitions: " + bundleBaseName);
+        if (verbose) {
+            System.out.println("BaseName has been derived for further bundle acquisitions: " + bundleBaseName);
+        }
 
         // Function<String, URL> urlAccessFunction = BundleUtils.MODULAR ?
         //         (path) -> Objects.requireNonNull(ClassLoader.getSystemResource(path)) :
@@ -56,16 +56,14 @@ public class App extends Application {
 
        root = loader.load();
 
-        //apply verbose mode if necessary
-        if (verbose) {
-            loader.<RootController>getController().setVerboseMode(verbose);
-            System.out.println("App mode: verbose");
-        }
+       loader.<RootController>getController().setVerboseMode(verbose);
+       System.out.println("App mode set to: " + (verbose ? "verbose" : "default"));
 
-        handler = defaultAppCloseEventHandler(loader);
+
+       handler = createDefaultAppCloseEventHandler(loader);
     }
 
-    private EventHandler<WindowEvent> defaultAppCloseEventHandler(FXMLLoader loader) {
+    private EventHandler<WindowEvent> createDefaultAppCloseEventHandler(FXMLLoader loader) {
         return event -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.initModality(Modality.APPLICATION_MODAL);

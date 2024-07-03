@@ -84,23 +84,23 @@ public class DecrementModifierImpl extends AbstractModifier implements Decrement
      * @return
      */
     private String decrementWordBy(String hexWord, long decrementBy) {
-        if (hexWord.length() > 8) {
-            throw new IllegalArgumentException("Hex word cannot be longer than 8 characters");
+        if (hexWord.length() != 8) {
+            throw new IllegalArgumentException("Hex word must be of exactly 8 characters");
         }
 
-        long maxValueLong = Long.parseLong(Stream.generate(() -> "F").limit(8).collect(Collectors.joining())) + 1;
-
-        if (decrementBy > maxValueLong) {
-            decrementBy = decrementBy % maxValueLong;
+        if (decrementBy > BaitConstants.OVERFLOW_REFERENCE_8_HEX) {
+            decrementBy = decrementBy % BaitConstants.OVERFLOW_REFERENCE_8_HEX;
         }
 
         long item = Long.parseLong(hexWord, 16);
         long finalNum = item - decrementBy; //0009 - 000A
 
-        if (BaitConstants.ZERO_LONG > finalNum) {
-            item = BaitConstants.OVERFLOW_REFERENCE_8_HEX - finalNum;
-        } else {
+        if (BaitConstants.ZERO_LONG < finalNum) {
             item = finalNum;
+        } else if (BaitConstants.ZERO_LONG > finalNum) {
+            item = finalNum + BaitConstants.OVERFLOW_REFERENCE_8_HEX;
+        } else {
+            item = BaitConstants.ZERO_LONG;
         }
 
         return helper.padToX(Long.toHexString(item), 8, uppercase);

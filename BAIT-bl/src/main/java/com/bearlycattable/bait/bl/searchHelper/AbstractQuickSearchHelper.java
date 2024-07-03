@@ -92,8 +92,9 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
             final boolean prefixed = SearchModeEnum.RANDOM_SAME_WORD == quickSearchContext.getSearchMode();
             // Function<String, String> nextPrivFunction = quickSearchContext.getNextPrivFunction();
             BiFunction<QuickSearchResponseModel, String, QuickSearchResponseModel> evaluationFunction = createGeneralEvaluationFunction(quickSearchContext);
-            int printSpacing = quickSearchContext.getPrintSpacing();
+            final int printSpacing = quickSearchContext.getPrintSpacing();
             final boolean verbose = quickSearchContext.isVerbose();
+
             @Override
             public PubComparisonResultSWrapper call() {
                 String currentPriv = seed;
@@ -105,7 +106,6 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
 
                 for (int i = 0; i < iterations; i++) {
                     seed = prefixed ? buildNextPrivPrefixed(seed, disabledWords, null) : buildNextPriv(seed, disabledWords);
-                    // seed = nextPrivFunction.apply(seed); //implementation is different for every search type
 
                     if (verbose && ((i + 1) % printSpacing == 0)) {
                         System.out.println("Current priv (current mode=" + searchMode + ") is " + "[" + (i + 1) + "]: " + seed);
@@ -135,10 +135,8 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                 String seed = quickSearchContext.getSeed();
                 List<Integer> disabledWords = quickSearchContext.getDisabledWords();
                 String targetPriv = quickSearchContext.getTargetPriv();
-                // Function<String, String> nextPrivFunction = quickSearchContext.getNextPrivFunction();
-                // BiFunction<String, Integer, String> nextPrivFunctionForFullPrefixed = quickSearchContext.getNextPrivFunctionFullPrefixed();
                 BiFunction<QuickSearchResponseModel, String, QuickSearchResponseModel> evaluationFunction = createGeneralEvaluationFunction(quickSearchContext);
-                int printSpacing = quickSearchContext.getPrintSpacing();
+                final int printSpacing = quickSearchContext.getPrintSpacing();
                 final boolean verbose = quickSearchContext.isVerbose();
 
                 SearchModeEnum searchMode = quickSearchContext.getSearchMode();
@@ -151,10 +149,8 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                 for (int i = 0; i < iterations; i++) {
                     if (!fullPrefixedMode) {
                         seed = rotateLeft(seed, disabledWords);
-                        // seed = nextPrivFunction.apply(seed);
                     } else {
                         seed = rotateLeftBy(savedSeed, (i + 1));
-                        // seed = nextPrivFunctionForFullPrefixed.apply(savedSeed, (i + 1));
                     }
 
                     if (verbose && ((i + 1) % printSpacing == 0)) {
@@ -190,9 +186,7 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                 String seed = quickSearchContext.getSeed();
                 final List<Integer> disabledWords = quickSearchContext.getDisabledWords();
                 final String targetPriv = quickSearchContext.getTargetPriv();
-                // BiFunction<String, Integer, String> nextPrivFunctionVertical = quickSearchContext.getNextPrivFunctionVertical();
                 final BiFunction<QuickSearchResponseModel, String, QuickSearchResponseModel> evaluationFunction = createGeneralEvaluationFunction(quickSearchContext);
-                // BiPredicate<String, Integer> validityCheckFunction = quickSearchContext.getValidityCheckFunction();
                 final SearchModeEnum searchMode = quickSearchContext.getSearchMode();
                 final int printSpacing = quickSearchContext.getPrintSpacing();
                 final boolean verbose = quickSearchContext.isVerbose();
@@ -209,14 +203,13 @@ public abstract class AbstractQuickSearchHelper extends AbstractBaseQuickSearchH
                     seed = start;
                     //check if index is valid for vertical rotation (not locked), otherwise we will get null
                     if (!isValidIndexForVerticalRotation(seed, disabledWords, i)) {
-                        // if (!validityCheckFunction.test(seed, i)) {
                         updateProgress((i + 1), iterations);
                         continue;
                     }
 
                     for (int j = 0; j < maxRotations; j++) {
                         seed = rotateAtIndex(seed, disabledWords, i);
-                        // seed = nextPrivFunctionVertical.apply(seed, i);
+
                         if (verbose && ((i + 1) % printSpacing == 0)) {
                             System.out.println("Current priv (current mode=" + searchMode + ") is " + "[" + (i + 1) + "]: " + seed);
                         }

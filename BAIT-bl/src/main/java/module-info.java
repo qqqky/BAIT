@@ -22,9 +22,6 @@ module bait.bl {
     exports com.bearlycattable.bait.bl.controllers.advancedTab to bait.ui, javafx.fxml;
     opens com.bearlycattable.bait.bl.controllers.advancedTab to javafx.fxml;
 
-    exports com.bearlycattable.bait.bl.controllers.aboutTheProjectTab to bait.ui, javafx.fxml;
-    opens com.bearlycattable.bait.bl.controllers.aboutTheProjectTab to javafx.fxml;
-
     exports com.bearlycattable.bait.bl.controllers.constructionTab to bait.ui, javafx.fxml;
     opens com.bearlycattable.bait.bl.controllers.constructionTab to javafx.fxml;
 

@@ -232,6 +232,8 @@ public final class AdvancedSubTabSearchControllerInitializer {
                 controller.getAdvancedSearchCbxLoopOptionEnableRotation().setDisable(randomRelatedMode);
                 controller.getAdvancedSearchCbxLoopOptionEnableVertical().setDisable(randomRelatedMode);
 
+                controller.getAdvancedSearchCbxByteComparisonEnable().setDisable(!SearchModeEnum.isByteComparisonSupported(currentMode));
+
                 //disable option component for all random-related modes, enable for others only if corresponding checkbox is selected
                 controller.getAdvancedOptionalMenuIncDecContainer().setDisable(randomRelatedMode || !controller.getAdvancedSearchCbxLoopOptionEnableIncDec().isSelected());
                 controller.getAdvancedOptionalMenuHRotationContainer().setDisable(randomRelatedMode || !controller.getAdvancedSearchCbxLoopOptionEnableRotation().isSelected());

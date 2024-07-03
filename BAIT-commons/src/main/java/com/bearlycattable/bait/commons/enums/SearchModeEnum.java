@@ -66,4 +66,8 @@ public enum SearchModeEnum {
     public static boolean isPrefixSupported(SearchModeEnum mode) {
         return RANDOM_SAME_WORD == mode || RANDOM_PREFIXED_WORD == mode;
     }
+
+    public static boolean isByteComparisonSupported(SearchModeEnum mode) {
+        return isIncDecRelatedMode(mode) || RANDOM == mode;
+    }
 }

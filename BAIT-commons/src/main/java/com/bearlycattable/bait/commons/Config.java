@@ -16,7 +16,7 @@ public class Config {
     public static final ScaleFactorEnum DEFAULT_SCALE_FACTOR = ScaleFactorEnum.MEDIUM;
 
     public static final int MAX_ITERATIONS_QUICK_SEARCH = 1_048_576; //0x00100000
-    public static final int MAX_ITERATIONS_ADVANCED_SEARCH = 1_431_655_766; //0xFFFFFFFF+1 /3 (remove later?)
+    public static final int MAX_ITERATIONS_ADVANCED_SEARCH = 1_431_655_766; //(0xFFFFFFFF + 1) / 3 (remove later?)
 
     public static final int MAX_H_ROTATIONS_WORDS = 8;
     public static final int MAX_H_ROTATIONS_FULL = 64;
@@ -27,6 +27,8 @@ public class Config {
     public static final int MAX_SOUND_NOTIFICATION_POINT_BARRIER = 9999;
 
     public static final int MAX_CACHEABLE_ADDRESSES_IN_TEMPLATE = 5000; //do not change this value
+
+    public static final boolean OVERRIDE_MAX_THREAD_LIMIT = true;
 
     public static final List<SearchModeEnum> DEFAULT_FUZZING_SEARCH_SUBSEQUENCE = Arrays.asList(
             SearchModeEnum.ROTATION_WORDS, SearchModeEnum.INCREMENTAL_WORDS, SearchModeEnum.DECREMENTAL_WORDS,
@@ -46,10 +48,10 @@ public class Config {
             SearchModeEnum.DECREMENTAL_ABSOLUTE.getLabel(), SearchModeEnum.DECREMENTAL_WORDS.getLabel()));
 
     //dev
-    public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/exactMatchCheckListExample.txt";
-    public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/matches.txt";
+    // public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/exactMatchCheckListExample.txt";
+    // public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/BAIT-ui/app/matches.txt";
 
     //prod
-    // public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/app/exactMatchCheckListExample.txt";
-    // public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/app/matches.txt";
+    public static final String EXACT_MATCH_ADDRESSES_LIST_PATH = System.getProperty("user.dir") + "/app/exactMatchCheckListExample.txt";
+    public static final String EXACT_MATCH_SAVE_PATH = System.getProperty("user.dir") + "/app/matches.txt";
 }

@@ -305,7 +305,13 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
                     Platform.runLater(() -> logConsumer.accept("Match saved at path: " + targetPath, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
                 }
 
-                ShortSoundEffects.DOUBLE_BEEP.play();
+                try {
+                    ShortSoundEffects.DOUBLE_BEEP.play();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    Platform.runLater(() -> logConsumer.accept("Could not play audio file [double_beep]. Message: " + e.getMessage(), Color.RED, LogTextTypeEnum.GENERAL));
+                }
+
                 updateProgress((i + 1), iterations);
                 updateProgressLabel((i + 1), observableProgressLabelValue);
             }
@@ -574,7 +580,13 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
                     Platform.runLater(() -> logConsumer.accept("Match saved at path: " + targetPath, Color.DEEPPINK, LogTextTypeEnum.LOG_CLEAR)); //intentional type
                 }
 
-                ShortSoundEffects.DOUBLE_BEEP.play();
+                try {
+                    ShortSoundEffects.DOUBLE_BEEP.play();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    Platform.runLater(() -> logConsumer.accept("Could not play audio file [double_beep]. Message: " + e.getMessage(), Color.RED, LogTextTypeEnum.GENERAL));
+                }
+
                 updateProgress((i + 1), iterations);
                 updateProgressLabel((i + 1), observableProgressLabelValue);
             }
@@ -635,8 +647,8 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
         int newAccuracy = getSimilarityMappings().get(helper.recalculateIndexForSimilarityMappings(pointsNew, getScaleFactor())).setScale(0, RoundingMode.HALF_UP).intValue();
         int pointsGained = (pointsNew - pointsOld);
 
-        //dev fun
-        textToSpeechPointsGained(pointsGained);
+        //dev fun (Windows)
+        // textToSpeechPointsGained(pointsGained);
 
         printMessageFoundBetterResult(comparisonModel, pointsGained, pointsNew, oldAccuracy, newAccuracy);
         printMessageKeySwap(comparisonModel, oldPriv);
@@ -671,7 +683,13 @@ public abstract class AbstractAdvancedSearchHelper extends AbstractGeneralSearch
     private void playNotificationSoundMaybe(AdvancedSearchSingleItemComparisonModel comparisonModel, int pointsGained) {
         if (comparisonModel.getPointThresholdForNotify() > 0 && pointsGained >= comparisonModel.getPointThresholdForNotify()) {
             comparisonModel.getLogConsumer().accept("At #playNotificationSoundMaybe() want to play SINGLE_BEEP sound", Color.DARKCYAN, LogTextTypeEnum.GENERAL);
-            ShortSoundEffects.SINGLE_BEEP.play();
+
+            try {
+                ShortSoundEffects.SINGLE_BEEP.play();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                Platform.runLater(() -> comparisonModel.getLogConsumer().accept("Could not play audio file [single_beep]. Message: " + e.getMessage(), Color.RED, LogTextTypeEnum.GENERAL));
+            }
         }
     }
 

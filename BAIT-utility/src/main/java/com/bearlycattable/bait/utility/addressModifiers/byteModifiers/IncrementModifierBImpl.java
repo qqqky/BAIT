@@ -38,6 +38,36 @@ public class IncrementModifierBImpl extends AbstractModifierB implements Increme
 
     @Override
     public byte[] incrementPrivWordsB(byte[] address, List<Integer> disabledWords) {
-        throw new UnsupportedOperationException("Method not supported at " + this.getClass().getName() + "#incrementPrivWordsB");
+        if (address == null || address.length != 32) {
+            return null;
+        }
+
+        if (Objects.requireNonNull(disabledWords).containsAll(ALL_WORDS)) {
+            return address;
+        }
+
+        int currentByte;
+
+        WORD_LOOP: for (int i = 1 ; i < 9; i++) {  //words
+            if (disabledWords.contains(i)) {
+                continue;
+            }
+
+            for (int j = 3; j >= 0; j--) {   //indexes of each word
+                currentByte = (i - 1) * 4 + j;
+
+                //increment normally if value is not "FF"
+                if (address[currentByte] != -1) {
+                    address[currentByte] = (byte) (address[currentByte] + 1);
+                    continue WORD_LOOP;
+                }
+
+                address[currentByte] = 0;
+            }
+        }
+
+        return address;
     }
+
+
 }
